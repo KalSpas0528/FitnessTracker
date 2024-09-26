@@ -30,6 +30,10 @@ nav ul li a {
     text-decoration: none;
 }
 
+nav ul li a:hover {
+    text-decoration: underline; /* Adds an underline when hovering over links */
+}
+
 /* Section Styling */
 section {
     padding: 20px;
@@ -45,9 +49,10 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: relative;
+    position: fixed;
     bottom: 0;
     width: 100%;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Headings */
