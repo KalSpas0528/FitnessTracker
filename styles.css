@@ -1,61 +1,127 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
     color: #333;
+    line-height: 1.6;
 }
 
 /* Header and Navigation */
 header {
-    background-color: #333;
-    color: white;
-    padding: 10px 0;
+    background-color: #282c34;
+    color: #ffffff;
+    padding: 20px 0;
     text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
 }
 
 nav ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
+    margin: 15px 0 0 0;
 }
 
 nav ul li {
-    display: inline;
+    display: inline-block;
     margin-right: 20px;
 }
 
 nav ul li a {
-    color: white;
+    color: #ffffff;
     text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
-    text-decoration: underline; /* Adds an underline when hovering over links */
+    color: #00d1b2; /* Accent color when hovering over links */
 }
 
 /* Section Styling */
 section {
-    padding: 20px;
-    margin: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    max-width: 900px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    color: #444;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #00d1b2; /* Adds a nice underline accent to section titles */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Dashboard Section */
+#dashboard p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Leaderboard Section */
+#leaderboard p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* AI Coach Section */
+#coach p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Account Section */
+#account p {
+    font-size: 1.1rem;
+    color: #666;
 }
 
 /* Footer */
 footer {
-    background-color: #333;
+    background-color: #282c34;
     color: white;
     text-align: center;
-    padding: 10px 0;
+    padding: 15px 0;
     position: fixed;
     bottom: 0;
     width: 100%;
-    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Headings */
-h2 {
-    color: #444;
+/* Miscellaneous Styling for Prototyping */
+body, section, footer {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+    transition: color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    /* Responsive styles for smaller screens */
+    nav ul li {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    section {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
 }
