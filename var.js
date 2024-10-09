@@ -16,4 +16,10 @@
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.style.marginLeft = "10px"; 
+    newWorkout.appendChild(deleteButton);
+    workoutList.appendChild(newWorkout);
+    deleteButton.addEventListener("click", function() {
+     workoutList.removeChild(newWorkout);
+    });
+   
 });
