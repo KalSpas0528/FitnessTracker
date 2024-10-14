@@ -1,20 +1,25 @@
+let workouts = [];
+
 document.querySelector("form").addEventListener("submit", function(event) {
-    event.preventDefault(); 
-    let exerciseName = document.getElementById("exercise-name").value;
-    let sets = document.getElementById("sets").value;
-    let reps = document.getElementById("reps").value;
-    let weight = document.getElementById("weight").value;
-    let workoutDate = document.getElementById("workout-date").value;
+    event.preventDefault();
+    let workout = {
+        date: document.getElementById("workout-date").value,
+        exercise: document.getElementById("exercise-name").value,
+        sets: document.getElementById("sets").value,
+        reps: document.getElementById("reps").value,
+        weight: document.getElementById("weight").value
+    };
+    if (!workout.exercise || workout.sets <= 0 || workout.reps <= 0 || workout.weight <= 0 || !workout.date) {
+        alert("Please fill in all fields correctly.");
+        return;
+    }
+    workouts.push(workout);
+    document.getElementById("workout-list").innerHTML += 
+        `<li>Date: ${workout.date}, Exercise: ${workout.exercise}, Sets: ${workout.sets}, Reps: ${workout.reps}, Weight: ${workout.weight} lbs
+         <button onclick="this.parentElement.remove()">Delete</button></li>`;
 
-    console.log(`Exercise: ${exerciseName}, Sets: ${sets}, Reps: ${reps}, Weight: ${weight}`);
-
-    let workoutList = document.getElementById("workout-list");
-    let newWorkout = document.createElement("li");
-    newWorkout.textContent = `Date: ${workoutDate}, Exercise: ${exerciseName}, Sets: ${sets}, Reps: ${reps}, Weight: ${weight} lbs`;
-    workoutList.appendChild(newWorkout);
     document.querySelector("form").reset();
-     
-    let deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.style.marginLeft = "10px"; 
+});
+document.querySelector('a[href="#add-workout"]').addEventListener('click', function() {
+    document.getElementById('add-workout-section').classList.toggle('hidden');
 });
