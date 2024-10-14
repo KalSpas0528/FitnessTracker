@@ -13,7 +13,7 @@ document.querySelector("form").addEventListener("submit", function(event) {
     newWorkout.textContent = `Date: ${workoutDate}, Exercise: ${exerciseName}, Sets: ${sets}, Reps: ${reps}, Weight: ${weight} lbs`;
     workoutList.appendChild(newWorkout);
     document.querySelector("form").reset();
-    
+     
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.style.marginLeft = "10px"; 
