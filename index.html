@@ -3,82 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerTitan - Gym Tracker</title>
-    <link rel="stylesheet" href="style.css"> <!-- Ensure this path is correct -->
+    <title>PowerTitan Gym Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Add an icon library for navigation buttons(my css doesnt work properly without this) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <header>
-        <h1>Gym Tracker</h1>
+    <!-- Sidebar on (left) -->
+    <aside id="sidebar">
+        <div class="logo">
+            <h2>PowerTitan</h2>
+        </div>
         <nav>
             <ul>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#leaderboard">Leaderboard</a></li>
-                <li><a href="#coach">AI Coach</a></li>
-                <li><a href="#account">Account</a></li>
-                <li><a href="add-workouts.html">Add Workouts</a></li> <!-- Updated to link to the new page -->
+                <li><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#add-workout"><i class="fas fa-plus-circle"></i> Add Workout</a></li>
+                <li><a href="#leaderboard"><i class="fas fa-trophy"></i> Leaderboard</a></li>
+                <li><a href="#account"><i class="fas fa-user"></i> Account</a></li>
             </ul>
-        </nav>        
-    </header>
+        </nav>
+    </aside>
 
-    <!-- Dashboard Section -->
-    <section id="dashboard">
-        <h2>Your Progress</h2>
-        <p>Progress graphs will be displayed here.</p>
-    </section>
+    <main id="main-content">
+        <!-- Dashboard -->
+        <section id="dashboard" class="section">
+            <h2>Welcome to Your Dashboard</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Workouts</h3>
+                    <p>15</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Weight Lifted</h3>
+                    <p>2500 lbs</p>
+                </div>
+            </div>
 
-    <!-- Leaderboard Section -->
-    <section id="leaderboard">
-        <h2>Global Leaderboard</h2>
-        <p>See how you compare to others here.</p>
-    </section>
+            <div class="recent-workouts">
+                <h3>Recent Workouts</h3>
+                <ul id="workout-list"></ul>
+            </div>
+        </section>
 
-    <!-- AI Fitness Coach Section -->
-    <section id="coach">
-        <h2>AI Fitness Coach</h2>
-        <p>Personalized workout advice will be shown here.</p>
-    </section>
+        <!-- Add Workout Section) -->
+        <section id="add-workout-section" class="section hidden">
+            <h2>Add Workouts</h2>
+            <form id="add-workout-form">
+                <label for="workout-date">Date:</label>
+                <input type="date" id="workout-date" name="workout-date" required><br><br>
 
-    <!-- Account Section -->
-    <section id="account">
-        <h2>Your Account</h2>
-        <p>Login and account management options will go here.</p>
-    </section>
+                <label for="exercise-name">Exercise:</label>
+                <input type="text" id="exercise-name" name="exercise-name" placeholder="e.g., Bench Press" required><br><br>
 
-    <!-- Add Workouts Section -->
-    <section id="workouts">
-        <h2>Add Workouts</h2>
-        <p>Log your workouts below:</p>
-        
-        <!-- Form for adding workout data -->
-        <form>
-            <!-- Workout Date -->
-            <label for="workout-date">Date:</label>
-            <input type="date" id="workout-date" name="workout-date" required><br><br>
+                <label for="sets">Sets:</label>
+                <input type="number" id="sets" name="sets" min="1" placeholder="e.g., 3" required><br><br>
 
-            <!-- Exercise Name -->
-            <label for="exercise-name">Exercise:</label>
-            <input type="text" id="exercise-name" name="exercise-name" placeholder="e.g., Bench Press" required><br><br>
+                <label for="reps">Reps per Set:</label>
+                <input type="number" id="reps" name="reps" min="1" placeholder="e.g., 10" required><br><br>
 
-            <!-- Number of Sets -->
-            <label for="sets">Sets:</label>
-            <input type="number" id="sets" name="sets" min="1" placeholder="e.g., 3" required><br><br>
+                <label for="weight">Weight (lbs):</label>
+                <input type="number" id="weight" name="weight" placeholder="e.g., 70" required><br><br>
 
-            <!-- Number of Reps -->
-            <label for="reps">Reps per Set:</label>
-            <input type="number" id="reps" name="reps" min="1" placeholder="e.g., 10" required><br><br>
+                <input type="submit" value="Add Workout">
+            </form>
+        </section>
 
-            <!-- Weight Used -->
-            <label for="weight">Weight (lbs):</label>
-            <input type="number" id="weight" name="weight" placeholder="e.g., 70" required><br><br>
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="section">
+            <h2>Global Leaderboard</h2>
+            <p>Compare your progress with others.</p>
+        </section>
 
-            <!-- Submit Button -->
-            <input type="submit" value="Add Workout">
-        </form>
-    </section>
+        <!-- Account Section -->
+        <section id="account" class="section">
+            <h2>Your Account</h2>
+            <p>Manage your account settings.</p>
+        </section>
+    </main>
 
-    <!-- Footer -->
-    <footer>
-    </footer>
+    <script src="workouts.js"></script>
 </body>
 </html>
