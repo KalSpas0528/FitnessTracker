@@ -22,40 +22,37 @@
     </header>
 
     <!-- Workout Form Section -->
-    <section id="workouts" class="form-section">
-        <div class="container">
-            <h2>Log Your Workout</h2>
-            
-            <form class="workout-form">
-                <div class="form-group">
-                    <label for="workout-date">Date:</label>
-                    <input type="date" id="workout-date" name="workout-date" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="exercise-name">Exercise:</label>
-                    <input type="text" id="exercise-name" name="exercise-name" placeholder="e.g., Bench Press" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="sets">Sets:</label>
-                    <input type="number" id="sets" name="sets" min="1" placeholder="e.g., 3" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="reps">Reps per Set:</label>
-                    <input type="number" id="reps" name="reps" min="1" placeholder="e.g., 10" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="weight">Weight (lbs):</label>
-                    <input type="number" id="weight" name="weight" placeholder="e.g., 70" required>
-                </div>
-
-                <button type="submit" class="submit-btn">Add Workout</button>
-            </form>
-        </div>
-    </section>
+    <section id="workouts">
+        <h2>Log Your Workout</h2>
+        <form class="workout-form"> <!-- Added class for styling -->
+            <div class="form-group"> <!-- Wrapped label and input in a div for better structure -->
+                <label for="workout-date">Date:</label>
+                <input type="date" id="workout-date" name="workout-date" required>
+            </div>
+    
+            <div class="form-group"> <!-- Wrapped label and input in a div for better structure -->
+                <label for="exercise-name">Exercise:</label>
+                <input type="text" id="exercise-name" name="exercise-name" placeholder="e.g., Bench Press" required>
+            </div>
+    
+            <div class="form-group"> <!-- Wrapped label and input in a div for better structure -->
+                <label for="sets">Sets:</label>
+                <input type="number" id="sets" name="sets" min="1" placeholder="e.g., 3" required>
+            </div>
+    
+            <div class="form-group"> <!-- Wrapped label and input in a div for better structure -->
+                <label for="reps">Reps per Set:</label>
+                <input type="number" id="reps" name="reps" min="1" placeholder="e.g., 10" required>
+            </div>
+    
+            <div class="form-group"> <!-- Wrapped label and input in a div for better structure -->
+                <label for="weight">Weight (lbs):</label>
+                <input type="number" id="weight" name="weight" placeholder="e.g., 70" required>
+            </div>
+    
+            <button type="submit" class="submit-button">Add Workout</button> <!-- Changed input to button for better styling -->
+        </form>
+    </section>    
 
     <footer>
         <p>&copy; 2024 PowerTitan Gym Tracker</p>
