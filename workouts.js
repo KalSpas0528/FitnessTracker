@@ -11,8 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
         showSection('add-workout-section');
     });
 
-    document.querySelector("form").addEventListener("submit", (event) => {
+    const form = document.querySelector('.workout-form');
+
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
+
         let workout = {
             date: document.getElementById("workout-date").value,
             exercise: document.getElementById("exercise-name").value,
@@ -31,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `<li>Date: ${workout.date}, Exercise: ${workout.exercise}, Sets: ${workout.sets}, Reps: ${workout.reps}, Weight: ${workout.weight} lbs
              <button onclick="this.parentElement.remove()">Delete</button></li>`;
 
-        document.querySelector("form").reset();
+        form.reset();
     });
 });
 
