@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault(); // Prevent default anchor behavior
             const target = this.getAttribute('href').substring(1); // Get target section ID
             showSection(target); // Show the corresponding section
+            console.log('Link clicked:', this.innerText); // Log clicked link for debugging
         });
     });
 
