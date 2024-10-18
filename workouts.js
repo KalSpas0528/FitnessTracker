@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showSection('dashboard'); // Show dashboard by default
 
     // Attach event listeners for sidebar links
-    document.querySelectorAll('.nav-link').forEach(link => {
+    document.querySelectorAll('#sidebar nav ul li a').forEach(link => {
         link.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default anchor behavior
             const target = this.getAttribute('href').substring(1); // Get target section ID
