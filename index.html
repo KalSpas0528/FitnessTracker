@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PowerTitan Gym Tracker</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Add an icon library for navigation buttons(my css doesnt work properly without this) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar on (left) -->
+    <!-- Sidebar -->
     <aside id="sidebar">
         <div class="logo">
             <h2>PowerTitan</h2>
@@ -25,7 +24,7 @@
     </aside>
 
     <main id="main-content">
-        <!-- Dashboard -->
+        <!-- Dashboard Section -->
         <section id="dashboard" class="section">
             <h2>Welcome to Your Dashboard</h2>
             <div class="stats">
@@ -45,7 +44,7 @@
             </div>
         </section>
 
-        <!-- Add Workout Section) -->
+        <!-- Add Workout Section -->
         <section id="add-workout-section" class="section hidden">
             <h2>Add Workouts</h2>
             <form id="add-workout-form">
@@ -69,15 +68,58 @@
         </section>
 
         <!-- Leaderboard Section -->
-        <section id="leaderboard" class="section">
+        <section id="leaderboard" class="section hidden">
             <h2>Global Leaderboard</h2>
-            <p>Compare your progress with others.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Total Workouts</th>
+                        <th>Total Weight Lifted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>JohnDoe123</td>
+                        <td>50</td>
+                        <td>4500 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>JaneFitPro</td>
+                        <td>47</td>
+                        <td>4200 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>MaxStrong</td>
+                        <td>45</td>
+                        <td>4000 lbs</td>
+                    </tr>
+                    <!-- Add more rows here -->
+                </tbody>
+            </table>
         </section>
 
         <!-- Account Section -->
-        <section id="account" class="section">
+        <section id="account" class="section hidden">
             <h2>Your Account</h2>
-            <p>Manage your account settings.</p>
+            <div class="account-details">
+                <form>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" value="User123" disabled><br><br>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="user123@example.com"><br><br>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" value="password123"><br><br>
+
+                    <button type="submit" class="submit-button">Update Account</button>
+                </form>
+            </div>
         </section>
     </main>
 
