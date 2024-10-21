@@ -20,6 +20,7 @@
                 <li><a href="#add-workout"><i class="fas fa-plus-circle"></i> Add Workout</a></li>
                 <li><a href="#leaderboard"><i class="fas fa-trophy"></i> Leaderboard</a></li>
                 <li><a href="#account"><i class="fas fa-user"></i> Account</a></li>
+                <li><a href="javascript:void(0);" id="logout-button">Logout</a></li> <!-- Add logout button -->
             </ul>
         </nav>
     </aside>
@@ -31,17 +32,17 @@
             <div class="stats">
                 <div class="stat-card">
                     <h3>Total Workouts</h3>
-                    <p>15</p>
+                    <p id="total-workouts">0</p> <!-- Dynamically filled -->
                 </div>
                 <div class="stat-card">
                     <h3>Total Weight Lifted</h3>
-                    <p>2500 lbs</p>
+                    <p id="total-weight-lifted">0 lbs</p> <!-- Dynamically filled -->
                 </div>
             </div>
 
             <div class="recent-workouts">
                 <h3>Recent Workouts</h3>
-                <ul id="workout-list"></ul>
+                <ul id="workout-list"></ul> <!-- Dynamically filled -->
             </div>
         </section>
 
@@ -124,6 +125,6 @@
         </section>
     </main>
 
-    <script src="workouts.js"></script>
+    <script src="app.js"></script> <!-- Make sure app.js is loaded here -->
 </body>
 </html>
