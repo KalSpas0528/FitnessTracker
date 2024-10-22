@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase setup
-const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co';  // Replace with your project URL
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';  // Replace with your anon public key
+const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'; // Replace with your project URL
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Replace with your anon public key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // DOM Elements
@@ -29,7 +29,7 @@ function toggleSectionVisibility() {
 
 // Handle Sidebar Navigation Links
 sidebarLinks.forEach(link => {
-    link.addEventListener('click', function(event) {
+    link.addEventListener('click', function (event) {
         event.preventDefault();
         const target = this.getAttribute('href').substring(1);
         showSection(target);
