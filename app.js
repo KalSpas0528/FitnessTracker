@@ -10,7 +10,8 @@ const signUpForm = document.getElementById("sign-up-form");
 const logInForm = document.getElementById("log-in-form");
 const workoutsList = document.getElementById("workout-list");
 const logoutButton = document.getElementById("logout-button");
-const addWorkoutForm = document.getElementById("add-workout-form");
+const addWorkoutForm1 = document.getElementById("add-workout-form"); // First form in index.html
+const addWorkoutForm2 = document.getElementById("add-workout-form-2"); // Second form in add-workouts.html
 const sidebarLinks = document.querySelectorAll('#sidebar nav ul li a');
 
 // Variables to store user session
@@ -108,7 +109,18 @@ function displayWorkouts(workouts) {
 }
 
 // Add a new workout (only if user is logged in)
-addWorkoutForm.addEventListener("submit", async (event) => {
+async function addWorkout(workout) {
+    const { error } = await supabase.from('workouts').insert(workout);
+
+    if (error) {
+        console.error("Error adding workout:", error.message);
+    } else {
+        getWorkouts(currentUser.id);  // Refresh workout list after adding
+    }
+}
+
+// Handle workout form submissions
+addWorkoutForm1?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!currentUser) {
         alert("You must be logged in to add a workout!");
@@ -124,64 +136,49 @@ addWorkoutForm.addEventListener("submit", async (event) => {
         date: document.getElementById("workout-date").value
     };
 
-    const { error } = await supabase.from('workouts').insert(workout);
-
-    if (error) {
-        console.error("Error adding workout:", error.message);
-    } else {
-        getWorkouts(currentUser.id);  // Refresh workout list after adding
-        addWorkoutForm.reset();  // Clear form after submission
-    }
+    await addWorkout(workout);
+    addWorkoutForm1.reset();  // Clear form after submission
 });
 
-// Delete a workout (optional functionality)
-async function deleteWorkout(workoutId) {
-    const { error } = await supabase
-        .from('workouts')
-        .delete()
-        .eq('id', workoutId);
+// Handle second workout form submission
+addWorkoutForm2?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!currentUser) {
+        alert("You must be logged in to add a workout!");
+        return;
+    }
 
+    const workout = {
+        user_id: currentUser.id,
+        exercise_name: document.getElementById("exercise-name-2").value,
+        sets: parseInt(document.getElementById("sets-2").value),
+        reps: parseInt(document.getElementById("reps-2").value),
+        weight: parseInt(document.getElementById("weight-2").value),
+        date: document.getElementById("workout-date-2").value
+    };
+
+    await addWorkout(workout);
+    addWorkoutForm2.reset();  // Clear form after submission
+});
+
+// Delete a workout by ID
+async function deleteWorkout(workoutId) {
+    const { error } = await supabase.from('workouts').delete().eq('id', workoutId);
     if (error) {
         console.error("Error deleting workout:", error.message);
     } else {
-        getWorkouts(currentUser.id);  // Refresh workout list after deletion
+        getWorkouts(currentUser.id); // Refresh workout list after deletion
     }
 }
 
-// Handle sign-up form
-if (signUpForm) {
-    signUpForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = event.target.email.value;
-        const password = event.target.password.value;
-        signUp(email, password);
-    });
-}
-
-// Handle log-in form
-if (logInForm) {
-    logInForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = event.target.email.value;
-        const password = event.target.password.value;
-        logIn(email, password);
-    });
-}
-
-// Log out handler
-if (logoutButton) {
-    logoutButton.addEventListener("click", signOut);
-}
-
-// Auth State Listener to handle persistent sessions
+// Check if the user is logged in when the app loads
 supabase.auth.onAuthStateChange((event, session) => {
     if (session) {
         currentUser = session.user;
         toggleSectionVisibility();
-        getWorkouts(session.user.id);  // Fetch workouts when logged in
+        getWorkouts(currentUser.id);  // Fetch workouts on load
     } else {
         currentUser = null;
         toggleSectionVisibility();
-        workoutsList.innerHTML = '';  // Clear workouts when logged out
     }
 });
