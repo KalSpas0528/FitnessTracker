@@ -1,56 +1,62 @@
-body {
-    display: flex;
-    font-family: Arial, sans-serif;
-}
-
-#sidebar {
-    width: 200px;
-    background-color: #333;
-    color: white;
-    height: 100vh;
-    position: fixed;
-}
-
-#sidebar nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-#sidebar nav ul li {
+/* Basic reset */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-#sidebar nav ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    display: block;
-}
-
-#sidebar nav ul li a:hover {
-    background-color: #555;
-}
-
-#main-content {
-    margin-left: 220px;
+body {
+    font-family: Arial, sans-serif;
     padding: 20px;
-    flex-grow: 1;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 .section {
-    display: none; /* All sections hidden by default */
-}
-
-.section.hidden {
-    display: none;
-}
-
-.stat-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0;
+    margin-top: 20px;
 }
 
 .hidden {
     display: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+}
+
+form input {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+form button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
 }
