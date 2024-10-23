@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase setup
 const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'; // Replace with your project URL
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE...'; // Replace with your anon public key
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE'; // Replace with your actual anon public key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // DOM Elements
@@ -10,8 +10,7 @@ const signUpForm = document.getElementById("sign-up-form");
 const logInForm = document.getElementById("log-in-form");
 const workoutsList = document.getElementById("workout-list");
 const logoutButton = document.getElementById("logout-button");
-const addWorkoutForm1 = document.getElementById("add-workout-form"); // First form in index.html
-const addWorkoutForm2 = document.getElementById("add-workout-form-2"); // Second form in add-workouts.html
+const addWorkoutForm1 = document.getElementById("add-workout-form");
 const sidebarLinks = document.querySelectorAll('#sidebar nav ul li a');
 
 // Variables to store user session
@@ -140,45 +139,32 @@ addWorkoutForm1?.addEventListener("submit", async (event) => {
     addWorkoutForm1.reset();  // Clear form after submission
 });
 
-// Handle second workout form submission
-addWorkoutForm2?.addEventListener("submit", async (event) => {
+// Event Listeners for Sign Up and Log In Forms
+signUpForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!currentUser) {
-        alert("You must be logged in to add a workout!");
-        return;
-    }
-
-    const workout = {
-        user_id: currentUser.id,
-        exercise_name: document.getElementById("exercise-name-2").value,
-        sets: parseInt(document.getElementById("sets-2").value),
-        reps: parseInt(document.getElementById("reps-2").value),
-        weight: parseInt(document.getElementById("weight-2").value),
-        date: document.getElementById("workout-date-2").value
-    };
-
-    await addWorkout(workout);
-    addWorkoutForm2.reset();  // Clear form after submission
+    const email = signUpForm.email.value;
+    const password = signUpForm.password.value;
+    await signUp(email, password);
 });
 
-// Delete a workout by ID
-async function deleteWorkout(workoutId) {
-    const { error } = await supabase.from('workouts').delete().eq('id', workoutId);
-    if (error) {
-        console.error("Error deleting workout:", error.message);
-    } else {
-        getWorkouts(currentUser.id); // Refresh workout list after deletion
-    }
-}
+logInForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = logInForm.email.value;
+    const password = logInForm.password.value;
+    await logIn(email, password);
+});
 
-// Check if the user is logged in when the app loads
+// Event Listener for Logout Button
+logoutButton.addEventListener('click', async () => {
+    console.log("Logout button clicked");  // Debugging line
+    await signOut();
+});
+
+// Check session on page load
 supabase.auth.onAuthStateChange((event, session) => {
-    if (session) {
-        currentUser = session.user;
-        toggleSectionVisibility();
-        getWorkouts(currentUser.id);  // Fetch workouts on load
-    } else {
-        currentUser = null;
-        toggleSectionVisibility();
+    currentUser = session?.user || null;
+    toggleSectionVisibility();
+    if (currentUser) {
+        getWorkouts(currentUser.id);
     }
 });
