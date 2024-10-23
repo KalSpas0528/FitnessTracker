@@ -1,3 +1,4 @@
+/*
 // Initialize Supabase client
 const { createClient } = supabase;
 const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'; // Replace with your Supabase URL
@@ -144,3 +145,4 @@ function updateWorkoutStats() {
     const totalWeightLifted = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets * workout.reps, 0);
     totalWeightLiftedElement.innerText = `${totalWeightLifted} lbs`;
 }
+*/
