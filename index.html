@@ -19,7 +19,6 @@
                 <li><a href="#add-workout"><i class="fas fa-plus-circle"></i> Add Workout</a></li>
                 <li><a href="#leaderboard"><i class="fas fa-trophy"></i> Leaderboard</a></li>
                 <li><a href="#account"><i class="fas fa-user"></i> Account</a></li>
-                <li><a href="javascript:void(0);" id="logout-button">Logout</a></li>
             </ul>
         </nav>
     </aside>
@@ -35,7 +34,7 @@
                 </div>
                 <div class="stat-card">
                     <h3>Total Weight Lifted</h3>
-                    <p id="total-weight-lifted">0 lbs</p>
+                    <p id="total-weight">0 lbs</p>
                 </div>
             </div>
 
@@ -47,45 +46,82 @@
 
         <!-- Add Workout Section -->
         <section id="add-workout" class="section hidden">
-            <h2>Add a New Workout</h2>
+            <h2>Add Workouts</h2>
             <form id="add-workout-form">
-                <input type="text" id="exercise-name" placeholder="Exercise Name" required>
-                <input type="number" id="sets" placeholder="Sets" required>
-                <input type="number" id="reps" placeholder="Reps" required>
-                <input type="number" id="weight" placeholder="Weight (lbs)" required>
-                <input type="date" id="workout-date" required>
-                <button type="submit">Add Workout</button>
+                <label for="workout-date">Date:</label>
+                <input type="date" id="workout-date" name="workout-date" required><br><br>
+
+                <label for="exercise-name">Exercise:</label>
+                <input type="text" id="exercise-name" name="exercise-name" placeholder="e.g., Bench Press" required><br><br>
+
+                <label for="sets">Sets:</label>
+                <input type="number" id="sets" name="sets" min="1" placeholder="e.g., 3" required><br><br>
+
+                <label for="reps">Reps per Set:</label>
+                <input type="number" id="reps" name="reps" min="1" placeholder="e.g., 10" required><br><br>
+
+                <label for="weight">Weight (lbs):</label>
+                <input type="number" id="weight" name="weight" placeholder="e.g., 70" required><br><br>
+
+                <input type="submit" value="Add Workout" class="submit-button">
             </form>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="section hidden">
+            <h2>Global Leaderboard</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Total Workouts</th>
+                        <th>Total Weight Lifted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>JohnDoe123</td>
+                        <td>50</td>
+                        <td>4500 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>JaneFitPro</td>
+                        <td>47</td>
+                        <td>4200 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>MaxStrong</td>
+                        <td>45</td>
+                        <td>4000 lbs</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <!-- Account Section -->
         <section id="account" class="section hidden">
             <h2>Your Account</h2>
-            <!-- Include user details or settings here -->
-        </section>
+            <div class="account-details">
+                <form>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" value="User123" disabled><br><br>
 
-        <!-- Sign Up Section -->
-        <section id="sign-up" class="section hidden">
-            <h2>Sign Up</h2>
-            <form id="sign-up-form">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Sign Up</button>
-            </form>
-        </section>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="user123@example.com"><br><br>
 
-        <!-- Log In Section -->
-        <section id="log-in" class="section hidden">
-            <h2>Log In</h2>
-            <form id="log-in-form">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Log In</button>
-            </form>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" value="password123"><br><br>
+
+                    <button type="submit" class="submit-button">Update Account</button>
+                </form>
+            </div>
         </section>
     </main>
 
-    <script src="https://unpkg.com/@supabase/supabase-js/dist/supabase.js"></script>
-    <script type="module" src="app.js"></script>
+    <script src="workouts.js"></script>
 </body>
 </html>

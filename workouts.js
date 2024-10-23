@@ -38,6 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
             `<li>Date: ${workout.date}, Exercise: ${workout.exercise}, Sets: ${workout.sets}, Reps: ${workout.reps}, Weight: ${workout.weight} lbs
              <button onclick="this.parentElement.remove()">Delete</button></li>`;
 
+        // Update total workouts and total weight
+        document.getElementById("total-workouts").innerText = workouts.length;
+        const totalWeight = workouts.reduce((total, w) => total + (w.weight * w.sets * w.reps), 0);
+        document.getElementById("total-weight").innerText = `${totalWeight} lbs`;
+
         // Reset the form
         form.reset();
     });
@@ -46,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Function to show the right section and hide others
 function showSection(sectionId) {
     // Hide all sections
-    document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
+    document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
     // Show the selected section
     document.getElementById(sectionId).classList.remove('hidden');
 }

@@ -10,7 +10,7 @@ let workouts = [];
 // Function to show the right section and hide others
 function showSection(sectionId) {
     document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
-    document.getElementById(sectionId).classList.remove('hidden');
+    document.getElementById(sectionId).classList.remove('hidwwwwwwwwwwwwwwwwwwwwwwen');
 }
 
 document.addEventListener("DOMContentLoaded", () => {
