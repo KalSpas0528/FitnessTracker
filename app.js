@@ -1,110 +1,170 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_KEY';
+// Supabase setup
+const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'; // Replace with your project URL
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE'; // Replace with your actual anon public key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// DOM Elements
+const signUpForm = document.getElementById("sign-up-form");
+const logInForm = document.getElementById("log-in-form");
+const workoutsList = document.getElementById("workout-list");
+const logoutButton = document.getElementById("logout-button");
+const addWorkoutForm1 = document.getElementById("add-workout-form");
+const sidebarLinks = document.querySelectorAll('#sidebar nav ul li a');
+
+// Variables to store user session
 let currentUser = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    const signUpForm = document.getElementById("sign-up-form");
-    const logInForm = document.getElementById("log-in-form");
-    const addWorkoutForm = document.getElementById("add-workout-form");
+// Function to show or hide sections based on login status
+function toggleSectionVisibility() {
+    if (currentUser) {
+        document.getElementById('add-workout').classList.remove('hidden');
+        document.getElementById('account').classList.remove('hidden');
+    } else {
+        document.getElementById('add-workout').classList.add('hidden');
+        document.getElementById('account').classList.add('hidden');
+    }
+}
 
-    signUpForm.addEventListener("submit", async (event) => {
+// Handle Sidebar Navigation Links
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', function (event) {
         event.preventDefault();
-        const email = document.getElementById("sign-up-email").value;
-        const password = document.getElementById("sign-up-password").value;
-        await signUp(email, password);
-    });
-
-    logInForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const email = document.getElementById("log-in-email").value;
-        const password = document.getElementById("log-in-password").value;
-        await logIn(email, password);
-    });
-
-    addWorkoutForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const workoutName = document.getElementById("workout-name").value;
-        const duration = document.getElementById("duration").value;
-        await addWorkout(workoutName, duration);
+        const target = this.getAttribute('href').substring(1);
+        showSection(target);
     });
 });
 
+// Show the target section
+function showSection(sectionId) {
+    document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
+    document.getElementById(sectionId).classList.remove('hidden');
+}
+
+// User Authentication Functions
 async function signUp(email, password) {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { user, error } = await supabase.auth.signUp({ email, password });
     if (error) {
-        displayError(error.message);
+        console.error("Error signing up:", error.message);
     } else {
-        alert("Sign up successful!");
-        showSection('log-in-section');
+        console.log("Sign up successful!", user);
     }
 }
 
 async function logIn(email, password) {
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { user, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-        displayError(error.message);
+        console.error("Error logging in:", error.message);
     } else {
-        currentUser = session.user;
-        alert("Log in successful!");
+        console.log("Login successful!", user);
+        currentUser = user;
         toggleSectionVisibility();
-        getWorkouts(currentUser.id);
+        getWorkouts(user.id);  // Fetch workouts after login
     }
 }
 
-async function logOut() {
-    await supabase.auth.signOut();
-    currentUser = null;
-    alert("Logged out!");
-    showSection('log-in-section');
-}
-
-async function addWorkout(workoutName, duration) {
-    const { data, error } = await supabase.from('workouts').insert([{ user_id: currentUser.id, workout_name: workoutName, duration: duration }]);
+async function signOut() {
+    const { error } = await supabase.auth.signOut();
     if (error) {
-        displayError(error.message);
+        console.error("Error signing out:", error.message);
     } else {
-        alert("Workout added!");
-        getWorkouts(currentUser.id);
+        console.log("User signed out successfully!");
+        currentUser = null;
+        workoutsList.innerHTML = '';
+        toggleSectionVisibility();
     }
 }
 
+// Fetch and display workouts for the logged-in user
 async function getWorkouts(userId) {
-    const { data: workouts, error } = await supabase.from('workouts').select('*').eq('user_id', userId);
+    const { data, error } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: false });
+
     if (error) {
-        displayError(error.message);
+        console.error("Error fetching workouts:", error.message);
     } else {
-        const workoutList = document.getElementById("workout-list");
-        workoutList.innerHTML = '';
-        workouts.forEach(workout => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${workout.workout_name} - ${workout.duration} minutes`;
-            workoutList.appendChild(listItem);
-        });
+        displayWorkouts(data);
     }
 }
 
-function showSection(sectionId) {
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(section => {
-        section.classList.add('hidden');
+// Display the fetched workouts in the UI
+function displayWorkouts(workouts) {
+    workoutsList.innerHTML = '';
+    workouts.forEach(workout => {
+        const workoutElement = document.createElement("li");
+        workoutElement.innerHTML = `
+            Date: ${new Date(workout.date).toLocaleDateString()}, 
+            Exercise: ${workout.exercise_name}, 
+            Sets: ${workout.sets}, 
+            Reps: ${workout.reps}, 
+            Weight: ${workout.weight} lbs
+            <button onclick="deleteWorkout(${workout.id})">Delete</button>`;
+        workoutsList.appendChild(workoutElement);
     });
-    document.getElementById(sectionId).classList.remove('hidden');
 }
 
-function toggleSectionVisibility() {
-    showSection('add-workout-section');
-    showSection('view-workouts-section');
+// Add a new workout (only if user is logged in)
+async function addWorkout(workout) {
+    const { error } = await supabase.from('workouts').insert(workout);
+
+    if (error) {
+        console.error("Error adding workout:", error.message);
+    } else {
+        getWorkouts(currentUser.id);  // Refresh workout list after adding
+    }
 }
 
-function displayError(message) {
-    const errorMessage = document.getElementById("error-message");
-    errorMessage.textContent = message;
-    errorMessage.classList.remove("hidden");
-    setTimeout(() => {
-        errorMessage.classList.add("hidden");
-    }, 3000);
-}
+// Handle workout form submissions
+addWorkoutForm1?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!currentUser) {
+        alert("You must be logged in to add a workout!");
+        return;
+    }
+
+    const workout = {
+        user_id: currentUser.id,
+        exercise_name: document.getElementById("exercise-name").value,
+        sets: parseInt(document.getElementById("sets").value),
+        reps: parseInt(document.getElementById("reps").value),
+        weight: parseInt(document.getElementById("weight").value),
+        date: document.getElementById("workout-date").value
+    };
+
+    await addWorkout(workout);
+    addWorkoutForm1.reset();  // Clear form after submission
+});
+
+// Event Listeners for Sign Up and Log In Forms
+signUpForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = signUpForm.email.value;
+    const password = signUpForm.password.value;
+    await signUp(email, password);
+});
+
+logInForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = logInForm.email.value;
+    const password = logInForm.password.value;
+    await logIn(email, password);
+});
+
+// Event Listener for Logout Button
+logoutButton.addEventListener('click', async () => {
+    console.log("Logout button clicked");  // Debugging line
+    await signOut();
+});
+
+// Check session on page load
+supabase.auth.onAuthStateChange((event, session) => {
+    currentUser = session?.user || null;
+    toggleSectionVisibility();
+    if (currentUser) {
+        getWorkouts(currentUser.id);
+    }
+});
