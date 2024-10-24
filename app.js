@@ -4,7 +4,7 @@ const { createClient } = require('@supabase/supabase-js'); // Correct import for
 
 // Initialize Express app
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // Supabase credentials (replace these with your actual Supabase project URL and Key)
 const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'; // Replace with your Supabase project URL
