@@ -79,25 +79,7 @@
                         <th>Total Weight Lifted</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>JohnDoe123</td>
-                        <td>50</td>
-                        <td>4500 lbs</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>JaneFitPro</td>
-                        <td>47</td>
-                        <td>4200 lbs</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>MaxStrong</td>
-                        <td>45</td>
-                        <td>4000 lbs</td>
-                    </tr>
+                <tbody id="leaderboard-body">
                 </tbody>
             </table>
         </section>
@@ -106,22 +88,23 @@
         <section id="account" class="section hidden">
             <h2>Your Account</h2>
             <div class="account-details">
-                <form>
+                <form id="account-form">
                     <label for="username">Username:</label>
                     <input type="text" id="username" value="User123" disabled><br><br>
 
                     <label for="email">Email:</label>
-                    <input type="email" id="email" value="user123@example.com"><br><br>
+                    <input type="email" id="email"><br><br>
 
                     <label for="password">Password:</label>
-                    <input type="password" id="password" value="password123"><br><br>
+                    <input type="password" id="password"><br><br>
 
                     <button type="submit" class="submit-button">Update Account</button>
                 </form>
             </div>
+            <button id="logout-button" class="submit-button">Logout</button>
         </section>
     </main>
 
-    <script src="workouts.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
