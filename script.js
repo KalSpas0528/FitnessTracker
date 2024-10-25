@@ -14,14 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: 'include' // Include credentials for session management
         });
         
         if (response.ok) {
             alert("Login successful!");
             showSection("dashboard");
         } else {
-            alert("Login failed.");
+            const result = await response.json();
+            alert("Login failed: " + result.error);
         }
     });
 
@@ -41,7 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Signup successful!");
             showSection("login-section");
         } else {
-            alert("Signup failed.");
+            const result = await response.json();
+            alert("Signup failed: " + result.error);
         }
     });
 
@@ -56,19 +59,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("/add-workout", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
+            body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() }),
+            credentials: 'include' // Include credentials for session management
         });
 
         if (response.ok) {
             alert("Workout added!");
+            // Optionally reset the form
+            document.getElementById("workout-form").reset();
         } else {
-            alert("Failed to add workout.");
+            const result = await response.json();
+            alert("Failed to add workout: " + result.error);
         }
     });
 
     // Logout
     document.getElementById("logout-button").addEventListener("click", async () => {
-        await fetch("/logout", { method: "POST" });
+        await fetch("/logout", { method: "POST", credentials: 'include' });
         alert("Logged out!");
         showSection("login-section");
     });
