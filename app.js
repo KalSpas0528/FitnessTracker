@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
@@ -5,7 +6,7 @@ const session = require('express-session');
 const cors = require('cors');
 
 const app = express();
-const port = 3000; // Change port from 4000 to 3000
+const port = 3000; // Local development port
 
 // Supabase credentials (store sensitive information securely in environment variables)
 const supabaseUrl = process.env.SUPABASE_URL || 'https://pswsfndbnlpeqaznztss.supabase.co';
@@ -24,7 +25,7 @@ app.use(
         secret: 'your_secret_key', // replace with a strong secret
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false }
+        cookie: { secure: false } // Change to true in production
     })
 );
 
@@ -46,7 +47,7 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return res.status(400).json({ error: error.message });
-    
+
     req.session.user = data.user;
     res.json({ message: 'Login successful', user: data.user });
 });
@@ -78,6 +79,7 @@ app.post('/logout', (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+const PORT = process.env.PORT || port; // Use Render's provided port
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
 });

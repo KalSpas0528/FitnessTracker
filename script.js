@@ -1,5 +1,3 @@
-// script.js
-
 document.getElementById("login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = document.getElementById("login-email").value;
@@ -10,12 +8,13 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
     });
-    
+
     if (response.ok) {
         alert("Login successful!");
         showSection("dashboard");
     } else {
-        alert("Login failed.");
+        const errorData = await response.json();
+        alert(`Login failed: ${errorData.error}`);
     }
 });
 
@@ -30,12 +29,13 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
     });
-    
+
     if (response.ok) {
         alert("Signup successful!");
         showSection("login-section");
     } else {
-        alert("Signup failed.");
+        const errorData = await response.json();
+        alert(`Signup failed: ${errorData.error}`);
     }
 });
 
@@ -56,7 +56,8 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
     if (response.ok) {
         alert("Workout added!");
     } else {
-        alert("Failed to add workout.");
+        const errorData = await response.json();
+        alert(`Failed to add workout: ${errorData.error}`);
     }
 });
 
