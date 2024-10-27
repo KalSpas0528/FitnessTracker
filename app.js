@@ -23,7 +23,7 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(
     session({
-        secret: 'your_secret_key', // replace with a strong secret for production
+        secret: 'm1P9&xFh6@cZ$2TqY!hR7*Qj3n8^zL5v', // replace with a strong secret for production
         resave: false,
         saveUninitialized: true,
         cookie: { secure: false } // Set to true if running over HTTPS in production
