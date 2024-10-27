@@ -12,9 +12,10 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Set up CORS
 app.use(cors({
-    origin: "https://kalspas0528.github.io",
-    credentials: true
+    origin: "https://kalspas0528.github.io", // Your frontend URL
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(bodyParser.json());
 app.use(
@@ -22,7 +23,7 @@ app.use(
         secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false }
+        cookie: { secure: false } // Set to true if using HTTPS
     })
 );
 
@@ -34,28 +35,12 @@ app.get("/", (req, res) => {
 // Sign-up endpoint
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
-
-    // Check if the user already exists
-    const { data: existingUser, error: userCheckError } = await supabase.auth.getUserByEmail(email);
-
-    if (userCheckError) {
-        console.error("Error checking existing user:", userCheckError);
-        return res.status(400).json({ error: "Unable to check user existence." });
-    }
-
-    if (existingUser) {
-        return res.status(400).json({ error: "Email already in use." });
-    }
-
-    // If user does not exist, proceed with signup
     const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
-        console.error("Signup error:", error); // Log the error for debugging
         return res.status(400).json({ error: error.message });
     }
 
-    console.log("Signup successful:", data);
     res.json({ message: "Signup successful", data });
 });
 
@@ -68,7 +53,7 @@ app.post("/login", async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    req.session.user = data.user;
+    req.session.user = data.user; // Store user information in the session
     res.json({ message: "Login successful", user: data.user });
 });
 
