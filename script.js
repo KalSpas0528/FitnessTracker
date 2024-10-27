@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Show dashboard section by default
+    // Show login section by default
     showSection("login-section");
 
     // Sidebar link event listeners
     document.querySelectorAll("#sidebar nav ul li a").forEach(link => {
         link.addEventListener("click", function(event) {
             event.preventDefault();
-            const target = this.getAttribute("href").substring(1);
-            showSection(target);
+            const target = this.getAttribute("href").substring(1); // Get the section ID
+            showSection(target); // Show the selected section
         });
     });
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
             alert("Login successful!");
-            showSection("dashboard");
+            showSection("dashboard"); // Show the dashboard on success
         } else {
             const errorData = await response.json();
             alert(`Login failed: ${errorData.error}`);
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
             alert("Signup successful!");
-            showSection("login-section");
+            showSection("login-section"); // Return to login after successful signup
         } else {
             const errorData = await response.json();
             alert(`Signup failed: ${errorData.error}`);
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("logout-button").addEventListener("click", async () => {
         await fetch("https://fitnesstracker-41f0.onrender.com/logout", { method: "POST" });
         alert("Logged out!");
-        showSection("login-section");
+        showSection("login-section"); // Return to login after logout
     });
 });
 
