@@ -12,9 +12,10 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Set up CORS
 app.use(cors({
     origin: "https://kalspas0528.github.io", // Your frontend URL
-    credentials: true
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(bodyParser.json());
 app.use(
@@ -22,7 +23,7 @@ app.use(
         secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false } // Change to true if using HTTPS
+        cookie: { secure: false } // Set to true if using HTTPS
     })
 );
 
@@ -52,7 +53,7 @@ app.post("/login", async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    req.session.user = data.user; // Save user session
+    req.session.user = data.user; // Store user information in the session
     res.json({ message: "Login successful", user: data.user });
 });
 
@@ -77,24 +78,6 @@ app.post("/add-workout", async (req, res) => {
     }
 
     res.json({ message: "Workout added successfully", workout: data });
-});
-
-// View workouts endpoint
-app.get("/workouts", async (req, res) => {
-    if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
-    const { data, error } = await supabase
-        .from("workouts")
-        .select("*")
-        .eq("user_id", req.session.user.id); // Fetch workouts for the logged-in user
-
-    if (error) {
-        return res.status(400).json({ error: error.message });
-    }
-
-    res.json({ workouts: data });
 });
 
 // Logout endpoint

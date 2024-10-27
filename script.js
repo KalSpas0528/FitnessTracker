@@ -1,90 +1,90 @@
-// Function to log in the user
-async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+document.addEventListener("DOMContentLoaded", () => {
+    // Show login section by default
+    showSection("login-section");
 
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: "include" // Include credentials to maintain session
+    // Sidebar link event listeners
+    document.querySelectorAll("#sidebar nav ul li a").forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+            const target = this.getAttribute("href").substring(1); // Get the section ID
+            showSection(target); // Show the selected section
+        });
     });
 
-    const data = await response.json();
-    if (response.ok) {
-        alert(data.message);
-        // Show the dashboard
-        document.getElementById("dashboard").classList.remove("hidden");
-    } else {
-        alert(`Login failed: ${data.error}`);
-    }
-}
+    // Login form submission
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
 
-// Function to add a workout
-async function addWorkout(event) {
-    event.preventDefault();
+        const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
 
-    const exercise_name = document.getElementById("exercise-name").value;
-    const sets = document.getElementById("sets").value;
-    const reps = document.getElementById("reps").value;
-    const weight = document.getElementById("weight").value;
-    const date = new Date().toISOString(); // Set current date/time
-
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/add-workout", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ exercise_name, sets, reps, weight, date }),
-        credentials: "include" // Include credentials to maintain session
+        if (response.ok) {
+            alert("Login successful!");
+            showSection("dashboard"); // Show the dashboard on success
+        } else {
+            const errorData = await response.json();
+            alert(`Login failed: ${errorData.error}`);
+        }
     });
 
-    const data = await response.json();
-    if (response.ok) {
-        alert(data.message);
-        // Clear the form after submission
-        document.getElementById("workout-form").reset();
-    } else {
-        alert(`Failed to add workout: ${data.error}`);
-    }
-}
+    // Signup form submission
+    document.getElementById("signup-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
 
-// Add this function to fetch and display workouts
-async function fetchWorkouts() {
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/workouts", {
-        method: "GET",
-        credentials: "include" // Include credentials to maintain session
+        const response = await fetch("https://fitnesstracker-41f0.onrender.com/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            alert("Signup successful!");
+            showSection("login-section"); // Return to login after successful signup
+        } else {
+            const errorData = await response.json();
+            alert(`Signup failed: ${errorData.error}`);
+        }
     });
 
-    if (response.ok) {
-        const { workouts } = await response.json();
-        displayWorkouts(workouts);
-    } else {
-        const errorData = await response.json();
-        alert(`Failed to fetch workouts: ${errorData.error}`);
-    }
-}
+    // Workout form submission
+    document.getElementById("workout-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const exercise_name = document.getElementById("exercise-name").value;
+        const sets = document.getElementById("sets").value;
+        const reps = document.getElementById("reps").value;
+        const weight = document.getElementById("weight").value;
 
-// Function to display workouts on the dashboard
-function displayWorkouts(workouts) {
-    const workoutList = document.getElementById("workout-list");
-    workoutList.innerHTML = ""; // Clear the list before adding new items
+        const response = await fetch("https://fitnesstracker-41f0.onrender.com/add-workout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
+        });
 
-    workouts.forEach(workout => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${workout.exercise_name}: ${workout.sets} sets of ${workout.reps} reps at ${workout.weight} lbs on ${new Date(workout.date).toLocaleDateString()}`;
-        workoutList.appendChild(listItem);
+        if (response.ok) {
+            alert("Workout added!");
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to add workout: ${errorData.error}`);
+        }
     });
-}
 
-// Call fetchWorkouts when the dashboard is shown
-document.getElementById("dashboard").addEventListener("show", fetchWorkouts);
-
-// Add event listeners
-document.getElementById("workout-form").addEventListener("submit", addWorkout);
-document.getElementById("login-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    login();
+    // Logout functionality
+    document.getElementById("logout-button").addEventListener("click", async () => {
+        await fetch("https://fitnesstracker-41f0.onrender.com/logout", { method: "POST" });
+        alert("Logged out!");
+        showSection("login-section"); // Return to login after logout
+    });
 });
+
+// Function to show the selected section and hide others
+function showSection(sectionId) {
+    document.querySelectorAll(".section").forEach(section => section.classList.add("hidden"));
+    document.getElementById(sectionId).classList.remove("hidden");
+}

@@ -3,21 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Tracker</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file if needed -->
+    <title>PowerTitan Gym Tracker</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
-    <header>
-        <h1>Fitness Tracker</h1>
-    </header>
+    <aside id="sidebar">
+        <div class="logo"><h2>PowerTitan</h2></div>
+        <nav>
+            <ul>
+                <li><a href="#login-section">Login</a></li>
+                <li><a href="#signup-section">Sign Up</a></li>
+                <li><a href="#dashboard" id="dashboard-link">Dashboard</a></li>
+                <li><a href="#account-section" id="account-link">Account</a></li>
+            </ul>
+        </nav>
+    </aside>
 
-    <main>
-        <section id="login" class="section">
+    <main id="main-content">
+        <section id="login-section" class="section">
             <h2>Login</h2>
             <form id="login-form">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
+                <input type="email" id="login-email" placeholder="Email" required><br>
+                <input type="password" id="login-password" placeholder="Password" required><br>
                 <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <section id="signup-section" class="section hidden">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="Email" required><br>
+                <input type="password" id="signup-password" placeholder="Password" required><br>
+                <button type="submit">Sign Up</button>
             </form>
         </section>
 
@@ -31,15 +48,14 @@
                 <button type="submit">Add Workout</button>
             </form>
             <button id="logout-button">Logout</button>
+        </section>
 
-            <h2>Your Workouts</h2>
-            <ul id="workout-list"></ul> <!-- This will list the workouts -->
+        <section id="account-section" class="section hidden">
+            <h2>Account Information</h2>
+            <p>Manage your account here.</p>
+            <!-- Add your account management features here -->
         </section>
     </main>
-
-    <footer>
-        <p>&copy; 2024 PowerTitan Tracker</p>
-    </footer>
 
     <script src="script.js"></script> <!-- Link to your JavaScript file -->
 </body>
