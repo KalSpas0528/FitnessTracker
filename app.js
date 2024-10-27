@@ -13,7 +13,7 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(cors({
-    origin: "https://kalspas0528.github.io", // Your frontend URL
+    origin: "https://kalspas0528.github.io",
     credentials: true
 }));
 app.use(bodyParser.json());
@@ -22,7 +22,7 @@ app.use(
         secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false } // Change to true if using HTTPS
+        cookie: { secure: false }
     })
 );
 
@@ -52,13 +52,15 @@ app.post("/login", async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    req.session.user = data.user; // Save user session
+    req.session.user = data.user; // Store user data in session
+    console.log("User logged in:", req.session.user); // Log user session
     res.json({ message: "Login successful", user: data.user });
 });
 
 // Add workout endpoint
 app.post("/add-workout", async (req, res) => {
     if (!req.session.user) {
+        console.log("Unauthorized access attempt:", req.session.user);
         return res.status(403).json({ error: "Unauthorized - Please log in" });
     }
 
@@ -79,8 +81,8 @@ app.post("/add-workout", async (req, res) => {
     res.json({ message: "Workout added successfully", workout: data });
 });
 
-// View workouts endpoint
-app.get("/workouts", async (req, res) => {
+// Get user workouts
+app.get("/user-workouts", async (req, res) => {
     if (!req.session.user) {
         return res.status(403).json({ error: "Unauthorized - Please log in" });
     }
@@ -88,13 +90,13 @@ app.get("/workouts", async (req, res) => {
     const { data, error } = await supabase
         .from("workouts")
         .select("*")
-        .eq("user_id", req.session.user.id); // Fetch workouts for the logged-in user
+        .eq("user_id", req.session.user.id);
 
     if (error) {
         return res.status(400).json({ error: error.message });
     }
 
-    res.json({ workouts: data });
+    res.json(data);
 });
 
 // Logout endpoint
