@@ -34,12 +34,28 @@ app.get("/", (req, res) => {
 // Sign-up endpoint
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
+
+    // Check if the user already exists
+    const { data: existingUser, error: userCheckError } = await supabase.auth.getUserByEmail(email);
+
+    if (userCheckError) {
+        console.error("Error checking existing user:", userCheckError);
+        return res.status(400).json({ error: "Unable to check user existence." });
+    }
+
+    if (existingUser) {
+        return res.status(400).json({ error: "Email already in use." });
+    }
+
+    // If user does not exist, proceed with signup
     const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
+        console.error("Signup error:", error); // Log the error for debugging
         return res.status(400).json({ error: error.message });
     }
 
+    console.log("Signup successful:", data);
     res.json({ message: "Signup successful", data });
 });
 
