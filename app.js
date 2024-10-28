@@ -1,89 +1,105 @@
-// File: app.js
-
+// app.js
+require("dotenv").config();
 const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
-const session = require("express-session");
 const bodyParser = require("body-parser");
-require("dotenv").config();
+const session = require("express-session");
+const cors = require("cors");
 
 const app = express();
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const port = process.env.PORT || 3000;
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Set up CORS
+app.use(cors({
+    origin: "https://kalspas0528.github.io", // Your frontend URL
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+}));
 app.use(bodyParser.json());
 app.use(
     session({
         secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false },
+        cookie: { secure: false } // Set to true if using HTTPS
     })
 );
 
-app.use((req, res, next) => {
-    if (req.session && req.session.user) {
-        res.locals.isLoggedIn = true; // Mark user as logged in if session exists
-    } else {
-        res.locals.isLoggedIn = false;
-    }
-    next();
+// Root route
+app.get("/", (req, res) => {
+    res.send("Welcome to the PowerTitan API!");
 });
 
+// Sign-up endpoint
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
-        res.status(400).json({ message: "Signup failed", error });
-    } else {
-        res.status(200).json({ message: "Signup successful" });
+        return res.status(400).json({ error: error.message });
     }
+
+    res.json({ message: "Signup successful", data });
 });
 
+// Login endpoint
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error || !data.user) {
-        res.status(400).json({ message: "Login failed", error });
-    } else {
-        req.session.user = data.user;
-        res.status(200).json({ message: "Login successful" });
+    if (error) {
+        return res.status(400).json({ error: error.message });
     }
+
+    req.session.user = data.user; // Store user information in the session
+
+    // Fetch previous workouts
+    const { data: workouts, error: workoutError } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', req.session.user.id);
+
+    if (workoutError) {
+        return res.status(400).json({ error: workoutError.message });
+    }
+
+    res.json({ message: "Login successful", user: data.user, workouts });
 });
 
+// Add workout endpoint
 app.post("/add-workout", async (req, res) => {
     if (!req.session.user) {
-        return res.status(401).json({ message: "Unauthorized - Please log in" });
+        return res.status(403).json({ error: "Unauthorized - Please log in" });
     }
 
-    const { name, sets, reps, weight } = req.body;
-    const { data, error } = await supabase.from("workouts").insert([
-        {
-            user_id: req.session.user.id,
-            name,
-            sets,
-            reps,
-            weight,
-        },
-    ]);
+    const { exercise_name, sets, reps, weight, date } = req.body;
+    const { data, error } = await supabase.from("workouts").insert([{
+        user_id: req.session.user.id,
+        exercise_name,
+        sets,
+        reps,
+        weight,
+        date
+    }]);
 
     if (error) {
-        res.status(500).json({ message: "Failed to add workout", error });
-    } else {
-        res.status(200).json({ message: "Workout added successfully" });
+        return res.status(400).json({ error: error.message });
     }
+
+    res.json({ message: "Workout added successfully", workout: data });
 });
 
+// Logout endpoint
 app.post("/logout", (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            res.status(500).json({ message: "Logout failed" });
-        } else {
-            res.status(200).json({ message: "Logout successful" });
-        }
+    req.session.destroy(err => {
+        if (err) return res.status(500).json({ error: "Logout failed" });
+        res.json({ message: "Logged out successfully" });
     });
 });
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });

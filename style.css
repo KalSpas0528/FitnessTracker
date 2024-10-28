@@ -1,39 +1,20 @@
-/* File: style.css */
-
+/* Basic styling for layout */
 body {
     font-family: Arial, sans-serif;
+    display: flex;
     margin: 0;
-    display: flex;
-    height: 100vh;
-    background-color: #f4f4f4;
-}
-
-.container {
-    display: flex;
-    width: 100%;
-}
-
-header {
-    background: #283593;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#status-indicator {
-    background: #ffeb3b;
-    padding: 5px 10px;
-    border-radius: 5px;
 }
 
 #sidebar {
-    width: 200px;
-    background: #3949ab;
-    color: white;
-    padding: 15px 0;
-    position: relative;
+    width: 250px;
+    background: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+#sidebar .logo {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 #sidebar nav ul {
@@ -42,61 +23,53 @@ header {
 }
 
 #sidebar nav ul li {
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 #sidebar nav ul li a {
-    color: white;
+    color: #fff;
     text-decoration: none;
-    padding: 10px 15px;
-    display: block;
-    border-radius: 5px;
-    transition: background 0.3s;
 }
 
-#sidebar nav ul li a:hover, #sidebar nav ul li a.active {
-    background: #1e88e5;
+#sidebar nav ul li button {
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
 }
 
 main {
-    flex: 1;
+    flex-grow: 1;
     padding: 20px;
-    overflow-y: auto;
 }
 
 .section {
     display: none;
 }
 
-.section.active {
-    display: block;
-}
-
-input[type="email"],
-input[type="password"],
-input[type="text"],
-input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    background: #283593;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-}
-
-button:hover {
-    background: #1e88e5;
-}
-
-.hidden {
+.section.hidden {
     display: none;
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input {
+    margin: 10px 0;
+    padding: 10px;
+}
+
+form button {
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
 }
