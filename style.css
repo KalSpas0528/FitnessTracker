@@ -1,110 +1,102 @@
-/* Default styles */
-body, html {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* File: style.css */
+
+body {
     font-family: Arial, sans-serif;
-    color: #333;
-}
-
-/* Sidebar styles */
-#sidebar {
-    width: 220px;
-    height: 100vh;
-    background-color: #2c3e50;
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
+    margin: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 10;
+    height: 100vh;
+    background-color: #f4f4f4;
 }
 
-#sidebar .logo {
-    margin: 20px 0;
-    font-size: 24px;
+.container {
+    display: flex;
+    width: 100%;
+}
+
+header {
+    background: #283593;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#status-indicator {
+    background: #ffeb3b;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#sidebar {
+    width: 200px;
+    background: #3949ab;
+    color: white;
+    padding: 15px 0;
+    position: relative;
 }
 
 #sidebar nav ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
-    width: 100%;
 }
 
 #sidebar nav ul li {
-    width: 100%;
+    margin: 20px 0;
 }
 
 #sidebar nav ul li a {
-    text-decoration: none;
     color: white;
-    display: flex;
-    align-items: center;
-    padding: 15px;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
     transition: background 0.3s;
 }
 
-#sidebar nav ul li a i {
-    margin-right: 10px;
+#sidebar nav ul li a:hover, #sidebar nav ul li a.active {
+    background: #1e88e5;
 }
 
-#sidebar nav ul li a:hover {
-    background-color: #34495e;
-}
-
-/* Main content area */
-#main-content {
-    margin-left: 220px;
+main {
+    flex: 1;
     padding: 20px;
+    overflow-y: auto;
 }
 
-/* Section styling */
 .section {
-    margin-bottom: 40px;
+    display: none;
 }
 
-h2 {
-    color: #34495e;
+.section.active {
+    display: block;
 }
 
-/* Card styling for stats */
-.stats {
-    display: flex;
-    justify-content: space-between;
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.stat-card {
-    background-color: #ecf0f1;
-    padding: 20px;
-    width: 45%;
-    text-align: center;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Workout list styling */
-#workout-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-/* Button styling */
-.submit-button {
-    background-color: #2ecc71;
+button {
+    background: #283593;
     color: white;
+    padding: 10px 15px;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
 }
 
-.submit-button:hover {
-    background-color: #27ae60;
+button:hover {
+    background: #1e88e5;
 }
 
-/* Hidden class */
 .hidden {
     display: none;
 }

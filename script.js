@@ -5,6 +5,25 @@ function updateStatusIndicator(isLoggedIn) {
     statusIndicator.textContent = isLoggedIn ? "Logged in" : "Not logged in";
 }
 
+function showSection(sectionId) {
+    document.querySelectorAll(".section").forEach(section => {
+        section.classList.remove("active");
+        section.classList.add("hidden");
+    });
+    document.getElementById(sectionId).classList.remove("hidden");
+    document.getElementById(sectionId).classList.add("active");
+    
+    // Highlight the active link in the sidebar
+    const links = document.querySelectorAll("#sidebar nav ul li a");
+    links.forEach(link => {
+        link.classList.remove("active");
+    });
+    document.querySelector(`#sidebar nav ul li a[href="#${sectionId}"]`).classList.add("active");
+}
+
+// Show the dashboard by default
+showSection("dashboard");
+
 document.getElementById("login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = document.getElementById("login-email").value;
@@ -19,7 +38,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
     const result = await response.json();
     if (response.ok) {
         updateStatusIndicator(true);
-        showSection("dashboard");
+        showSection("add-workout-section"); // Show workout section upon successful login
     } else {
         alert(`Failed to login: ${result.message}`);
     }
@@ -64,19 +83,3 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
         alert(`Failed to add workout: ${result.message}`);
     }
 });
-
-document.getElementById("logout-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const response = await fetch("/logout", { method: "POST" });
-    if (response.ok) {
-        updateStatusIndicator(false);
-        showSection("login-section");
-    } else {
-        alert("Failed to logout");
-    }
-});
-
-function showSection(sectionId) {
-    document.querySelectorAll(".section").forEach(section => section.classList.add("hidden"));
-    document.getElementById(sectionId).classList.remove("hidden");
-}
