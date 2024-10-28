@@ -1,3 +1,4 @@
+//workouts.js
 let workouts = [];
 
 document.addEventListener("DOMContentLoaded", () => {
