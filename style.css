@@ -1,75 +1,40 @@
-/* Basic styling for layout */
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    margin: 0;
+    height: 100vh;
 }
 
 #sidebar {
     width: 250px;
-    background: #333;
-    color: #fff;
+    background-color: #f0f0f0;
     padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
-#sidebar .logo {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#sidebar nav ul {
+nav ul {
     list-style: none;
     padding: 0;
 }
 
-#sidebar nav ul li {
-    margin: 10px 0;
-}
-
-#sidebar nav ul li a {
-    color: #fff;
-    text-decoration: none;
-}
-
-#sidebar nav ul li button {
-    background: #ff4d4d;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+nav ul li {
+    margin: 15px 0;
 }
 
 main {
     flex-grow: 1;
     padding: 20px;
+    background-color: #ffffff;
 }
 
 .section {
-    display: none;
+    display: none; /* Hidden by default */
+    position: relative; /* Ensure correct stacking context */
 }
 
 .section.hidden {
-    display: none;
+    display: none; /* Keep hidden sections invisible */
 }
 
-.section h2 {
-    margin-top: 0;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-form input {
-    margin: 10px 0;
-    padding: 10px;
-}
-
-form button {
-    padding: 10px;
-    background: #333;
-    color: #fff;
-    border: none;
-    cursor: pointer;
+.section:not(.hidden) {
+    display: block; /* Show visible sections */
 }

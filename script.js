@@ -1,4 +1,7 @@
+//script.js
+
 document.addEventListener("DOMContentLoaded", () => {
+    
     // Show login section by default
     showSection("login-section");
 
@@ -7,7 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const target = event.target.closest("a"); // Check if a link was clicked
         if (target) {
             event.preventDefault(); // Prevent default anchor behavior
-            const targetId = target.getAttribute("href").substring(1); // Get section ID
+            const targetId = target.getAttribute("data-section"); // Get section ID
+            console.log("Section to show:", targetId); // Debugging line
             showSection(targetId); // Show the selected section
         }
     });
@@ -17,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("login-email").value;
         const password = document.getElementById("login-password").value;
+
+        alert("Login button clicked!"); // Check if this alert appears
 
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
             method: "POST",
@@ -42,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("signup-email").value;
         const password = document.getElementById("signup-password").value;
+
+        alert("Sign Up button clicked!"); // Check if this alert appears
 
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/signup", {
             method: "POST",
