@@ -11,16 +11,17 @@
         <div class="logo"><h1>PowerTitan</h1></div>
         <nav>
             <ul>
-                <li><a href="#login-section">Login</a></li>
-                <li><a href="#signup-section">Sign Up</a></li>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#add-workout">Add Workout</a></li>
+                <li><a data-section="login-section">Login</a></li>
+                <li><a data-section="signup-section">Sign Up</a></li>
+                <li><a data-section="dashboard">Dashboard</a></li>
+                <li><a data-section="add-workout">Add Workout</a></li>
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
     </aside>
     
     <main>
+        <!-- Login Section -->
         <section id="login-section" class="section">
             <h2>Login</h2>
             <form id="login-form">
@@ -30,6 +31,7 @@
             </form>
         </section>
 
+        <!-- Signup Section -->
         <section id="signup-section" class="section hidden">
             <h2>Sign Up</h2>
             <form id="signup-form">
@@ -39,12 +41,16 @@
             </form>
         </section>
 
+        <!-- Dashboard Section -->
         <section id="dashboard" class="section hidden">
             <h2>Dashboard</h2>
             <h3>Your Workouts</h3>
             <ul id="workout-list"></ul>
+            <div>Total Workouts: <span id="total-workouts">0</span></div>
+            <div>Total Weight Lifted: <span id="total-weight">0 lbs</span></div>
         </section>
 
+        <!-- Add Workout Section -->
         <section id="add-workout" class="section hidden">
             <h2>Add Workout</h2>
             <form id="workout-form">
