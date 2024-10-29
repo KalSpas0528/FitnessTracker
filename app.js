@@ -1,55 +1,135 @@
-// app.js
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const { createClient } = require("@supabase/supabase-js");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const cors = require("cors");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json());
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Set up CORS
 app.use(cors({
-    origin: 'http://localhost:5500', // Adjust this to your frontend origin
-    credentials: true
+    origin: "https://kalspas0528.github.io", // Your frontend URL
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
 }));
 
-// Sample data store
-let workouts = []; // You would normally use a database
+app.use(bodyParser.json());
+app.use(
+    session({
+        secret: process.env.SECRET_KEY,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false } // Set to true if using HTTPS
+    })
+);
 
-// Login Endpoint
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    // Perform login logic (check credentials)
-    res.json({ success: true, workouts: workouts });
+// Root route
+app.get("/", (req, res) => {
+    res.send("Welcome to the PowerTitan API!");
 });
 
-// Signup Endpoint
-app.post('/signup', (req, res) => {
+// Sign-up endpoint
+app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
-    // Perform signup logic (add user to database)
-    res.json({ success: true });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ message: "Signup successful", user: data.user });
 });
 
-// Add Workout Endpoint
-app.post('/add-workout', (req, res) => {
+// Login endpoint
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
+    req.session.user = data.user; // Store user information in the session
+    res.json({ message: "Login successful", user: data.user });
+});
+
+// Add workout endpoint
+app.post("/add-workout", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(403).json({ error: "Unauthorized - Please log in" });
+    }
+
     const { exercise_name, sets, reps, weight, date } = req.body;
-    const newWorkout = { id: workouts.length + 1, exercise_name, sets, reps, weight, date };
-    workouts.push(newWorkout);
-    res.status(201).json({ success: true, workout: newWorkout });
+    const { data, error } = await supabase.from("workouts").insert([{
+        user_id: req.session.user.id,
+        exercise_name,
+        sets,
+        reps,
+        weight,
+        date
+    }]);
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ message: "Workout added successfully", workout: data });
 });
 
-// Get Workouts Endpoint
-app.get('/get-workouts', (req, res) => {
-    res.json({ workouts: workouts });
+// Get workouts endpoint
+app.get("/get-workouts", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(403).json({ error: "Unauthorized - Please log in" });
+    }
+
+    const { user } = req.session;
+    const { data: workouts, error } = await supabase
+        .from("workouts")
+        .select("*")
+        .eq("user_id", user.id);
+
+    if (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ workouts });
 });
 
-// Delete Workout Endpoint
-app.delete('/delete-workout/:id', (req, res) => {
+// Delete workout endpoint
+app.delete("/delete-workout/:id", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(403).json({ error: "Unauthorized - Please log in" });
+    }
+
     const workoutId = parseInt(req.params.id);
-    workouts = workouts.filter(workout => workout.id !== workoutId);
+    const { error } = await supabase
+        .from("workouts")
+        .delete()
+        .eq("id", workoutId)
+        .eq("user_id", req.session.user.id); // Ensure the workout belongs to the logged-in user
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
     res.status(204).send(); // No content to return
+});
+
+// Logout endpoint
+app.post("/logout", (req, res) => {
+    req.session.destroy(err => {
+        if (err) return res.status(500).json({ error: "Logout failed" });
+        res.json({ message: "Logged out successfully" });
+    });
 });
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`Server running at http://localhost:${port}`);
 });
