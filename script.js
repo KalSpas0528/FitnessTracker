@@ -1,9 +1,13 @@
 //script.js
-
 document.addEventListener("DOMContentLoaded", () => {
-    
     // Show login section by default
     showSection("login-section");
+
+    // Check if user is logged in (based on session storage)
+    if (sessionStorage.getItem("loggedIn")) {
+        showSection("add-workout"); // Direct to Add Workout if already logged in
+        refreshWorkoutList(); // Refresh workout list to show existing workouts
+    }
 
     // Event listener for sidebar links using event delegation
     document.getElementById("sidebar").addEventListener("click", function (event) {
@@ -34,9 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const responseData = await response.json();
             alert("Login successful!");
 
-            // Show the dashboard and display previous workouts
-            showSection("dashboard");
-            displayWorkouts(responseData.workouts); // Call to display previous workouts
+            // Store login state in session storage
+            sessionStorage.setItem("loggedIn", true);
+            showSection("add-workout"); // Redirect to Add Workout section
         } else {
             const errorData = await response.json();
             alert(`Login failed: ${errorData.error}`);
@@ -94,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/logout", { method: "POST" });
         if (response.ok) {
             alert("Logged out!");
+            sessionStorage.removeItem("loggedIn"); // Clear login state
             showSection("login-section"); // Return to login after logout
         } else {
             alert("Logout failed.");
