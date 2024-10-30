@@ -1,4 +1,3 @@
-//script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");
@@ -15,8 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (target) {
             event.preventDefault(); // Prevent default anchor behavior
             const targetId = target.getAttribute("data-section"); // Get section ID
-            console.log("Section to show:", targetId); // Debugging line
             showSection(targetId); // Show the selected section
+            if (targetId === "dashboard") {
+                refreshWorkoutList(); // Refresh workout list when viewing the dashboard
+            }
         }
     });
 
@@ -25,8 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("login-email").value;
         const password = document.getElementById("login-password").value;
-
-        alert("Login button clicked!"); // Check if this alert appears
 
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
             method: "POST",
@@ -52,8 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("signup-email").value;
         const password = document.getElementById("signup-password").value;
-
-        alert("Sign Up button clicked!"); // Check if this alert appears
 
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/signup", {
             method: "POST",
@@ -87,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
             alert("Workout added!");
             await refreshWorkoutList(); // Refresh workout list after adding a workout
+            showSection("dashboard"); // Optionally, redirect to the dashboard after adding workout
         } else {
             const errorData = await response.json();
             alert(`Failed to add workout: ${errorData.error}`);
