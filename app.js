@@ -1,11 +1,11 @@
 //app.js
-require("dotenv").config();
-const express = require("express");
-const { createClient } = require("@supabase/supabase-js");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const cors = require("cors");
+// Import the necessary libraries
+import { createClient } from '@supabase/supabase-js';
+import express from 'express';
+import session from 'express-session';
+import bodyParser from 'body-parser';
 
+// Initialize the Express app
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -14,123 +14,81 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Set up CORS
-app.use(cors({
-    origin: "https://kalspas0528.github.io", // Your frontend URL
-    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public')); // Serve static files from the "public" directory
+app.use(session({
+    secret: 'your-session-secret', // Replace with a secure secret
+    resave: false,
+    saveUninitialized: true
 }));
 
-app.use(bodyParser.json());
-app.use(
-    session({
-        secret: process.env.SECRET_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false } // Set to true if using HTTPS
-    })
-);
-
-// Root route
-app.get("/", (req, res) => {
-    res.send("Welcome to the PowerTitan API!");
+// Serve the login page
+app.get('/login', (req, res) => {
+    res.sendFile('path/to/your/login.html'); // Adjust the path to your login page
 });
 
-// Sign-up endpoint
-app.post("/signup", async (req, res) => {
+// Handle login
+app.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { user, error } = await supabase.auth.signIn({ email, password });
 
     if (error) {
-        return res.status(400).json({ error: error.message });
+        console.error('Login error:', error.message);
+        return res.status(401).send('Login failed: ' + error.message);
     }
 
-    res.json({ message: "Signup successful", user: data.user });
+    req.session.user = user; // Store user information in session
+    res.redirect('/dashboard'); // Redirect to dashboard after login
 });
 
-// Login endpoint
-app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-        return res.status(400).json({ error: error.message });
-    }
-
-    req.session.user = data.user; // Store user information in the session
-    res.json({ message: "Login successful", user: data.user });
-});
-
-// Add workout endpoint
-app.post("/add-workout", async (req, res) => {
+// Serve the dashboard
+app.get('/dashboard', async (req, res) => {
     if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
+        return res.redirect('/login'); // Redirect to login if not authenticated
     }
-
-    const { exercise_name, sets, reps, weight, date } = req.body;
-    const { data, error } = await supabase.from("workouts").insert([{
-        user_id: req.session.user.id,
-        exercise_name,
-        sets,
-        reps,
-        weight,
-        date
-    }]);
-
-    if (error) {
-        return res.status(400).json({ error: error.message });
-    }
-
-    res.json({ message: "Workout added successfully", workout: data });
+    res.sendFile('path/to/your/dashboard.html'); // Adjust the path to your dashboard page
 });
 
-// Get workouts endpoint
-app.get("/get-workouts", async (req, res) => {
+// Handle adding workouts
+app.post('/add-workout', async (req, res) => {
     if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
+        return res.status(401).send('Unauthorized - Please log in');
     }
 
-    const { user } = req.session;
-    const { data: workouts, error } = await supabase
-        .from("workouts")
-        .select("*")
-        .eq("user_id", user.id);
+    const { exercise_name, sets, reps, weight } = req.body;
+    const { data, error } = await supabase
+        .from('workouts')
+        .insert([
+            {
+                user_id: req.session.user.id, // Use the authenticated user's ID
+                exercise_name,
+                sets,
+                reps,
+                weight,
+            }
+        ]);
 
     if (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Failed to add workout:', error.message);
+        return res.status(500).send('Failed to add workout: ' + error.message);
     }
 
-    res.json({ workouts });
+    res.send('Workout added successfully!');
 });
 
-// Delete workout endpoint
-app.delete("/delete-workout/:id", async (req, res) => {
-    if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
-    const workoutId = parseInt(req.params.id);
-    const { error } = await supabase
-        .from("workouts")
-        .delete()
-        .eq("id", workoutId)
-        .eq("user_id", req.session.user.id); // Ensure the workout belongs to the logged-in user
-
-    if (error) {
-        return res.status(400).json({ error: error.message });
-    }
-
-    res.status(204).send(); // No content to return
-});
-
-// Logout endpoint
-app.post("/logout", (req, res) => {
-    req.session.destroy(err => {
-        if (err) return res.status(500).json({ error: "Logout failed" });
-        res.json({ message: "Logged out successfully" });
+// Handle logout
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Logout error:', err.message);
+            return res.status(500).send('Failed to logout');
+        }
+        res.redirect('/login'); // Redirect to login after logout
     });
 });
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server is running at http://localhost:${port}`);
 });
