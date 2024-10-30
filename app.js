@@ -1,9 +1,9 @@
-require("dotenv").config();
-const express = require("express");
-const { createClient } = require("@supabase/supabase-js");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const cors = require("cors");
+import "dotenv/config"; // Automatically loads environment variables
+import express from "express";
+import { createClient } from "@supabase/supabase-js";
+import bodyParser from "body-parser";
+import session from "express-session";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
