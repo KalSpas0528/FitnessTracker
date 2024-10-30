@@ -1,9 +1,12 @@
-//app.js
 // Import the necessary libraries
 import { createClient } from '@supabase/supabase-js';
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Initialize the Express app
 const app = express();
