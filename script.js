@@ -1,4 +1,3 @@
-//script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");
@@ -40,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Store login state in session storage
             sessionStorage.setItem("loggedIn", true);
+            sessionStorage.setItem("userId", responseData.user.id); // Store user ID
+
             showSection("add-workout"); // Redirect to Add Workout section
         } else {
             const errorData = await response.json();
@@ -78,7 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/add-workout", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                // No need for Authorization header; it’s handled in app.js
+            },
             credentials: "include", // Ensure credentials are included
             body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
         });
@@ -99,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
             alert("Logged out!");
             sessionStorage.removeItem("loggedIn"); // Clear login state
+            sessionStorage.removeItem("userId"); // Clear user ID
             showSection("login-section"); // Return to login after logout
         } else {
             alert("Logout failed.");
