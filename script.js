@@ -1,4 +1,4 @@
-//script.js
+// script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");
@@ -114,37 +114,25 @@ async function refreshWorkoutList() {
     });
 
     const workoutsData = await workoutsResponse.json();
-    displayWorkouts(workoutsData.workouts); // Update workout list
-}
-
-// Function to display workouts
-function displayWorkouts(workouts) {
     const workoutList = document.getElementById("workout-list");
-    workoutList.innerHTML = ""; // Clear previous list
+    workoutList.innerHTML = ""; // Clear previous workouts
 
-    workouts.forEach(workout => {
-        workoutList.innerHTML += 
-            `<li>Date: ${new Date(workout.date).toLocaleDateString()}, Exercise: ${workout.exercise_name}, Sets: ${workout.sets}, Reps: ${workout.reps}, Weight: ${workout.weight} lbs
-            <button onclick="deleteWorkout(${workout.id}, this)">Delete</button></li>`;
-    });
-}
-
-// Function to delete workout
-async function deleteWorkout(workoutId, button) {
-    const response = await fetch(`https://fitnesstracker-41f0.onrender.com/delete-workout/${workoutId}`, {
-        method: "DELETE"
-    });
-
-    if (response.ok) {
-        alert("Workout deleted!");
-        button.parentElement.remove(); // Remove the workout from the list
+    if (workoutsResponse.ok) {
+        workoutsData.workouts.forEach(workout => {
+            const workoutItem = document.createElement("li");
+            workoutItem.textContent = `${workout.exercise_name} - ${workout.sets} sets, ${workout.reps} reps, ${workout.weight} lbs`;
+            workoutList.appendChild(workoutItem);
+        });
     } else {
-        alert("Failed to delete workout.");
+        alert(`Failed to load workouts: ${workoutsData.error}`);
     }
 }
 
-// Function to show the selected section and hide others
+// Function to switch between different sections
 function showSection(sectionId) {
-    document.querySelectorAll(".section").forEach(section => section.classList.add("hidden"));
-    document.getElementById(sectionId).classList.remove("hidden");
+    const sections = document.querySelectorAll("section");
+    sections.forEach(section => {
+        section.style.display = "none"; // Hide all sections
+    });
+    document.getElementById(sectionId).style.display = "block"; // Show the targeted section
 }
