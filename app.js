@@ -26,10 +26,7 @@ app.use(
         secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: true,
-        cookie: {
-            secure: false, // Set to true if using HTTPS in production
-            sameSite: "lax" // Prevents some cross-site cookie issues
-        }
+        cookie: { secure: false } // Set to true if using HTTPS
     })
 );
 
@@ -61,11 +58,6 @@ app.post("/login", async (req, res) => {
 
     req.session.user = data.user; // Store user information in the session
     res.json({ message: "Login successful", user: data.user });
-});
-
-// Test session endpoint
-app.get('/check-session', (req, res) => {
-    res.json({ sessionUser: req.session.user || "No user in session" });
 });
 
 // Add workout endpoint
