@@ -1,3 +1,4 @@
+// script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");
@@ -6,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.getItem("loggedIn")) {
         showSection("add-workout"); // Direct to Add Workout if already logged in
         refreshWorkoutList(); // Refresh workout list to show existing workouts
-        updateLoginStatus(true); // Update login status
     }
 
     // Event listener for sidebar links using event delegation
@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Store login state in session storage
             sessionStorage.setItem("loggedIn", true);
             showSection("add-workout"); // Redirect to Add Workout section
-            updateLoginStatus(true); // Update login status
         } else {
             const errorData = await response.json();
             alert(`Login failed: ${errorData.error}`);
@@ -101,24 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Logged out!");
             sessionStorage.removeItem("loggedIn"); // Clear login state
             showSection("login-section"); // Return to login after logout
-            updateLoginStatus(false); // Update login status
         } else {
             alert("Logout failed.");
         }
     });
 });
-
-// Function to update login status display
-function updateLoginStatus(isLoggedIn) {
-    const loginStatusDiv = document.getElementById("login-status");
-    if (isLoggedIn) {
-        loginStatusDiv.textContent = "You are logged in.";
-        loginStatusDiv.classList.remove("hidden");
-    } else {
-        loginStatusDiv.textContent = "You are logged out.";
-        loginStatusDiv.classList.remove("hidden");
-    }
-}
 
 // Function to display workouts in the dashboard
 async function refreshWorkoutList() {
