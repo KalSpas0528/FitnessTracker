@@ -3,8 +3,8 @@ import "dotenv/config"; // Automatically loads environment variables
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
 import bodyParser from "body-parser";
-import session from "express-session";
 import cors from "cors";
+import jwt from "jsonwebtoken";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,18 +17,24 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // Set up CORS
 app.use(cors({
     origin: "https://kalspas0528.github.io", // Your frontend URL
-    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+    credentials: true
 }));
 
 app.use(bodyParser.json());
-app.use(
-    session({
-        secret: process.env.SECRET_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false } // Set to true if using HTTPS
-    })
-);
+
+// Middleware to verify JWT token
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) return res.status(403).json({ error: "Unauthorized - Please log in" });
+
+    jwt.verify(token, process.env.SUPABASE_KEY, (err, user) => {
+        if (err) return res.status(403).json({ error: "Token invalid" });
+        req.user = user; // Attach user info to request
+        next();
+    });
+}
 
 // Root route
 app.get("/", (req, res) => {
@@ -47,7 +53,7 @@ app.post("/signup", async (req, res) => {
     res.json({ message: "Signup successful", user: data.user });
 });
 
-// Login endpoint
+// Login endpoint (returns JWT token)
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -56,24 +62,17 @@ app.post("/login", async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    req.session.user = data.user; // Store user information in the session
-    console.log("User session after login:", req.session); // Debugging log
-    res.json({ message: "Login successful", user: data.user });
+    res.json({ message: "Login successful", user: data.user, access_token: data.session.access_token });
 });
 
-// Add workout endpoint
-app.post("/add-workout", async (req, res) => {
-    console.log("Incoming request to add workout. User session:", req.session); // Log session info for debugging
-    if (!req.session.user) {
-        console.log("User session not found:", req.session.user); // Log for debugging
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
+// Add workout endpoint (requires JWT auth)
+app.post("/add-workout", authenticateToken, async (req, res) => {
     const { exercise_name, sets, reps, weight, date } = req.body;
+
     const { data, error } = await supabase
         .from("workouts")
         .insert([{
-            user_id: req.session.user.id, // Ensure the user_id is set to the logged-in user's ID
+            user_id: req.user.sub, // User ID from token payload
             exercise_name,
             sets,
             reps,
@@ -88,19 +87,12 @@ app.post("/add-workout", async (req, res) => {
     res.json({ message: "Workout added successfully", workout: data });
 });
 
-// Get workouts endpoint
-app.get("/get-workouts", async (req, res) => {
-    if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
-    const { user } = req.session;
-
-    // Using RLS to fetch only the workouts of the logged-in user
+// Get workouts endpoint (requires JWT auth)
+app.get("/get-workouts", authenticateToken, async (req, res) => {
     const { data: workouts, error } = await supabase
         .from("workouts")
         .select("*")
-        .eq("user_id", user.id); // This respects the RLS policy
+        .eq("user_id", req.user.sub);
 
     if (error) {
         return res.status(500).json({ error: error.message });
@@ -109,12 +101,8 @@ app.get("/get-workouts", async (req, res) => {
     res.json({ workouts });
 });
 
-// Update workout endpoint
-app.put("/update-workout/:id", async (req, res) => {
-    if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
+// Update workout endpoint (requires JWT auth)
+app.put("/update-workout/:id", authenticateToken, async (req, res) => {
     const workoutId = parseInt(req.params.id);
     const { exercise_name, sets, reps, weight, date } = req.body;
 
@@ -128,7 +116,7 @@ app.put("/update-workout/:id", async (req, res) => {
             date
         })
         .eq("id", workoutId)
-        .eq("user_id", req.session.user.id); // Ensure the workout belongs to the logged-in user
+        .eq("user_id", req.user.sub); // Ensure the workout belongs to the logged-in user
 
     if (error) {
         return res.status(400).json({ error: error.message });
@@ -137,18 +125,15 @@ app.put("/update-workout/:id", async (req, res) => {
     res.json({ message: "Workout updated successfully", workout: data });
 });
 
-// Delete workout endpoint
-app.delete("/delete-workout/:id", async (req, res) => {
-    if (!req.session.user) {
-        return res.status(403).json({ error: "Unauthorized - Please log in" });
-    }
-
+// Delete workout endpoint (requires JWT auth)
+app.delete("/delete-workout/:id", authenticateToken, async (req, res) => {
     const workoutId = parseInt(req.params.id);
+
     const { error } = await supabase
         .from("workouts")
         .delete()
         .eq("id", workoutId)
-        .eq("user_id", req.session.user.id); // Ensure the workout belongs to the logged-in user
+        .eq("user_id", req.user.sub); // Ensure the workout belongs to the logged-in user
 
     if (error) {
         return res.status(400).json({ error: error.message });
@@ -157,12 +142,9 @@ app.delete("/delete-workout/:id", async (req, res) => {
     res.status(204).send(); // No content to return
 });
 
-// Logout endpoint
+// Logout endpoint (frontend can clear the token from storage)
 app.post("/logout", (req, res) => {
-    req.session.destroy(err => {
-        if (err) return res.status(500).json({ error: "Logout failed" });
-        res.json({ message: "Logged out successfully" });
-    });
+    res.json({ message: "Logged out successfully" });
 });
 
 // Start the server
