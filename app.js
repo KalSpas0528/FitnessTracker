@@ -53,7 +53,7 @@ app.post("/signup", async (req, res) => {
     res.json({ message: "Signup successful", user: data.user });
 });
 
-// Login endpoint (returns JWT token)
+// Login endpoint (returns JWT token and workouts)
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -62,7 +62,22 @@ app.post("/login", async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    res.json({ message: "Login successful", user: data.user, access_token: data.session.access_token });
+    // Fetch the user's workouts
+    const { data: workouts, error: workoutsError } = await supabase
+        .from("workouts")
+        .select("*")
+        .eq("user_id", data.user.id); // Using user ID from Supabase
+
+    if (workoutsError) {
+        return res.status(500).json({ error: workoutsError.message });
+    }
+
+    res.json({ 
+        message: "Login successful", 
+        user: data.user, 
+        access_token: data.session.access_token,
+        workouts // Include workouts in the response
+    });
 });
 
 // Add workout endpoint (requires JWT auth)
