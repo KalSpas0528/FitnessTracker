@@ -1,21 +1,30 @@
-// Frontend: script.js
+const apiUrl = "https://fitnesstracker-41f0.onrender.com";
 
 // Section management
 function showSection(sectionId) {
     const sections = document.querySelectorAll("section");
-    sections.forEach((section) => (section.style.display = "none"));
-    document.getElementById(sectionId).style.display = "block";
+    sections.forEach((section) => section.classList.add("hidden"));
+    document.getElementById(sectionId).classList.remove("hidden");
 }
 
-// Check if user is logged in on page load
+// Page load setup
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
-        showSection("add-workout");
+        showSection("dashboard");
         refreshWorkoutList();
     } else {
-        showSection("login");
+        showSection("login-section");
     }
+
+    // Sidebar navigation handling
+    document.querySelectorAll("aside nav ul li a").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const sectionId = e.target.getAttribute("data-section");
+            showSection(sectionId);
+        });
+    });
 });
 
 // Sign-up form submission
@@ -24,7 +33,7 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
 
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/signup", {
+    const response = await fetch(`${apiUrl}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -32,7 +41,7 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
 
     if (response.ok) {
         alert("Signup successful! You can now log in.");
-        showSection("login");
+        showSection("login-section");
     } else {
         const errorData = await response.json();
         alert(`Signup failed: ${errorData.error}`);
@@ -45,7 +54,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
+    const response = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -55,8 +64,8 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         const responseData = await response.json();
         alert("Login successful!");
         sessionStorage.setItem("loggedIn", true);
-        sessionStorage.setItem("token", responseData.access_token); // Save JWT token here
-        showSection("add-workout");
+        sessionStorage.setItem("token", responseData.access_token);
+        showSection("dashboard");
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -70,13 +79,13 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
     const weight = document.getElementById("weight").value;
-    const token = sessionStorage.getItem("token"); // Retrieve token
+    const token = sessionStorage.getItem("token");
 
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/add-workout", {
+    const response = await fetch(`${apiUrl}/add-workout`, {
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Send token with request
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
     });
@@ -93,12 +102,12 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
 
 // Fetch and display workouts
 async function refreshWorkoutList() {
-    const token = sessionStorage.getItem("token"); // Retrieve token
+    const token = sessionStorage.getItem("token");
 
-    const response = await fetch("https://fitnesstracker-41f0.onrender.com/get-workouts", {
+    const response = await fetch(`${apiUrl}/get-workouts`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token}` // Send token with request
+            "Authorization": `Bearer ${token}`
         }
     });
 
@@ -120,9 +129,9 @@ async function refreshWorkoutList() {
 }
 
 // Logout button click handler
-document.getElementById("logout-btn").addEventListener("click", () => {
+document.getElementById("logout-button").addEventListener("click", () => {
     sessionStorage.removeItem("loggedIn");
-    sessionStorage.removeItem("token"); // Clear JWT token from session storage
-    showSection("login");
+    sessionStorage.removeItem("token");
+    showSection("login-section");
     alert("Logged out successfully!");
 });
