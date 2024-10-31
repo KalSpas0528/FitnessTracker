@@ -85,9 +85,16 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            // The Authorization header is optional since anyone can add workouts
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
         },
-        body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
+        body: JSON.stringify({ 
+            exercise_name, 
+            sets, 
+            reps, 
+            weight, 
+            date: new Date().toISOString() 
+        })
     });
 
     if (response.ok) {
@@ -107,7 +114,8 @@ async function refreshWorkoutList() {
     const response = await fetch(`${apiUrl}/get-workouts`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token}`
+            // The Authorization header is optional since anyone can view workouts
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
         }
     });
 
