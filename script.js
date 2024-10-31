@@ -1,3 +1,4 @@
+//script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");
@@ -30,7 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: "include" // Include credentials
         });
 
         if (response.ok) {
@@ -55,7 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: "include" // Include credentials
         });
 
         if (response.ok) {
@@ -78,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("https://fitnesstracker-41f0.onrender.com/add-workout", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() })
+            body: JSON.stringify({ exercise_name, sets, reps, weight, date: new Date().toISOString() }),
+            credentials: "include" // Include credentials to maintain session
         });
 
         if (response.ok) {
@@ -93,7 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Logout functionality
     document.getElementById("logout-button").addEventListener("click", async () => {
-        const response = await fetch("https://fitnesstracker-41f0.onrender.com/logout", { method: "POST" });
+        const response = await fetch("https://fitnesstracker-41f0.onrender.com/logout", { 
+            method: "POST",
+            credentials: "include" // Include credentials for logout
+        });
         if (response.ok) {
             alert("Logged out!");
             sessionStorage.removeItem("loggedIn"); // Clear login state
@@ -110,6 +117,11 @@ async function refreshWorkoutList() {
         method: "GET",
         credentials: "include" // Include credentials to maintain session
     });
+
+    if (!workoutsResponse.ok) {
+        alert("Failed to fetch workouts.");
+        return;
+    }
 
     const workoutsData = await workoutsResponse.json();
     displayWorkouts(workoutsData.workouts); // Update workout list
@@ -130,7 +142,8 @@ function displayWorkouts(workouts) {
 // Function to delete workout
 async function deleteWorkout(workoutId, button) {
     const response = await fetch(`https://fitnesstracker-41f0.onrender.com/delete-workout/${workoutId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: "include" // Include credentials to maintain session
     });
 
     if (response.ok) {

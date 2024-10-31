@@ -1,3 +1,4 @@
+//app.js
 import "dotenv/config"; // Automatically loads environment variables
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
