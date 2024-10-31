@@ -1,4 +1,4 @@
-//app.js
+// app.js
 import "dotenv/config"; // Automatically loads environment variables
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
@@ -63,6 +63,7 @@ app.post("/login", async (req, res) => {
 
 // Add workout endpoint
 app.post("/add-workout", async (req, res) => {
+    console.log("Incoming request to add workout. User session:", req.session); // Log session info for debugging
     if (!req.session.user) {
         console.log("User session not found:", req.session.user); // Log for debugging
         return res.status(403).json({ error: "Unauthorized - Please log in" });
