@@ -1,4 +1,4 @@
-// app.js
+//app.js
 import "dotenv/config"; // Automatically loads environment variables
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
@@ -57,6 +57,7 @@ app.post("/login", async (req, res) => {
     }
 
     req.session.user = data.user; // Store user information in the session
+    console.log("User session after login:", req.session); // Debugging log
     res.json({ message: "Login successful", user: data.user });
 });
 
