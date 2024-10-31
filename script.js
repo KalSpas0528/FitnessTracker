@@ -1,4 +1,4 @@
-// script.js
+//script.js
 document.addEventListener("DOMContentLoaded", () => {
     // Show login section by default
     showSection("login-section");

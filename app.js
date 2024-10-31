@@ -70,14 +70,16 @@ app.post("/add-workout", async (req, res) => {
     }
 
     const { exercise_name, sets, reps, weight, date } = req.body;
-    const { data, error } = await supabase.from("workouts").insert([{
-        user_id: req.session.user.id,
-        exercise_name,
-        sets,
-        reps,
-        weight,
-        date
-    }]);
+    const { data, error } = await supabase
+        .from("workouts")
+        .insert([{
+            user_id: req.session.user.id, // Ensure the user_id is set to the logged-in user's ID
+            exercise_name,
+            sets,
+            reps,
+            weight,
+            date
+        }]);
 
     if (error) {
         return res.status(400).json({ error: error.message });
@@ -93,16 +95,46 @@ app.get("/get-workouts", async (req, res) => {
     }
 
     const { user } = req.session;
+
+    // Using RLS to fetch only the workouts of the logged-in user
     const { data: workouts, error } = await supabase
         .from("workouts")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id); // This respects the RLS policy
 
     if (error) {
         return res.status(500).json({ error: error.message });
     }
 
     res.json({ workouts });
+});
+
+// Update workout endpoint
+app.put("/update-workout/:id", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(403).json({ error: "Unauthorized - Please log in" });
+    }
+
+    const workoutId = parseInt(req.params.id);
+    const { exercise_name, sets, reps, weight, date } = req.body;
+
+    const { data, error } = await supabase
+        .from("workouts")
+        .update({
+            exercise_name,
+            sets,
+            reps,
+            weight,
+            date
+        })
+        .eq("id", workoutId)
+        .eq("user_id", req.session.user.id); // Ensure the workout belongs to the logged-in user
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ message: "Workout updated successfully", workout: data });
 });
 
 // Delete workout endpoint
