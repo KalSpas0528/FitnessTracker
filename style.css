@@ -23,7 +23,8 @@ nav ul li {
 main {
     flex-grow: 1;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #007bff; /* Blue background */
+    color: white; /* Change text color for contrast */
 }
 
 .section {
