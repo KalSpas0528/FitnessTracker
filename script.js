@@ -7,24 +7,16 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.remove("hidden");
 }
 
-// Clear workout list function
-function clearWorkoutList() {
-    const workoutList = document.getElementById("workout-list");
-    workoutList.innerHTML = ""; // Clear the displayed workouts
-    document.getElementById("total-workouts").textContent = "0"; // Reset total workouts
-    document.getElementById("total-weight").textContent = "0 lbs"; // Reset total weight
-}
-
 // Page load setup
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
         showSection("dashboard");
-        refreshWorkoutList(); // This will fetch and display workouts if logged in
-        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
+        refreshWorkoutList(); // Fetch and display workouts if logged in
+        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
     } else {
         showSection("login-section");
-        document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
+        document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
     }
 
     // Sidebar navigation handling
@@ -60,7 +52,7 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
 
 // Login form submission
 document.getElementById("login-form").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+    event.preventDefault();
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
@@ -76,11 +68,9 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
 
-        // Clear previous workouts before displaying new ones
-        clearWorkoutList(); // Clear any existing workouts
-        await refreshWorkoutList(); // Fetch and display the logged-in user's workouts
         showSection("dashboard");
-        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
+        refreshWorkoutList();
+        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -89,18 +79,17 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 
 // Add workout form submission
 document.getElementById("workout-form").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
     const exercise_name = document.getElementById("exercise-name").value;
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
     const weight = document.getElementById("weight").value;
-    const token = sessionStorage.getItem("token");
 
     const response = await fetch(`${apiUrl}/add-workout`, {
         method: "POST",
         headers: { 
-            "Content-Type": "application/json",
-            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+            "Content-Type": "application/json"
+            // Authorization header is optional; remove if anyone can add workouts
         },
         body: JSON.stringify({ 
             exercise_name, 
@@ -121,7 +110,7 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
     }
 });
 
-// Refresh workout list for dashboard
+// Fetch and display workouts
 async function refreshWorkoutList() {
     const token = sessionStorage.getItem("token");
 
@@ -133,36 +122,27 @@ async function refreshWorkoutList() {
     });
 
     if (response.ok) {
-        const responseData = await response.json();
-        await displayWorkouts(responseData.workouts);
+        const data = await response.json();
+        const workouts = data.workouts;
+        const workoutList = document.getElementById("workout-list");
+        workoutList.innerHTML = "";
+
+        workouts.forEach((workout) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
+            workoutList.appendChild(listItem);
+        });
     } else {
-        alert("Failed to fetch workouts.");
+        const errorData = await response.json();
+        alert(`Failed to retrieve workouts: ${errorData.error}`);
     }
 }
 
-// Function to display workouts on the dashboard
-async function displayWorkouts(workouts) {
-    const workoutList = document.getElementById("workout-list");
-    workoutList.innerHTML = ""; // Clear existing list
-
-    workouts.forEach((workout) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
-        workoutList.appendChild(listItem);
-    });
-
-    // Update total workouts and total weight lifted
-    document.getElementById("total-workouts").textContent = workouts.length;
-    const totalWeight = workouts.reduce((total, workout) => total + workout.weight, 0);
-    document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
-}
-
-// Logout function
+// Logout button click handler
 document.getElementById("logout-button").addEventListener("click", () => {
-    sessionStorage.clear(); // Clear session storage
-    alert("Logged out successfully!");
-
-    clearWorkoutList(); // Clear the displayed workouts on logout
-    document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
+    sessionStorage.removeItem("loggedIn");
+    sessionStorage.removeItem("token");
     showSection("login-section");
+    alert("Logged out successfully!");
+    document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link on logout
 });
