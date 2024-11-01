@@ -37,21 +37,16 @@ function displayWorkouts() {
                 <tr><td>Exercise</td><td>${workout.exercise_name}</td></tr>
                 <tr><td>Sets</td><td>${workout.sets}</td></tr>
                 <tr><td>Reps</td><td>${workout.reps}</td></tr>
-                <tr><td>Weight</td><td>${workout.weight} lbs</td></tr>
+                <tr><td>Weight</td><td>${workout.weight}</td></tr>
             </table>
             <button class="delete-button" onclick="deleteWorkout(${index})">Delete</button>
         `;
         workoutList.appendChild(listItem);
     });
 
-    // Update the total workouts and total weight lifted
     document.getElementById("total-workouts").textContent = workouts.length;
-
-    // Correctly calculate total weight lifted (weight * sets * reps)
     const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets * workout.reps, 0);
-    document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
-
-    // Update the chart with the latest data
+    document.getElementById("total-weight").textContent = totalWeight;
     updateChart();
 }
 
@@ -90,7 +85,7 @@ let workoutProgressChart;
 // Update the chart with the latest workout data
 function updateChart() {
     const labels = workouts.map(workout => workout.exercise_name);
-    const data = workouts.map(workout => workout.weight); // Use only the weight for chart data
+    const data = workouts.map(workout => workout.weight);
 
     if (workoutProgressChart) {
         workoutProgressChart.destroy();
@@ -102,7 +97,7 @@ function updateChart() {
             labels: labels,
             datasets: [{
                 label: 'Weights Lifted',
-                data: data, // Correct data array for chart
+                data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
