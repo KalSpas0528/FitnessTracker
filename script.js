@@ -20,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
         showSection("dashboard");
-        refreshWorkoutList(); // This will fetch and display workouts if logged in
+        refreshWorkoutList(); // Fetch and display workouts if logged in
+        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
     } else {
         showSection("login-section");
+        document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
     }
 
     // Sidebar navigation handling
@@ -78,6 +80,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         clearWorkoutList(); // Clear any existing workouts
         await refreshWorkoutList(); // Fetch and display the logged-in user's workouts
         showSection("dashboard");
+        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -160,6 +163,7 @@ document.getElementById("logout-button").addEventListener("click", () => {
     alert("Logged out successfully!");
 
     clearWorkoutList(); // Clear the displayed workouts on logout
+    document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
 
     showSection("login-section");
 });
