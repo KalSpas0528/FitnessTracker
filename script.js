@@ -145,6 +145,29 @@ async function displayWorkouts(workouts) {
     workouts.forEach((workout) => {
         const listItem = document.createElement("li");
         listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
+
+        // Create delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("delete-button");
+        deleteButton.addEventListener("click", async () => {
+            const response = await fetch(`${apiUrl}/delete-workout/${workout.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+                }
+            });
+
+            if (response.ok) {
+                alert("Workout deleted successfully!");
+                await refreshWorkoutList(); // Refresh the list after deletion
+            } else {
+                alert("Failed to delete workout.");
+            }
+        });
+
+        // Append delete button to list item
+        listItem.appendChild(deleteButton);
         workoutList.appendChild(listItem);
     });
 
