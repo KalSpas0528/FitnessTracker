@@ -136,3 +136,16 @@
         opacity: 1;
     }
 }
+
+/* Confirmation message styling */
+.confirmation-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it's on top of other elements */
+    transition: opacity 0.5s ease;
+}

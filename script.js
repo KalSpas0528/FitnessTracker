@@ -50,10 +50,22 @@ function displayWorkouts() {
     updateChart();
 }
 
+// Confirmation message function
+function showMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = "confirmation-message"; // Add a class for styling
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+
+    // Automatically remove the message after 3 seconds
+    setTimeout(() => messageDiv.remove(), 3000);
+}
+
 // Delete a workout
 function deleteWorkout(index) {
     workouts.splice(index, 1);
     displayWorkouts();
+    showMessage("Workout deleted successfully!"); // Show confirmation message
 }
 
 // Handle workout form submission
@@ -66,6 +78,7 @@ document.getElementById("workout-form").addEventListener("submit", function (eve
 
     workouts.push({ exercise_name: exerciseName, sets: parseInt(sets), reps: parseInt(reps), weight: parseInt(weight) });
     displayWorkouts();
+    showMessage("Workout added successfully!"); // Show confirmation message
     this.reset();
 });
 
