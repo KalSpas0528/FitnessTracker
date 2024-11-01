@@ -75,7 +75,12 @@ document.getElementById("login-form").addEventListener("submit", function (event
     document.getElementById("login-status").textContent = "Logged In"; // Update login status
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)]; // Random server name
     document.getElementById("server-name").textContent = `Server: ${randomServer}`; // Display server name
+    
+    // Initialize workouts with example workouts
+    workouts = [...exampleWorkouts]; // Populate workouts with example workouts
+
     showSection('dashboard'); // Show the dashboard after login
+    displayWorkouts(); // Update the dashboard with example workouts
 });
 
 // Chart.js implementation for workout progress
