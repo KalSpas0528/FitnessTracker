@@ -166,3 +166,68 @@ app.post("/logout", (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+// Frontend JavaScript to handle localStorage
+window.onload = function() {
+    displayWorkouts();
+};
+
+function addWorkout() {
+    const exerciseName = document.getElementById("exercise-name").value;
+    const sets = document.getElementById("sets").value;
+    const reps = document.getElementById("reps").value;
+    const weight = document.getElementById("weight").value;
+    const date = new Date().toISOString(); // Current date
+
+    // Create a new workout object
+    const workout = {
+        exerciseName,
+        sets: parseInt(sets),
+        reps: parseInt(reps),
+        weight: parseInt(weight),
+        date,
+    };
+
+    // Retrieve existing workouts from localStorage or initialize as empty array
+    const workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+
+    // Add new workout to the array
+    workouts.push(workout);
+
+    // Save the updated workouts array to localStorage
+    localStorage.setItem("workouts", JSON.stringify(workouts));
+
+    // Optionally, clear the input fields
+    document.getElementById("exercise-name").value = "";
+    document.getElementById("sets").value = "";
+    document.getElementById("reps").value = "";
+    document.getElementById("weight").value = "";
+
+    // Refresh the display of workouts
+    displayWorkouts();
+}
+
+function displayWorkouts() {
+    const workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+    const workoutsContainer = document.getElementById("workouts-container"); // Your workouts display area
+    workoutsContainer.innerHTML = ""; // Clear the container before displaying
+
+    workouts.forEach((workout, index) => {
+        const workoutElement = document.createElement("div");
+        workoutElement.className = "workout-item";
+        workoutElement.innerHTML = `
+            <p><strong>Exercise:</strong> ${workout.exerciseName}</p>
+            <p><strong>Sets:</strong> ${workout.sets}, <strong>Reps:</strong> ${workout.reps}, <strong>Weight:</strong> ${workout.weight} lbs</p>
+            <p><strong>Date:</strong> ${new Date(workout.date).toLocaleString()}</p>
+            <button onclick="deleteWorkout(${index})">Delete</button>
+        `;
+        workoutsContainer.appendChild(workoutElement);
+    });
+}
+
+function deleteWorkout(index) {
+    const workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+    workouts.splice(index, 1); // Remove the workout at the specified index
+    localStorage.setItem("workouts", JSON.stringify(workouts)); // Save updated array back to localStorage
+    displayWorkouts(); // Refresh the display
+}
