@@ -1,7 +1,8 @@
-"body {
+body {
     font-family: Arial, sans-serif;
     display: flex;
     height: 100vh;
+    background-color: #e0f7fa; /* Light blue background for the entire body */
 }
 
 #sidebar {
@@ -36,4 +37,18 @@ main {
 }
 
 .section:not(.hidden) {
-    display: block; /* Show visible sections */"
+    display: block; /* Show visible sections */
+}
+
+#quote-section {
+    background-color: #f0f8ff; /* Light blue background for quotes section */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center; /* Center text */
+}
+
+#inspirational-quote {
+    font-size: 1.2em; /* Adjust font size */
+    font-style: italic; /* Italicize the quote */
+}
