@@ -1,11 +1,14 @@
-/* Sidebar styles */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+}
+
 #sidebar {
     width: 250px;
-    background-color: #2c3e50; /* Darker background for modern look */
+    background-color: #f0f0f0;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    color: #ecf0f1; /* Light text color */
-    font-family: 'Arial', sans-serif; /* Clean font */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
 nav ul {
@@ -17,66 +20,60 @@ nav ul li {
     margin: 15px 0;
 }
 
-nav ul li a {
-    color: #ecf0f1; /* Light text color for links */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Make text bold */
-    transition: color 0.3s ease; /* Smooth color transition */
-}
-
-nav ul li a:hover {
-    color: #3498db; /* Change color on hover */
-}
-
-/* Dashboard styles */
-#dashboard {
+main {
+    flex-grow: 1;
     padding: 20px;
-    background-color: #ffffff; /* Keep background white for contrast */
-    border-radius: 8px; /* Rounded corners for modern look */
+    background-color: #ffffff;
 }
 
-#dashboard h2 {
-    font-family: 'Arial', sans-serif; /* Consistent font */
-    color: #2c3e50; /* Dark title color */
-    font-size: 24px; /* Slightly larger font size */
+.section {
+    display: none; /* Hidden by default */
+    position: relative; /* Ensure correct stacking context */
 }
 
-.workout-list {
-    list-style-type: none; /* Remove bullet points */
-    padding: 0;
+.section.hidden {
+    display: none; /* Keep hidden sections invisible */
 }
 
-.workout-list li {
+.section:not(.hidden) {
+    display: block; /* Show visible sections */
+}
+
+/* New styles for workout items */
+.workout-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #ecf0f1; /* Light gray background for list items */
-    border: 1px solid #bdc3c7; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    margin: 10px 0;
-    padding: 10px;
-    transition: all 0.3s ease;
+    justify-content: space-between; /* Space between workout details and delete button */
+    align-items: center; /* Center items vertically */
+    padding: 10px; /* Add padding for spacing */
+    border-bottom: 1px solid #ddd; /* Add bottom border for separation */
+    background-color: #f9f9f9; /* Light background for contrast */
+    margin: 5px 0; /* Margin to separate workout items */
 }
 
-.workout-list li:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
-}
-
+/* Styles for the delete button */
 .delete-button {
-    background-color: #e74c3c; /* Red background for delete button */
-    color: white; /* White text */
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition */
+    background-color: #ff4d4d; /* Red background for delete action */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    padding: 5px 10px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
+/* Change background color on hover for the delete button */
 .delete-button:hover {
-    background-color: #c0392b; /* Darker red on hover */
+    background-color: #ff1a1a; /* Darker red on hover */
 }
 
-.totals {
-    margin-top: 20px;
-    font-family: 'Arial', sans-serif; /* Consistent font */
+/* Optional: Make workout items responsive */
+@media (max-width: 600px) {
+    .workout-item {
+        flex-direction: column; /* Stack items on smaller screens */
+        align-items: flex-start; /* Align to the left */
+    }
+    
+    .delete-button {
+        margin-top: 5px; /* Space between text and button */
+    }
 }

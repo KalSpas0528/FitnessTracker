@@ -143,15 +143,21 @@ async function displayWorkouts(workouts) {
     workoutList.innerHTML = ""; // Clear existing list
 
     workouts.forEach((workout) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
+        const listItem = document.createElement("div");
+        listItem.classList.add("workout-item");
+        listItem.innerHTML = `
+            <span>${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs</span>
+            <button class="delete-button" data-id="${workout.id}">Delete</button>
+        `;
 
-        // Create delete button
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.classList.add("delete-button");
-        deleteButton.addEventListener("click", async () => {
-            const response = await fetch(`${apiUrl}/delete-workout/${workout.id}`, {
+        workoutList.appendChild(listItem);
+    });
+
+    // Attach delete event handlers
+    document.querySelectorAll(".delete-button").forEach(button => {
+        button.addEventListener("click", async (event) => {
+            const workoutId = event.target.getAttribute("data-id");
+            const response = await fetch(`${apiUrl}/delete-workout/${workoutId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${sessionStorage.getItem("token")}`
@@ -165,10 +171,6 @@ async function displayWorkouts(workouts) {
                 alert("Failed to delete workout.");
             }
         });
-
-        // Append delete button to list item
-        listItem.appendChild(deleteButton);
-        workoutList.appendChild(listItem);
     });
 
     // Update total workouts and total weight lifted
