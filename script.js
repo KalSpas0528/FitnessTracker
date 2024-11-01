@@ -112,7 +112,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
     if (email && password) {
         document.getElementById("login-status").textContent = "Logged In";
         showSection("dashboard");
-        workouts = exampleWorkouts; // Load example workouts
+        workouts = [...exampleWorkouts]; // Load example workouts only on login
         displayWorkouts();
     }
 });
@@ -120,7 +120,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
 // Logout function
 document.getElementById("logout-button").addEventListener("click", function() {
     document.getElementById("login-status").textContent = "Logged Out";
-    workouts = [];
+    workouts = []; // Clear workouts on logout
     displayWorkouts();
     showSection("login-section");
 });
