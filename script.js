@@ -70,12 +70,44 @@ document.getElementById("workout-form").addEventListener("submit", function (eve
 });
 
 // Handle login form submission
-document.getElementById("login-form").addEventListener("submit", function (event) {
+document.getElementById("login-form").addEventListener("submit", async function (event) {
     event.preventDefault();
-    document.getElementById("login-status").textContent = "Logged In"; // Update login status
-    const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)]; // Random server name
-    document.getElementById("server-name").textContent = `Server: ${randomServer}`; // Display server name
-    showSection('dashboard'); // Show the dashboard after login
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    try {
+        const response = await fetch(`${apiUrl}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById("login-status").textContent = "Login successful"; // Update login status
+            const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)]; // Random server name
+            document.getElementById("server-name").textContent = `Server: ${randomServer}`; // Display server name
+            
+            workouts = exampleWorkouts.concat(data.workouts); // Show example workouts plus user's workouts
+            displayWorkouts(); // Display workouts after login
+            showSection('dashboard'); // Show the dashboard after login
+        } else {
+            document.getElementById("login-status").textContent = `Login failed: ${data.error}`;
+        }
+    } catch (error) {
+        document.getElementById("login-status").textContent = `Error: ${error.message}`;
+    }
+});
+
+// Handle logout
+document.getElementById("logout-button").addEventListener("click", function () {
+    document.getElementById("login-status").textContent = "Logged Out"; // Update login status
+    workouts = []; // Clear workouts on logout
+    document.getElementById("workout-list").innerHTML = ""; // Clear workout list
+    showSection('login-section'); // Show login section
 });
 
 // Chart.js implementation for workout progress
