@@ -1,4 +1,4 @@
-const apiUrl = "https://fitnesstracker-41f0.onrender.com";
+const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // URL for your API
 let workouts = [];
 const exampleWorkouts = [
     { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
@@ -13,16 +13,19 @@ const motivationQuotes = [
 ];
 const serverNames = ["Server A", "Server B", "Server C", "Server D"];
 
+// Show selected section
 function showSection(sectionId) {
     document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
     document.getElementById(sectionId).classList.remove("hidden");
 
+    // If the motivation section is selected, show a random quote
     if (sectionId === "motivation-section") {
         document.getElementById("motivation-content").textContent =
             motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
     }
 }
 
+// Display workouts on the dashboard
 function displayWorkouts() {
     const workoutList = document.getElementById("workout-list");
     workoutList.innerHTML = "";
@@ -34,39 +37,68 @@ function displayWorkouts() {
                 <tr><td>Exercise</td><td>${workout.exercise_name}</td></tr>
                 <tr><td>Sets</td><td>${workout.sets}</td></tr>
                 <tr><td>Reps</td><td>${workout.reps}</td></tr>
-                <tr><td>Weight</td><td>${workout.weight} lbs</td></tr>
+                <tr><td>Weight</td><td>${workout.weight}</td></tr>
             </table>
             <button class="delete-button" onclick="deleteWorkout(${index})">Delete</button>
         `;
         workoutList.appendChild(listItem);
     });
+
     document.getElementById("total-workouts").textContent = workouts.length;
-    const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets, 0);
-    document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
-    
-    // Update the workout progress chart
-    updateWorkoutProgressChart();
+    const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets * workout.reps, 0);
+    document.getElementById("total-weight").textContent = totalWeight;
+    updateChart();
 }
 
-// Function to initialize and update the chart
-function updateWorkoutProgressChart() {
-    const ctx = document.getElementById('workoutProgressChart').getContext('2d');
+// Delete a workout
+function deleteWorkout(index) {
+    workouts.splice(index, 1);
+    displayWorkouts();
+}
 
+// Handle workout form submission
+document.getElementById("workout-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const exerciseName = document.getElementById("exercise-name").value;
+    const sets = document.getElementById("sets").value;
+    const reps = document.getElementById("reps").value;
+    const weight = document.getElementById("weight").value;
+
+    workouts.push({ exercise_name: exerciseName, sets: parseInt(sets), reps: parseInt(reps), weight: parseInt(weight) });
+    displayWorkouts();
+    this.reset();
+});
+
+// Handle login form submission
+document.getElementById("login-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    document.getElementById("login-status").textContent = "Logged In"; // Update login status
+    const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)]; // Random server name
+    document.getElementById("server-name").textContent = `Server: ${randomServer}`; // Display server name
+    showSection('dashboard'); // Show the dashboard after login
+});
+
+// Chart.js implementation for workout progress
+const ctx = document.getElementById("workoutProgressChart").getContext("2d");
+let workoutProgressChart;
+
+// Update the chart with the latest workout data
+function updateChart() {
     const labels = workouts.map(workout => workout.exercise_name);
-    const data = workouts.map(workout => workout.weight * workout.reps * workout.sets); // Weight lifted per exercise
+    const data = workouts.map(workout => workout.weight);
 
-    if (window.myChart) {
-        window.myChart.destroy();
+    if (workoutProgressChart) {
+        workoutProgressChart.destroy();
     }
 
-    window.myChart = new Chart(ctx, {
+    workoutProgressChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Weight Lifted',
+                label: 'Weights Lifted',
                 data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
@@ -81,49 +113,3 @@ function updateWorkoutProgressChart() {
         }
     });
 }
-
-// Event listener for adding workouts
-document.getElementById("workout-form").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const newWorkout = {
-        exercise_name: document.getElementById("exercise-name").value,
-        sets: parseInt(document.getElementById("sets").value),
-        reps: parseInt(document.getElementById("reps").value),
-        weight: parseInt(document.getElementById("weight").value),
-    };
-    workouts.push(newWorkout);
-    displayWorkouts();
-    event.target.reset();
-});
-
-// Delete workout function
-function deleteWorkout(index) {
-    workouts.splice(index, 1);
-    displayWorkouts();
-}
-
-// Event listener for login form
-document.getElementById("login-form").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
-    
-    // Simulated login logic
-    if (email && password) {
-        document.getElementById("login-status").textContent = "Logged In";
-        showSection("dashboard");
-        workouts = [...exampleWorkouts]; // Load example workouts only on login
-        displayWorkouts();
-    }
-});
-
-// Logout function
-document.getElementById("logout-button").addEventListener("click", function() {
-    document.getElementById("login-status").textContent = "Logged Out";
-    workouts = []; // Clear workouts on logout
-    displayWorkouts();
-    showSection("login-section");
-});
-
-// Initial load
-showSection("login-section");

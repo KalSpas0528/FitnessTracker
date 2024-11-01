@@ -17,9 +17,28 @@
     height: 100vh; /* Sidebar takes full height */
 }
 
+.account-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Space below the account info */
+}
+
+.account-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.server-status {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px; /* Space below the server status */
+}
+
 .sidebar ul {
     list-style-type: none;
     padding: 0;
+    flex: 1; /* Allow buttons to grow and fill space */
 }
 
 .sidebar ul li {
@@ -38,34 +57,6 @@
 
 .sidebar button:hover {
     background-color: #555;
-}
-
-/* Header for account info and server status */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #eef2f5; /* Modern color */
-    border-bottom: 2px solid #ccc;
-}
-
-/* Account info styling */
-.account-info {
-    display: flex;
-    align-items: center;
-}
-
-.account-icon {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-}
-
-/* Server status styling */
-.server-status {
-    font-size: 0.9em;
-    color: #666;
 }
 
 /* Main content styling */

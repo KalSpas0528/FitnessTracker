@@ -11,6 +11,13 @@
     <div class="container">
         <!-- Sidebar -->
         <nav class="sidebar">
+            <div class="account-info">
+                <img src="https://via.placeholder.com/30" alt="Account Icon" class="account-icon">
+                <span id="login-status">Logged Out</span>
+            </div>
+            <div class="server-status">
+                <span id="server-name">Server: Random Server</span>
+            </div>
             <ul>
                 <li><button onclick="showSection('dashboard')">Dashboard</button></li>
                 <li><button onclick="showSection('workout-form-section')">Add Workout</button></li>
@@ -19,17 +26,6 @@
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
-
-        <!-- Account Icon and Server Status -->
-        <header class="header">
-            <div class="account-info">
-                <img src="https://via.placeholder.com/30" alt="Account Icon" class="account-icon"> <!-- Placeholder for account icon -->
-                <span id="login-status">Logged Out</span>
-            </div>
-            <div class="server-status">
-                <span id="server-name">Server: Random Server</span>
-            </div>
-        </header>
 
         <!-- Main Content -->
         <main class="content">
