@@ -96,7 +96,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 });
 
 // Add workout form submission
-document.getElementById("add-workout-form").addEventListener("submit", async (event) => {
+document.getElementById("workout-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const exerciseName = document.getElementById("exercise-name").value;
     const sets = document.getElementById("sets").value;
