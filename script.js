@@ -1,4 +1,4 @@
-const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // Update with your actual API URL
+const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // Your actual API URL
 
 // Section management
 function showSection(sectionId) {
@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
         showSection("dashboard");
-        refreshWorkoutList(); // Fetch and display workouts if logged in
-        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
+        refreshWorkoutList(); // This will fetch and display workouts if logged in
+        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
     } else {
         showSection("login-section");
-        document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
+        document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
     }
 
     // Sidebar navigation handling
@@ -60,7 +60,7 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
 
 // Login form submission
 document.getElementById("login-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent the default form submission
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
@@ -80,7 +80,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         clearWorkoutList(); // Clear any existing workouts
         await refreshWorkoutList(); // Fetch and display the logged-in user's workouts
         showSection("dashboard");
-        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
+        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -89,7 +89,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 
 // Add workout form submission
 document.getElementById("workout-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
     const exercise_name = document.getElementById("exercise-name").value;
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
@@ -163,7 +163,6 @@ document.getElementById("logout-button").addEventListener("click", () => {
     alert("Logged out successfully!");
 
     clearWorkoutList(); // Clear the displayed workouts on logout
-    document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
-
+    document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
     showSection("login-section");
 });
