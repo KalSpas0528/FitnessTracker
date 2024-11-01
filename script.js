@@ -18,7 +18,6 @@ function showSection(sectionId) {
     document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
     document.getElementById(sectionId).classList.remove("hidden");
 
-    // If the motivation section is selected, show a random quote
     if (sectionId === "motivation-section") {
         document.getElementById("motivation-content").textContent =
             motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
@@ -53,11 +52,9 @@ function displayWorkouts() {
 // Confirmation message function
 function showMessage(message) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = "confirmation-message"; // Add a class for styling
+    messageDiv.className = "confirmation-message";
     messageDiv.textContent = message;
     document.body.appendChild(messageDiv);
-
-    // Automatically remove the message after 3 seconds
     setTimeout(() => messageDiv.remove(), 3000);
 }
 
@@ -65,20 +62,21 @@ function showMessage(message) {
 function deleteWorkout(index) {
     workouts.splice(index, 1);
     displayWorkouts();
-    showMessage("Workout deleted successfully!"); // Show confirmation message
+    showMessage("Workout deleted successfully!");
 }
 
 // Handle workout form submission
 document.getElementById("workout-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const exerciseName = document.getElementById("exercise-name").value;
-    const sets = document.getElementById("sets").value;
-    const reps = document.getElementById("reps").value;
-    const weight = document.getElementById("weight").value;
+    const sets = parseInt(document.getElementById("sets").value);
+    const reps = parseInt(document.getElementById("reps").value);
+    const weight = parseInt(document.getElementById("weight").value);
 
-    workouts.push({ exercise_name: exerciseName, sets: parseInt(sets), reps: parseInt(reps), weight: parseInt(weight) });
+    const newWorkout = { exercise_name: exerciseName, sets: sets, reps: reps, weight: weight };
+    workouts.push(newWorkout);
     displayWorkouts();
-    showMessage("Workout added successfully!"); // Show confirmation message
+    showMessage("Workout added successfully!");
     this.reset();
 });
 
@@ -100,13 +98,13 @@ document.getElementById("login-form").addEventListener("submit", async function 
         const data = await response.json();
 
         if (response.ok) {
-            document.getElementById("login-status").textContent = "Login successful"; // Update login status
-            const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)]; // Random server name
-            document.getElementById("server-name").textContent = `Server: ${randomServer}`; // Display server name
+            document.getElementById("login-status").textContent = `Logged in as ${email}`;
+            const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
+            document.getElementById("server-name").textContent = `Server: ${randomServer}`;
             
-            workouts = exampleWorkouts.concat(data.workouts); // Show example workouts plus user's workouts
-            displayWorkouts(); // Display workouts after login
-            showSection('dashboard'); // Show the dashboard after login
+            workouts = exampleWorkouts.concat(data.workouts || []);
+            displayWorkouts();
+            showSection('dashboard');
         } else {
             document.getElementById("login-status").textContent = `Login failed: ${data.error}`;
         }
@@ -117,17 +115,23 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
 // Handle logout
 document.getElementById("logout-button").addEventListener("click", function () {
-    document.getElementById("login-status").textContent = "Logged Out"; // Update login status
-    workouts = []; // Clear workouts on logout
-    document.getElementById("workout-list").innerHTML = ""; // Clear workout list
-    showSection('login-section'); // Show login section
+    document.getElementById("login-status").textContent = "Logged Out";
+    workouts = [];
+    document.getElementById("workout-list").innerHTML = "";
+    document.getElementById("total-workouts").textContent = "0";
+    document.getElementById("total-weight").textContent = "0";
+
+    if (workoutProgressChart) {
+        workoutProgressChart.destroy();
+    }
+
+    showSection('login-section');
 });
 
-// Chart.js implementation for workout progress
+// Chart.js for workout progress
 const ctx = document.getElementById("workoutProgressChart").getContext("2d");
 let workoutProgressChart;
 
-// Update the chart with the latest workout data
 function updateChart() {
     const labels = workouts.map(workout => workout.exercise_name);
     const data = workouts.map(workout => workout.weight);
@@ -158,3 +162,11 @@ function updateChart() {
         }
     });
 }
+
+// Initialize with example workouts
+window.onload = function () {
+    workouts = exampleWorkouts;
+    displayWorkouts();
+    const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
+    document.getElementById("server-name").textContent = `Server: ${randomServer}`;
+};

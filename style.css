@@ -1,8 +1,8 @@
-/* Container to organize sidebar and main content */
+/* Container */
 .container {
     display: flex;
     height: 100vh;
-    flex-direction: row; /* Sidebar on the left, content on the right */
+    flex-direction: row;
 }
 
 /* Sidebar styling */
@@ -13,14 +13,13 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: start;
-    height: 100vh; /* Sidebar takes full height */
+    height: 100vh;
 }
 
 .account-info {
     display: flex;
     align-items: center;
-    margin-bottom: 15px; /* Space below the account info */
+    margin-bottom: 15px;
 }
 
 .account-icon {
@@ -32,13 +31,13 @@
 .server-status {
     font-size: 0.9em;
     color: #666;
-    margin-bottom: 20px; /* Space below the server status */
+    margin-bottom: 20px;
 }
 
 .sidebar ul {
     list-style-type: none;
     padding: 0;
-    flex: 1; /* Allow buttons to grow and fill space */
+    flex: 1;
 }
 
 .sidebar ul li {
@@ -63,8 +62,8 @@
 .content {
     flex: 1;
     padding: 20px;
-    overflow-y: auto; /* Enables scrolling for the content */
-    background-color: #6ac7a8; /* More modern, clean background */
+    overflow-y: auto;
+    background-color: #6ac7a8;
 }
 
 /* Section visibility */
@@ -107,45 +106,15 @@
     background-color: #ff1c1c;
 }
 
-/* Motivational Quotes Section Styling */
-#motivation-section {
-    background-image: url('https://example.com/path-to-your-background-image.jpg'); /* Replace with your image URL */
-    background-size: cover; /* Ensure the background covers the section */
-    background-position: center; /* Center the background image */
-    color: white; /* Text color for better contrast */
-    padding: 20px; /* Padding around the text */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
-}
-
-#motivation-content {
-    font-size: 1.5em; /* Increase font size */
-    font-weight: bold; /* Make the font bold */
-    text-align: center; /* Center the text */
-    margin: 20px 0; /* Margin for spacing */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add a shadow for depth */
-    animation: fadeIn 2s; /* Fade in animation */
-}
-
-/* Animation for motivational quotes */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 /* Confirmation message styling */
 .confirmation-message {
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
-    z-index: 1000; /* Ensure it's on top of other elements */
+    z-index: 1000;
     transition: opacity 0.5s ease;
 }

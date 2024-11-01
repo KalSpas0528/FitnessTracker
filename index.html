@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -21,8 +21,9 @@
             <ul>
                 <li><button onclick="showSection('dashboard')">Dashboard</button></li>
                 <li><button onclick="showSection('workout-form-section')">Add Workout</button></li>
-                <li><button onclick="showSection('motivation-section')">Motivation</button></li> <!-- Motivation Page Link -->
+                <li><button onclick="showSection('motivation-section')">Motivation</button></li>
                 <li><button onclick="showSection('login-section')">Login</button></li>
+                <li><button onclick="showSection('signup-section')">Signup</button></li> <!-- Signup Button Added -->
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
@@ -37,7 +38,6 @@
                     <p>Total Workouts: <span id="total-workouts"></span></p>
                     <p>Total Weight Lifted: <span id="total-weight"></span></p>
                 </div>
-                <!-- Workout Progress Chart -->
                 <canvas id="workoutProgressChart" width="400" height="200"></canvas>
             </section>
 
@@ -73,6 +73,13 @@
                     <input type="password" id="login-password" required>
                     <button type="submit">Login</button>
                 </form>
+            </section>
+
+            <!-- Signup Section (No Functionality) -->
+            <section id="signup-section" class="hidden">
+                <h2>Signup</h2>
+                <p>This is the signup page. Functionality coming soon!</p>
+                <button>Signup</button>
             </section>
         </main>
     </div>
