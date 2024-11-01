@@ -1,41 +1,35 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    height: 100vh;
+/* Dashboard workout item styling */
+.workout-item {
+    border: 2px solid #5d77f7;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #ffffff;
+    color: #000000;
+    text-align: left;
 }
 
-#sidebar {
-    width: 250px;
-    background-color: #5d77f7;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+.workout-item table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
+.workout-item td {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
 }
 
-nav ul li {
-    margin: 15px 0;
+.delete-button {
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    color: #ffffff;
+    background-color: #ff4c4c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-main {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #007bff; /* Blue background */
-    color: white; /* Change text color for contrast */
-}
-
-.section {
-    display: none; /* Hidden by default */
-    position: relative; /* Ensure correct stacking context */
-}
-
-.section.hidden {
-    display: none; /* Keep hidden sections invisible */
-}
-
-.section:not(.hidden) {
-    display: block; /* Show visible sections */
+.delete-button:hover {
+    background-color: #ff1c1c;
 }

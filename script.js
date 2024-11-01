@@ -1,7 +1,5 @@
 const apiUrl = "https://fitnesstracker-41f0.onrender.com";
 let workouts = []; // Store workouts in memory
-
-// Example workouts that will be displayed upon successful login
 const exampleWorkouts = [
     { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
     { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
@@ -19,9 +17,20 @@ function displayWorkouts() {
     const workoutList = document.getElementById("workout-list");
     workoutList.innerHTML = ""; // Clear current list
 
-    workouts.forEach((workout) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
+    workouts.forEach((workout, index) => {
+        const listItem = document.createElement("div");
+        listItem.className = "workout-item"; // Styled in CSS
+
+        listItem.innerHTML = `
+            <table>
+                <tr><td>Exercise</td><td>${workout.exercise_name}</td></tr>
+                <tr><td>Sets</td><td>${workout.sets}</td></tr>
+                <tr><td>Reps</td><td>${workout.reps}</td></tr>
+                <tr><td>Weight</td><td>${workout.weight} lbs</td></tr>
+            </table>
+            <button class="delete-button" onclick="deleteWorkout(${index})">Delete</button>
+        `;
+
         workoutList.appendChild(listItem);
     });
 
@@ -30,49 +39,17 @@ function displayWorkouts() {
     document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
 }
 
-// Page load setup
-document.addEventListener("DOMContentLoaded", () => {
-    const isLoggedIn = sessionStorage.getItem("loggedIn");
-    if (isLoggedIn) {
-        showSection("dashboard");
-        workouts = [...exampleWorkouts]; // Load example workouts on login
-        displayWorkouts();
-    } else {
-        showSection("login-section");
-    }
-
-    // Sidebar navigation handling
-    document.querySelectorAll("aside nav ul li a").forEach(link => {
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const sectionId = e.target.getAttribute("data-section");
-            showSection(sectionId);
-        });
-    });
+// Clear workouts and display login section on logout
+document.getElementById("logout-button").addEventListener("click", () => {
+    sessionStorage.removeItem("loggedIn");
+    sessionStorage.removeItem("token");
+    workouts = []; // Clear workouts on logout
+    displayWorkouts(); // Refresh the workout list on dashboard
+    showSection("login-section");
+    alert("Logged out successfully!");
 });
 
-// Sign-up form submission
-document.getElementById("signup-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
-
-    const response = await fetch(`${apiUrl}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    if (response.ok) {
-        alert("Signup successful! You can now log in.");
-        showSection("login-section");
-    } else {
-        const errorData = await response.json();
-        alert(`Signup failed: ${errorData.error}`);
-    }
-});
-
-// Login form submission
+// Login form submission with specific email check
 document.getElementById("login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = document.getElementById("login-email").value;
@@ -89,7 +66,9 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         alert("Login successful!");
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
-        workouts = [...exampleWorkouts]; // Load example workouts on login
+
+        // Load example workouts only if the email matches
+        workouts = email === "kaloyan.spasov@vhhscougars.org" ? [...exampleWorkouts] : responseData.workouts;
         showSection("dashboard");
         displayWorkouts(); // Refresh the workout list upon login
     } else {
@@ -106,18 +85,14 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
     const reps = parseInt(document.getElementById("reps").value);
     const weight = parseInt(document.getElementById("weight").value);
 
-    // Add new workout to the workouts array
     workouts.push({ exercise_name, sets, reps, weight });
     alert("Workout added!");
     displayWorkouts(); // Refresh the workout list
     showSection("dashboard");
 });
 
-// Logout button click handler
-document.getElementById("logout-button").addEventListener("click", () => {
-    sessionStorage.removeItem("loggedIn");
-    sessionStorage.removeItem("token");
-    showSection("login-section");
-    workouts = []; // Clear workouts on logout
-    alert("Logged out successfully!");
-});
+// Delete workout function
+function deleteWorkout(index) {
+    workouts.splice(index, 1); // Remove the workout from the array
+    displayWorkouts(); // Refresh the display after deletion
+}
