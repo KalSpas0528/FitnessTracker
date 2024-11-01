@@ -1,4 +1,4 @@
-const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // Your actual API URL
+const apiUrl = "https://fitnesstracker-41f0.onrender.com";
 
 // Section management
 function showSection(sectionId) {
@@ -12,11 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
         showSection("dashboard");
-        refreshWorkoutList(); // Fetch and display workouts if logged in
-        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
+        refreshWorkoutList();
     } else {
         showSection("login-section");
-        document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link
     }
 
     // Sidebar navigation handling
@@ -67,10 +65,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         alert("Login successful!");
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
-
         showSection("dashboard");
-        refreshWorkoutList();
-        document.getElementById("add-workout-link").style.display = 'block'; // Show Add Workout link
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -84,12 +79,14 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
     const weight = document.getElementById("weight").value;
+    const token = sessionStorage.getItem("token");
 
     const response = await fetch(`${apiUrl}/add-workout`, {
         method: "POST",
         headers: { 
-            "Content-Type": "application/json"
-            // Authorization header is optional; remove if anyone can add workouts
+            "Content-Type": "application/json",
+            // The Authorization header is optional since anyone can add workouts
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
         },
         body: JSON.stringify({ 
             exercise_name, 
@@ -117,6 +114,7 @@ async function refreshWorkoutList() {
     const response = await fetch(`${apiUrl}/get-workouts`, {
         method: "GET",
         headers: {
+            // The Authorization header is optional since anyone can view workouts
             ...(token ? { "Authorization": `Bearer ${token}` } : {})
         }
     });
@@ -144,5 +142,4 @@ document.getElementById("logout-button").addEventListener("click", () => {
     sessionStorage.removeItem("token");
     showSection("login-section");
     alert("Logged out successfully!");
-    document.getElementById("add-workout-link").style.display = 'none'; // Hide Add Workout link on logout
 });
