@@ -1,4 +1,4 @@
-"body {
+body {
     font-family: Arial, sans-serif;
     display: flex;
     height: 100vh;
@@ -36,4 +36,5 @@ main {
 }
 
 .section:not(.hidden) {
-    display: block; /* Show visible sections */"
+    display: block; /* Show visible sections */
+}
