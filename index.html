@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library -->
 </head>
 <body>
     <div class="container">
@@ -22,7 +23,7 @@
         <!-- Account Icon and Server Status -->
         <header class="header">
             <div class="account-info">
-                <img src="account-icon.png" alt="Account Icon" class="account-icon">
+                <img src="https://via.placeholder.com/30" alt="Account Icon" class="account-icon"> <!-- Placeholder for account icon -->
                 <span id="login-status">Logged Out</span>
             </div>
             <div class="server-status">
@@ -40,6 +41,8 @@
                     <p>Total Workouts: <span id="total-workouts"></span></p>
                     <p>Total Weight Lifted: <span id="total-weight"></span></p>
                 </div>
+                <!-- Workout Progress Chart -->
+                <canvas id="workoutProgressChart" width="400" height="200"></canvas>
             </section>
 
             <!-- Workout Form Section -->

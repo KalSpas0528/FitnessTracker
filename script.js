@@ -43,39 +43,87 @@ function displayWorkouts() {
     document.getElementById("total-workouts").textContent = workouts.length;
     const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets, 0);
     document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
+    
+    // Update the workout progress chart
+    updateWorkoutProgressChart();
 }
 
-document.getElementById("logout-button").addEventListener("click", () => {
-    sessionStorage.clear();
-    workouts = [];
-    document.getElementById("login-status").textContent = "Logged Out";
+// Function to initialize and update the chart
+function updateWorkoutProgressChart() {
+    const ctx = document.getElementById('workoutProgressChart').getContext('2d');
+
+    const labels = workouts.map(workout => workout.exercise_name);
+    const data = workouts.map(workout => workout.weight * workout.reps * workout.sets); // Weight lifted per exercise
+
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Weight Lifted',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Event listener for adding workouts
+document.getElementById("workout-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const newWorkout = {
+        exercise_name: document.getElementById("exercise-name").value,
+        sets: parseInt(document.getElementById("sets").value),
+        reps: parseInt(document.getElementById("reps").value),
+        weight: parseInt(document.getElementById("weight").value),
+    };
+    workouts.push(newWorkout);
     displayWorkouts();
-    showSection("login-section");
-    alert("Logged out successfully!");
+    event.target.reset();
 });
 
-document.getElementById("login-form").addEventListener("submit", async (event) => {
+// Delete workout function
+function deleteWorkout(index) {
+    workouts.splice(index, 1);
+    displayWorkouts();
+}
+
+// Event listener for login form
+document.getElementById("login-form").addEventListener("submit", function(event) {
     event.preventDefault();
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
-    const response = await fetch(`${apiUrl}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-    if (response.ok) {
-        const responseData = await response.json();
-        alert("Login successful!");
-        sessionStorage.setItem("loggedIn", true);
-        sessionStorage.setItem("token", responseData.access_token);
+    
+    // Simulated login logic
+    if (email && password) {
         document.getElementById("login-status").textContent = "Logged In";
-        workouts = email === "kaloyan.spasov@vhhscougars.org" ? [...exampleWorkouts] : responseData.workouts;
         showSection("dashboard");
+        workouts = exampleWorkouts; // Load example workouts
         displayWorkouts();
-    } else {
-        alert(`Login failed: ${await response.json().error}`);
     }
 });
 
-// Display random server name at load
-document.getElementById("server-name").textContent = `Server: ${serverNames[Math.floor(Math.random() * serverNames.length)]}`;
+// Logout function
+document.getElementById("logout-button").addEventListener("click", function() {
+    document.getElementById("login-status").textContent = "Logged Out";
+    workouts = [];
+    displayWorkouts();
+    showSection("login-section");
+});
+
+// Initial load
+showSection("login-section");
