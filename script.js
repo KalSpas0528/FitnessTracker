@@ -4,10 +4,23 @@ const exampleWorkouts = [
     { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
     { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
 ];
+const motivationQuotes = [
+    "Push yourself, because no one else is going to do it for you.",
+    "Success isn’t always about greatness. It’s about consistency.",
+    "All progress takes place outside the comfort zone.",
+    "Dream big and dare to fail.",
+    "Hard work beats talent when talent doesn’t work hard."
+];
+const serverNames = ["Server A", "Server B", "Server C", "Server D"];
 
 function showSection(sectionId) {
     document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
     document.getElementById(sectionId).classList.remove("hidden");
+
+    if (sectionId === "motivation-section") {
+        document.getElementById("motivation-content").textContent =
+            motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+    }
 }
 
 function displayWorkouts() {
@@ -35,6 +48,7 @@ function displayWorkouts() {
 document.getElementById("logout-button").addEventListener("click", () => {
     sessionStorage.clear();
     workouts = [];
+    document.getElementById("login-status").textContent = "Logged Out";
     displayWorkouts();
     showSection("login-section");
     alert("Logged out successfully!");
@@ -54,6 +68,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         alert("Login successful!");
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
+        document.getElementById("login-status").textContent = "Logged In";
         workouts = email === "kaloyan.spasov@vhhscougars.org" ? [...exampleWorkouts] : responseData.workouts;
         showSection("dashboard");
         displayWorkouts();
@@ -62,19 +77,5 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
     }
 });
 
-document.getElementById("workout-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const exercise_name = document.getElementById("exercise-name").value;
-    const sets = +document.getElementById("sets").value;
-    const reps = +document.getElementById("reps").value;
-    const weight = +document.getElementById("weight").value;
-    workouts.push({ exercise_name, sets, reps, weight });
-    alert("Workout added!");
-    displayWorkouts();
-    showSection("dashboard");
-});
-
-function deleteWorkout(index) {
-    workouts.splice(index, 1);
-    displayWorkouts();
-}
+// Display random server name at load
+document.getElementById("server-name").textContent = `Server: ${serverNames[Math.floor(Math.random() * serverNames.length)]}`;

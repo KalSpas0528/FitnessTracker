@@ -2,6 +2,7 @@
 .container {
     display: flex;
     height: 100vh;
+    flex-direction: column;
 }
 
 /* Sidebar styling */
@@ -36,6 +37,32 @@
 
 .sidebar button:hover {
     background-color: #555;
+}
+
+/* Header for account info and server status */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f3f3f3;
+    border-bottom: 2px solid #ccc;
+}
+
+.account-info {
+    display: flex;
+    align-items: center;
+}
+
+.account-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.server-status {
+    font-size: 0.9em;
+    color: #666;
 }
 
 /* Main content styling */
