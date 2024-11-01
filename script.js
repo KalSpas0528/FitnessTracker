@@ -1,4 +1,4 @@
-const apiUrl = "https://fitnesstracker-41f0.onrender.com";
+const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // Your actual API URL
 
 // Section management
 function showSection(sectionId) {
@@ -7,14 +7,52 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.remove("hidden");
 }
 
+// Clear workout list function
+function clearWorkoutList() {
+    const workoutList = document.getElementById("workout-list");
+    workoutList.innerHTML = ""; // Clear the displayed workouts
+    document.getElementById("total-workouts").textContent = "0"; // Reset total workouts
+    document.getElementById("total-weight").textContent = "0 lbs"; // Reset total weight
+}
+
+// Refresh workout list function
+async function refreshWorkoutList() {
+    const token = sessionStorage.getItem("token");
+    const response = await fetch(`${apiUrl}/get-workouts`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+        const { workouts } = await response.json();
+        const workoutList = document.getElementById("workout-list");
+        clearWorkoutList(); // Clear previous workouts
+
+        workouts.forEach(workout => {
+            const workoutItem = document.createElement("li");
+            workoutItem.textContent = `${workout.exercise_name} - ${workout.sets} sets, ${workout.reps} reps, ${workout.weight} lbs`;
+            workoutList.appendChild(workoutItem);
+        });
+
+        document.getElementById("total-workouts").textContent = workouts.length.toString();
+        const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight, 0);
+        document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
+    } else {
+        const errorData = await response.json();
+        alert(`Failed to fetch workouts: ${errorData.error}`);
+    }
+}
+
 // Page load setup
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
     if (isLoggedIn) {
         showSection("dashboard");
-        refreshWorkoutList();
+        refreshWorkoutList(); // Fetch and display workouts if logged in
+        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
     } else {
         showSection("login-section");
+        document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
     }
 
     // Sidebar navigation handling
@@ -25,27 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showSection(sectionId);
         });
     });
-});
-
-// Sign-up form submission
-document.getElementById("signup-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
-
-    const response = await fetch(`${apiUrl}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    if (response.ok) {
-        alert("Signup successful! You can now log in.");
-        showSection("login-section");
-    } else {
-        const errorData = await response.json();
-        alert(`Signup failed: ${errorData.error}`);
-    }
 });
 
 // Login form submission
@@ -65,7 +82,12 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         alert("Login successful!");
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
+
+        // Clear previous workouts before displaying new ones
+        clearWorkoutList(); // Clear any existing workouts
+        await refreshWorkoutList(); // Fetch and display the logged-in user's workouts
         showSection("dashboard");
+        document.getElementById("add-workout").style.display = 'block'; // Show Add Workout button
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
@@ -73,73 +95,41 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 });
 
 // Add workout form submission
-document.getElementById("workout-form").addEventListener("submit", async (event) => {
+document.getElementById("add-workout-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const exercise_name = document.getElementById("exercise-name").value;
+    const exerciseName = document.getElementById("exercise-name").value;
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
     const weight = document.getElementById("weight").value;
-    const token = sessionStorage.getItem("token");
+    const date = document.getElementById("date").value;
 
+    const token = sessionStorage.getItem("token");
     const response = await fetch(`${apiUrl}/add-workout`, {
         method: "POST",
-        headers: { 
+        headers: {
             "Content-Type": "application/json",
-            // The Authorization header is optional since anyone can add workouts
-            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+            "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ 
-            exercise_name, 
-            sets, 
-            reps, 
-            weight, 
-            date: new Date().toISOString() 
-        })
+        body: JSON.stringify({ exercise_name: exerciseName, sets, reps, weight, date })
     });
 
     if (response.ok) {
-        alert("Workout added!");
+        alert("Workout added successfully!");
+        clearWorkoutList(); // Clear and refresh workout list after adding
         await refreshWorkoutList();
-        showSection("dashboard");
     } else {
         const errorData = await response.json();
         alert(`Failed to add workout: ${errorData.error}`);
     }
 });
 
-// Fetch and display workouts
-async function refreshWorkoutList() {
-    const token = sessionStorage.getItem("token");
-
-    const response = await fetch(`${apiUrl}/get-workouts`, {
-        method: "GET",
-        headers: {
-            // The Authorization header is optional since anyone can view workouts
-            ...(token ? { "Authorization": `Bearer ${token}` } : {})
-        }
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        const workouts = data.workouts;
-        const workoutList = document.getElementById("workout-list");
-        workoutList.innerHTML = "";
-
-        workouts.forEach((workout) => {
-            const listItem = document.createElement("li");
-            listItem.textContent = `${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs`;
-            workoutList.appendChild(listItem);
-        });
-    } else {
-        const errorData = await response.json();
-        alert(`Failed to retrieve workouts: ${errorData.error}`);
-    }
-}
-
-// Logout button click handler
+// Logout function
 document.getElementById("logout-button").addEventListener("click", () => {
-    sessionStorage.removeItem("loggedIn");
-    sessionStorage.removeItem("token");
-    showSection("login-section");
+    sessionStorage.clear(); // Clear session storage
     alert("Logged out successfully!");
+
+    clearWorkoutList(); // Clear the displayed workouts on logout
+    document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
+
+    showSection("login-section");
 });
