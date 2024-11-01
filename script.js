@@ -67,7 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Login form submission
 document.getElementById("login-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent the default form submission
+
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
