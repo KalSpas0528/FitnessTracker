@@ -115,3 +115,33 @@
 .delete-button:hover {
     background-color: #ff1c1c;
 }
+
+/* Motivational Quotes Section Styling */
+#motivation-section {
+    background-image: url('https://example.com/path-to-your-background-image.jpg'); /* Replace with your image URL */
+    background-size: cover; /* Ensure the background covers the section */
+    background-position: center; /* Center the background image */
+    color: white; /* Text color for better contrast */
+    padding: 20px; /* Padding around the text */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+}
+
+#motivation-content {
+    font-size: 1.5em; /* Increase font size */
+    font-weight: bold; /* Make the font bold */
+    text-align: center; /* Center the text */
+    margin: 20px 0; /* Margin for spacing */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add a shadow for depth */
+    animation: fadeIn 2s; /* Fade in animation */
+}
+
+/* Animation for motivational quotes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
