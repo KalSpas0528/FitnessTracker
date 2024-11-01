@@ -7,58 +7,59 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <aside>
-        <nav>
-            <ul>
-                <li><a data-section="dashboard">Dashboard</a></li>
-                <li><a data-section="add-workout">Add Workout</a></li>
-                <li><a data-section="workout-history">Workout History</a></li>
-                <li><a data-section="settings">Settings</a></li>
-                <li id="add-workout" style="display: none;"><a data-section="add-workout">Add Workout</a></li>
-                <li><button id="logout-button">Logout</button></li>
-            </ul>
-        </nav>
-    </aside>
-    
-    <main>
-        <section id="login-section" class="hidden">
-            <h2>Login</h2>
-            <form id="login-form">
-                <input type="email" id="login-email" placeholder="Email" required>
-                <input type="password" id="login-password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-        </section>
+    <div class="container">
+        <aside>
+            <nav>
+                <ul>
+                    <li><a data-section="dashboard">Dashboard</a></li>
+                    <li><a data-section="workout-history">Workout History</a></li>
+                    <li><a data-section="add-workout">Add Workout</a></li>
+                    <li><a data-section="settings">Settings</a></li>
+                    <li><button id="logout-button">Logout</button></li>
+                </ul>
+            </nav>
+        </aside>
 
-        <section id="dashboard" class="hidden">
-            <h2>Dashboard</h2>
-            <div id="total-workouts">Total Workouts: 0</div>
-            <div id="total-weight">Total Weight: 0 lbs</div>
-            <div id="workout-list"></div>
-        </section>
+        <main>
+            <section id="login-section" class="hidden">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </section>
 
-        <section id="add-workout" class="hidden">
-            <h2>Add Workout</h2>
-            <form id="add-workout-form">
-                <input type="text" id="exercise_name" placeholder="Exercise Name" required>
-                <input type="number" id="sets" placeholder="Sets" required>
-                <input type="number" id="reps" placeholder="Reps" required>
-                <input type="number" id="weight" placeholder="Weight" required>
-                <input type="date" id="date" required>
-                <button type="submit">Add Workout</button>
-            </form>
-        </section>
+            <section id="dashboard" class="hidden">
+                <h2>Dashboard</h2>
+                <div id="total-workouts">Total Workouts: 0</div>
+                <div id="total-weight">Total Weight: 0 lbs</div>
+                <div id="workout-list"></div>
+            </section>
 
-        <section id="workout-history" class="hidden">
-            <h2>Workout History</h2>
-            <!-- History details will go here -->
-        </section>
+            <section id="add-workout" class="hidden">
+                <h2>Add Workout</h2>
+                <form id="add-workout-form">
+                    <input type="text" id="exercise_name" placeholder="Exercise Name" required>
+                    <input type="number" id="sets" placeholder="Sets" required>
+                    <input type="number" id="reps" placeholder="Reps" required>
+                    <input type="number" id="weight" placeholder="Weight" required>
+                    <input type="date" id="date" required>
+                    <button type="submit">Add Workout</button>
+                </form>
+            </section>
 
-        <section id="settings" class="hidden">
-            <h2>Settings</h2>
-            <!-- Settings details will go here -->
-        </section>
-    </main>
+            <section id="workout-history" class="hidden">
+                <h2>Workout History</h2>
+                <!-- History details will go here -->
+            </section>
+
+            <section id="settings" class="hidden">
+                <h2>Settings</h2>
+                <!-- Settings details will go here -->
+            </section>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>

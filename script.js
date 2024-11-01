@@ -15,6 +15,34 @@ function clearWorkoutList() {
     document.getElementById("total-weight").textContent = "0 lbs"; // Reset total weight
 }
 
+// Refresh workout list function
+async function refreshWorkoutList() {
+    const token = sessionStorage.getItem("token");
+    const response = await fetch(`${apiUrl}/get-workouts`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+        const { workouts } = await response.json();
+        const workoutList = document.getElementById("workout-list");
+        clearWorkoutList(); // Clear previous workouts
+
+        workouts.forEach(workout => {
+            const workoutItem = document.createElement("li");
+            workoutItem.textContent = `${workout.exercise_name} - ${workout.sets} sets, ${workout.reps} reps, ${workout.weight} lbs`;
+            workoutList.appendChild(workoutItem);
+        });
+
+        document.getElementById("total-workouts").textContent = workouts.length.toString();
+        const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight, 0);
+        document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
+    } else {
+        const errorData = await response.json();
+        alert(`Failed to fetch workouts: ${errorData.error}`);
+    }
+}
+
 // Page load setup
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = sessionStorage.getItem("loggedIn");
@@ -63,6 +91,35 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
     } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.error}`);
+    }
+});
+
+// Add workout form submission
+document.getElementById("add-workout-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const exerciseName = document.getElementById("exercise-name").value;
+    const sets = document.getElementById("sets").value;
+    const reps = document.getElementById("reps").value;
+    const weight = document.getElementById("weight").value;
+    const date = document.getElementById("date").value;
+
+    const token = sessionStorage.getItem("token");
+    const response = await fetch(`${apiUrl}/add-workout`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ exercise_name: exerciseName, sets, reps, weight, date })
+    });
+
+    if (response.ok) {
+        alert("Workout added successfully!");
+        clearWorkoutList(); // Clear and refresh workout list after adding
+        await refreshWorkoutList();
+    } else {
+        const errorData = await response.json();
+        alert(`Failed to add workout: ${errorData.error}`);
     }
 });
 
