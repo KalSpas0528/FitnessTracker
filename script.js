@@ -143,40 +143,47 @@ async function displayWorkouts(workouts) {
     workoutList.innerHTML = ""; // Clear existing list
 
     workouts.forEach((workout) => {
-        const listItem = document.createElement("div");
-        listItem.classList.add("workout-item");
+        const listItem = document.createElement("li");
+        listItem.className = "workout-item"; // Apply new class
+
         listItem.innerHTML = `
             <span>${workout.exercise_name} - ${workout.sets} sets of ${workout.reps} reps, ${workout.weight} lbs</span>
             <button class="delete-button" data-id="${workout.id}">Delete</button>
         `;
 
-        workoutList.appendChild(listItem);
-    });
-
-    // Attach delete event handlers
-    document.querySelectorAll(".delete-button").forEach(button => {
-        button.addEventListener("click", async (event) => {
-            const workoutId = event.target.getAttribute("data-id");
-            const response = await fetch(`${apiUrl}/delete-workout/${workoutId}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`
-                }
-            });
-
-            if (response.ok) {
-                alert("Workout deleted successfully!");
-                await refreshWorkoutList(); // Refresh the list after deletion
-            } else {
-                alert("Failed to delete workout.");
-            }
+        // Add event listener to the delete button
+        const deleteButton = listItem.querySelector(".delete-button");
+        deleteButton.addEventListener("click", async () => {
+            await deleteWorkout(workout.id);
         });
+
+        workoutList.appendChild(listItem);
     });
 
     // Update total workouts and total weight lifted
     document.getElementById("total-workouts").textContent = workouts.length;
     const totalWeight = workouts.reduce((total, workout) => total + workout.weight, 0);
     document.getElementById("total-weight").textContent = `${totalWeight} lbs`;
+}
+
+// Delete workout function
+async function deleteWorkout(workoutId) {
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(`${apiUrl}/delete-workout/${workoutId}`, {
+        method: "DELETE",
+        headers: {
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        }
+    });
+
+    if (response.ok) {
+        alert("Workout deleted!");
+        await refreshWorkoutList(); // Refresh the list after deletion
+    } else {
+        const errorData = await response.json();
+        alert(`Failed to delete workout: ${errorData.error}`);
+    }
 }
 
 // Logout function
