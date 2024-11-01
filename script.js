@@ -7,25 +7,6 @@ const exampleWorkouts = [
     { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
 ];
 
-// Array of inspirational quotes
-const quotes = [
-    "Your only limit is you.",
-    "Push yourself, because no one else is going to do it for you.",
-    "Great things never come from comfort zones.",
-    "Dream it. Wish it. Do it.",
-    "Success doesn’t just find you. You have to go out and get it.",
-    "The harder you work for something, the greater you’ll feel when you achieve it.",
-    "Dream bigger. Do bigger.",
-    "Don’t stop when you’re tired. Stop when you’re done."
-];
-
-// Function to display a random quote
-function displayRandomQuote() {
-    const quoteElement = document.getElementById("inspirational-quote");
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    quoteElement.textContent = quotes[randomIndex];
-}
-
 // Section management
 function showSection(sectionId) {
     const sections = document.querySelectorAll("section");
@@ -55,8 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isLoggedIn) {
         showSection("dashboard");
         workouts = [...exampleWorkouts]; // Load example workouts on login
-        displayRandomQuote(); // Display a random quote
-        displayWorkouts(); // Refresh the workout list upon login
+        displayWorkouts();
     } else {
         showSection("login-section");
     }
@@ -111,7 +91,6 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         sessionStorage.setItem("token", responseData.access_token);
         workouts = [...exampleWorkouts]; // Load example workouts on login
         showSection("dashboard");
-        displayRandomQuote(); // Display a random quote
         displayWorkouts(); // Refresh the workout list upon login
     } else {
         const errorData = await response.json();
