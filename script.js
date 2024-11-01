@@ -1,4 +1,4 @@
-const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // Your actual API URL
+const apiUrl = "https://fitnesstracker-41f0.onrender.com" // Your actual API URL
 
 // Section management
 function showSection(sectionId) {
@@ -56,11 +56,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Sidebar navigation handling
-    document.querySelectorAll("aside nav ul li a").forEach(link => {
+    document.querySelectorAll(".sidebar-link").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            const sectionId = e.target.getAttribute("data-section");
-            showSection(sectionId);
+
+            // If the link is the logout button, handle logout
+            if (e.target.id === "logout-button") {
+                sessionStorage.clear(); // Clear session storage
+                alert("Logged out successfully!");
+
+                clearWorkoutList(); // Clear displayed workouts on logout
+                document.getElementById("add-workout").style.display = 'none'; // Hide Add Workout button
+                showSection("login-section"); // Redirect to login section
+            } else {
+                // Get the section ID from `data-section` attribute
+                const sectionId = e.target.getAttribute("data-section");
+                showSection(sectionId); // Show the selected section
+            }
         });
     });
 });
@@ -84,7 +96,6 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
         sessionStorage.setItem("loggedIn", true);
         sessionStorage.setItem("token", responseData.access_token);
 
-        // Clear previous workouts before displaying new ones
         clearWorkoutList(); // Clear any existing workouts
         await refreshWorkoutList(); // Fetch and display the logged-in user's workouts
         showSection("dashboard");
@@ -118,6 +129,7 @@ document.getElementById("workout-form").addEventListener("submit", async (event)
         alert("Workout added successfully!");
         clearWorkoutList(); // Clear and refresh workout list after adding
         await refreshWorkoutList();
+        showSection("dashboard"); // Redirect to dashboard to view workouts
     } else {
         const errorData = await response.json();
         alert(`Failed to add workout: ${errorData.error}`);
