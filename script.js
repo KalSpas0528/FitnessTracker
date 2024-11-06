@@ -1,7 +1,5 @@
 const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // URL for your API
 let workouts = [];
-let mealLogs = [];  // Array to hold the logged meals
-
 const exampleWorkouts = [
     { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
     { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
@@ -51,41 +49,6 @@ function displayWorkouts() {
     updateChart();
 }
 
-// Display nutrient logs
-function displayMealLogs() {
-    const mealLogList = document.getElementById("meal-log-list");
-    mealLogList.innerHTML = "";
-    mealLogs.forEach((meal, index) => {
-        const listItem = document.createElement("div");
-        listItem.className = "meal-log-item";
-        listItem.innerHTML = `
-            <table>
-                <tr><td>Food</td><td>${meal.foodName}</td></tr>
-                <tr><td>Calories</td><td>${meal.calories}</td></tr>
-                <tr><td>Protein</td><td>${meal.protein}</td></tr>
-                <tr><td>Carbs</td><td>${meal.carbs}</td></tr>
-                <tr><td>Fat</td><td>${meal.fat}</td></tr>
-            </table>
-            <button class="delete-button" onclick="deleteMeal(${index})">Delete</button>
-        `;
-        mealLogList.appendChild(listItem);
-    });
-}
-
-// Delete a workout
-function deleteWorkout(index) {
-    workouts.splice(index, 1);
-    displayWorkouts();
-    showMessage("Workout deleted successfully!");
-}
-
-// Delete a meal log
-function deleteMeal(index) {
-    mealLogs.splice(index, 1);
-    displayMealLogs();
-    showMessage("Meal deleted successfully!");
-}
-
 // Confirmation message function
 function showMessage(message) {
     const messageDiv = document.createElement('div');
@@ -93,6 +56,13 @@ function showMessage(message) {
     messageDiv.textContent = message;
     document.body.appendChild(messageDiv);
     setTimeout(() => messageDiv.remove(), 3000);
+}
+
+// Delete a workout
+function deleteWorkout(index) {
+    workouts.splice(index, 1);
+    displayWorkouts();
+    showMessage("Workout deleted successfully!");
 }
 
 // Handle workout form submission
@@ -107,22 +77,6 @@ document.getElementById("workout-form").addEventListener("submit", function (eve
     workouts.push(newWorkout);
     displayWorkouts();
     showMessage("Workout added successfully!");
-    this.reset();
-});
-
-// Handle meal log form submission
-document.getElementById("meal-log-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    const foodName = document.getElementById("food-name").value;
-    const calories = parseInt(document.getElementById("calories").value);
-    const protein = parseInt(document.getElementById("protein").value);
-    const carbs = parseInt(document.getElementById("carbs").value);
-    const fat = parseInt(document.getElementById("fat").value);
-
-    const newMeal = { foodName, calories, protein, carbs, fat };
-    mealLogs.push(newMeal);
-    displayMealLogs();
-    showMessage("Meal logged successfully!");
     this.reset();
 });
 
@@ -163,7 +117,6 @@ document.getElementById("login-form").addEventListener("submit", async function 
 document.getElementById("logout-button").addEventListener("click", function () {
     document.getElementById("login-status").textContent = "Logged Out";
     workouts = [];
-    mealLogs = [];  // Clear meal logs on logout
     document.getElementById("workout-list").innerHTML = "";
     document.getElementById("total-workouts").textContent = "0";
     document.getElementById("total-weight").textContent = "0";
