@@ -3,92 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Tracker Dashboard</title>
+    <title>Fitness Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="account-info">
-                <img src="https://via.placeholder.com/30" alt="Account Icon" class="account-icon">
-                <span id="login-status">Logged Out</span>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="account-info">
+            <img src="profile.jpg" alt="Profile Picture" width="50">
+            <span>Welcome, User!</span>
+        </div>
+        <ul>
+            <li><button id="dashboard-btn">Dashboard</button></li>
+            <li><button id="workout-history-btn">Workout History</button></li>
+            <li><button id="nutrient-tracking-btn">Nutrient Tracking</button></li> <!-- New Button -->
+            <li><button id="workout-form-btn">Workout Form</button></li>
+            <li><button id="motivation-btn">Motivation</button></li>
+            <li><button id="logout-btn">Logout</button></li>
+        </ul>
+        <div class="server-status">Server Status: Online</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="hidden">
+            <h2>Dashboard</h2>
+            <p>Welcome to your fitness dashboard!</p>
+        </div>
+
+        <!-- Workout History Section -->
+        <div id="workout-history-section" class="hidden">
+            <h2>Workout History</h2>
+            <div class="workout-history-item">
+                <table>
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td>2024-11-06</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Exercise</strong></td>
+                        <td>Push-ups</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reps</strong></td>
+                        <td>50</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sets</strong></td>
+                        <td>3</td>
+                    </tr>
+                </table>
             </div>
-            <div class="server-status">
-                <span id="server-name">Server: Random Server</span>
+        </div>
+
+        <!-- Nutrient Tracking Section (New) -->
+        <div id="nutrient-tracking-section" class="hidden">
+            <h2>Nutrient Tracking</h2>
+            <div class="nutrient-tracking-item">
+                <h3>Today's Meal Log</h3>
+                <table>
+                    <tr>
+                        <td><strong>Food</strong></td>
+                        <td><strong>Calories</strong></td>
+                        <td><strong>Protein (g)</strong></td>
+                        <td><strong>Carbs (g)</strong></td>
+                        <td><strong>Fat (g)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Chicken Breast</td>
+                        <td>165</td>
+                        <td>31</td>
+                        <td>0</td>
+                        <td>4</td>
+                    </tr>
+                    <tr>
+                        <td>Rice</td>
+                        <td>200</td>
+                        <td>4</td>
+                        <td>45</td>
+                        <td>0</td>
+                    </tr>
+                    <!-- Add more meals here -->
+                </table>
             </div>
-            <ul>
-                <li><button onclick="showSection('dashboard')">Dashboard</button></li>
-                <li><button onclick="showSection('workout-form-section')">Add Workout</button></li>
-                <li><button onclick="showSection('motivation-section')">Motivation</button></li>
-                <li><button onclick="showSection('workout-history-section')">Workout History</button></li> <!-- New button for Workout History -->
-                <li><button onclick="showSection('login-section')">Login</button></li>
-                <li><button onclick="showSection('signup-section')">Signup</button></li>
-                <li><button id="logout-button">Logout</button></li>
-            </ul>
-        </nav>
 
-        <!-- Main Content -->
-        <main class="content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="hidden">
-                <h2>Your Workouts</h2>
-                <div id="workout-list"></div>
-                <div id="workout-summary">
-                    <p>Total Workouts: <span id="total-workouts"></span></p>
-                    <p>Total Weight Lifted: <span id="total-weight"></span></p>
-                </div>
-                <canvas id="workoutProgressChart" width="400" height="200"></canvas>
-            </section>
+            <h3>Log a New Meal</h3>
+            <form id="meal-log-form">
+                <input type="text" id="food-name" placeholder="Food Name" required>
+                <input type="number" id="calories" placeholder="Calories" required>
+                <input type="number" id="protein" placeholder="Protein (g)" required>
+                <input type="number" id="carbs" placeholder="Carbs (g)" required>
+                <input type="number" id="fat" placeholder="Fat (g)" required>
+                <button type="submit">Log Meal</button>
+            </form>
+        </div>
 
-            <!-- Workout Form Section -->
-            <section id="workout-form-section" class="hidden">
-                <h2>Add New Workout</h2>
-                <form id="workout-form">
-                    <label>Exercise Name:</label>
-                    <input type="text" id="exercise-name" required>
-                    <label>Sets:</label>
-                    <input type="number" id="sets" required>
-                    <label>Reps:</label>
-                    <input type="number" id="reps" required>
-                    <label>Weight:</label>
-                    <input type="number" id="weight" required>
-                    <button type="submit">Add Workout</button>
-                </form>
-            </section>
+        <!-- Other sections (Workout Form, Motivation) -->
+        <div id="workout-form-section" class="hidden">
+            <h2>Log a New Workout</h2>
+            <form id="workout-form">
+                <input type="text" placeholder="Exercise Name" required>
+                <input type="number" placeholder="Reps" required>
+                <input type="number" placeholder="Sets" required>
+                <button type="submit">Submit Workout</button>
+            </form>
+        </div>
 
-            <!-- Workout History Section (New) -->
-            <section id="workout-history-section" class="hidden">
-                <h2>Your Workout History</h2>
-                <div id="workout-history-list"></div>
-            </section>
-
-            <!-- Motivation Section -->
-            <section id="motivation-section" class="hidden">
-                <h2>Motivational Quotes</h2>
-                <p id="motivation-content"></p>
-            </section>
-
-            <!-- Login Section -->
-            <section id="login-section">
-                <h2>Login</h2>
-                <form id="login-form">
-                    <label>Email:</label>
-                    <input type="email" id="login-email" required>
-                    <label>Password:</label>
-                    <input type="password" id="login-password" required>
-                    <button type="submit">Login</button>
-                </form>
-            </section>
-
-            <!-- Signup Section -->
-            <section id="signup-section" class="hidden">
-                <h2>Signup</h2>
-                <p>This is the signup page. Functionality coming soon!</p>
-                <button>Signup</button>
-            </section>
-        </main>
+        <div id="motivation-section" class="hidden">
+            <h2>Motivation</h2>
+            <p>"Your only limit is you."</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
