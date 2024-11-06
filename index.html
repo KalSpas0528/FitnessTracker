@@ -22,8 +22,9 @@
                 <li><button onclick="showSection('dashboard')">Dashboard</button></li>
                 <li><button onclick="showSection('workout-form-section')">Add Workout</button></li>
                 <li><button onclick="showSection('motivation-section')">Motivation</button></li>
+                <li><button onclick="showSection('workout-history-section')">Workout History</button></li> <!-- New button for Workout History -->
                 <li><button onclick="showSection('login-section')">Login</button></li>
-                <li><button onclick="showSection('signup-section')">Signup</button></li> <!-- Signup Button Added -->
+                <li><button onclick="showSection('signup-section')">Signup</button></li>
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
@@ -57,6 +58,12 @@
                 </form>
             </section>
 
+            <!-- Workout History Section (New) -->
+            <section id="workout-history-section" class="hidden">
+                <h2>Your Workout History</h2>
+                <div id="workout-history-list"></div>
+            </section>
+
             <!-- Motivation Section -->
             <section id="motivation-section" class="hidden">
                 <h2>Motivational Quotes</h2>
@@ -75,7 +82,7 @@
                 </form>
             </section>
 
-            <!-- Signup Section (No Functionality) -->
+            <!-- Signup Section -->
             <section id="signup-section" class="hidden">
                 <h2>Signup</h2>
                 <p>This is the signup page. Functionality coming soon!</p>
