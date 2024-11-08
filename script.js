@@ -1,3 +1,4 @@
+// Script modifications
 const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // URL for your API
 let workouts = [];
 const exampleWorkouts = [
@@ -19,10 +20,14 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.remove("hidden");
 
     if (sectionId === "motivation-section") {
-        document.getElementById("motivation-content").textContent =
-            motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+        // Display a random motivational quote with added 'bubbly' effect
+        const quoteElement = document.getElementById("motivation-content");
+        quoteElement.textContent = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+        quoteElement.classList.add("bubble-animation"); // Add the bubbly animation class
     }
 }
+
+// (Other functions remain the same)
 
 // Display workouts on the dashboard
 function displayWorkouts() {
