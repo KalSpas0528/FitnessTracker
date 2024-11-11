@@ -175,3 +175,35 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
+document.addEventListener('DOMContentLoaded', () => {
+    const nutritionLink = document.getElementById('nutrition-link');
+    const nutritionSection = document.getElementById('nutrition-section');
+    const addFoodButton = document.getElementById('add-food');
+    const foodLog = document.getElementById('food-log');
+  
+    // Switch to Nutrition Page
+    nutritionLink.addEventListener('click', () => {
+      document.querySelectorAll('.content > div').forEach(section => section.classList.add('hidden'));
+      nutritionSection.classList.remove('hidden');
+    });
+  
+    // Add Food Entry
+    addFoodButton.addEventListener('click', () => {
+      const foodName = document.getElementById('food-name').value;
+      const calories = document.getElementById('calories').value;
+  
+      if (foodName && calories) {
+        const entry = document.createElement('div');
+        entry.classList.add('food-entry');
+        entry.innerText = `${foodName}: ${calories} kcal`;
+        foodLog.appendChild(entry);
+  
+        // Clear input fields
+        document.getElementById('food-name').value = '';
+        document.getElementById('calories').value = '';
+      } else {
+        alert('Please enter both food name and calorie count.');
+      }
+    });
+  });
+  

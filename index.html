@@ -23,7 +23,8 @@
                 <li><button onclick="showSection('workout-form-section')">Add Workout</button></li>
                 <li><button onclick="showSection('motivation-section')">Motivation</button></li>
                 <li><button onclick="showSection('login-section')">Login</button></li>
-                <li><button onclick="showSection('signup-section')">Signup</button></li> <!-- Signup Button Added -->
+                <li><button onclick="showSection('signup-section')">Signup</button></li>
+                <li><button onclick="showSection('nutrition-section')">Nutrition</button></li> <!-- Added Nutrition Button -->
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
@@ -80,6 +81,17 @@
                 <h2>Signup</h2>
                 <p>This is the signup page. Functionality coming soon!</p>
                 <button>Signup</button>
+            </section>
+
+            <!-- Nutrition Section -->
+            <section id="nutrition-section" class="hidden">
+                <h2>Nutrition Tracker</h2>
+                <div class="nutrition-input">
+                    <input type="text" id="food-name" placeholder="Food Item">
+                    <input type="number" id="calories" placeholder="Calories">
+                    <button id="add-food">Add Food</button>
+                </div>
+                <div id="food-log"></div>
             </section>
         </main>
     </div>
