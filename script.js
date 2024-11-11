@@ -1,6 +1,7 @@
 // Script modifications
 const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // URL for your API
 let workouts = [];
+let nutritionData = []; // Store food data here
 const exampleWorkouts = [
     { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
     { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
@@ -13,7 +14,7 @@ const motivationQuotes = [
     "Hard work beats talent when talent doesn’t work hard."
 ];
 const serverNames = ["Server A", "Server B", "Server C", "Server D"];
-const nutritionData = []; // Store food data here
+let loggedIn = false;
 
 // Show selected section
 function showSection(sectionId) {
@@ -21,10 +22,9 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.remove("hidden");
 
     if (sectionId === "motivation-section") {
-        // Display a random motivational quote with added 'bubbly' effect
         const quoteElement = document.getElementById("motivation-content");
         quoteElement.textContent = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
-        quoteElement.classList.add("bubble-animation"); // Add the bubbly animation class
+        quoteElement.classList.add("bubble-animation");
     }
 }
 
@@ -53,6 +53,25 @@ function displayWorkouts() {
     updateChart();
 }
 
+// Display nutrition data on the nutrition page
+function displayNutritionData() {
+    const nutritionList = document.getElementById("nutrition-list");
+    nutritionList.innerHTML = "";
+    nutritionData.forEach((entry, index) => {
+        const div = document.createElement("div");
+        div.className = "nutrition-item";
+        div.innerHTML = `
+            <p><strong>${entry.foodItem}</strong></p>
+            <p>Calories: ${entry.calories} kcal</p>
+            <p>Proteins: ${entry.proteins} g</p>
+            <p>Carbs: ${entry.carbs} g</p>
+            <p>Fats: ${entry.fats} g</p>
+            <button class="delete-button" onclick="deleteNutritionItem(${index})">Delete</button>
+        `;
+        nutritionList.appendChild(div);
+    });
+}
+
 // Confirmation message function
 function showMessage(message) {
     const messageDiv = document.createElement('div');
@@ -69,6 +88,13 @@ function deleteWorkout(index) {
     showMessage("Workout deleted successfully!");
 }
 
+// Delete a nutrition item
+function deleteNutritionItem(index) {
+    nutritionData.splice(index, 1);
+    displayNutritionData();
+    showMessage("Food entry deleted successfully!");
+}
+
 // Handle workout form submission
 document.getElementById("workout-form").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -81,6 +107,22 @@ document.getElementById("workout-form").addEventListener("submit", function (eve
     workouts.push(newWorkout);
     displayWorkouts();
     showMessage("Workout added successfully!");
+    this.reset();
+});
+
+// Handle food form submission for adding food entry
+document.getElementById("nutrition-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const foodItem = document.getElementById("food-item").value;
+    const calories = document.getElementById("calories").value;
+    const proteins = document.getElementById("proteins").value;
+    const carbs = document.getElementById("carbs").value;
+    const fats = document.getElementById("fats").value;
+
+    const newFoodEntry = { foodItem, calories, proteins, carbs, fats };
+    nutritionData.push(newFoodEntry);
+    displayNutritionData();
+    showMessage("Food entry added successfully!");
     this.reset();
 });
 
@@ -102,12 +144,15 @@ document.getElementById("login-form").addEventListener("submit", async function 
         const data = await response.json();
 
         if (response.ok) {
+            loggedIn = true;
             document.getElementById("login-status").textContent = `Logged in as ${email}`;
             const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
             document.getElementById("server-name").textContent = `Server: ${randomServer}`;
             
             workouts = exampleWorkouts.concat(data.workouts || []);
+            nutritionData = data.nutrition || [];
             displayWorkouts();
+            displayNutritionData();
             showSection('dashboard');
         } else {
             document.getElementById("login-status").textContent = `Login failed: ${data.error}`;
@@ -120,8 +165,11 @@ document.getElementById("login-form").addEventListener("submit", async function 
 // Handle logout
 document.getElementById("logout-button").addEventListener("click", function () {
     document.getElementById("login-status").textContent = "Logged Out";
+    loggedIn = false;
     workouts = [];
+    nutritionData = [];
     document.getElementById("workout-list").innerHTML = "";
+    document.getElementById("nutrition-list").innerHTML = "";
     document.getElementById("total-workouts").textContent = "0";
     document.getElementById("total-weight").textContent = "0";
 
@@ -167,51 +215,10 @@ function updateChart() {
     });
 }
 
-// Initialize with example workouts
+// Initialize with example workouts and nutrition data
 window.onload = function () {
     workouts = exampleWorkouts;
     displayWorkouts();
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
-
-// Nutrition tracking functionality
-document.addEventListener('DOMContentLoaded', () => {
-    const nutritionSection = document.getElementById('nutrition-section');
-    const nutritionForm = document.getElementById('nutrition-form');
-    const nutritionList = document.getElementById('nutrition-list');
-  
-    // Handle the submission of the nutrition form
-    nutritionForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const foodItem = document.getElementById('food-item').value;
-        const calories = document.getElementById('calories').value;
-        const proteins = document.getElementById('proteins').value;
-        const carbs = document.getElementById('carbs').value;
-        const fats = document.getElementById('fats').value;
-
-        // Add the new food entry to the nutrition data array
-        nutritionData.push({ foodItem, calories, proteins, carbs, fats });
-        nutritionForm.reset();
-
-        if (loggedIn) {
-            displayNutritionData();
-        }
-    });
-
-    function displayNutritionData() {
-        nutritionList.innerHTML = '';
-        nutritionData.forEach((entry) => {
-            const div = document.createElement('div');
-            div.classList.add('nutrition-item');
-            div.innerHTML = `
-                <p><strong>${entry.foodItem}</strong></p>
-                <p>Calories: ${entry.calories} kcal</p>
-                <p>Proteins: ${entry.proteins} g</p>
-                <p>Carbs: ${entry.carbs} g</p>
-                <p>Fats: ${entry.fats} g</p>
-            `;
-            nutritionList.appendChild(div);
-        });
-    }
-});
