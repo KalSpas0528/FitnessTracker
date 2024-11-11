@@ -13,6 +13,7 @@ const motivationQuotes = [
     "Hard work beats talent when talent doesn’t work hard."
 ];
 const serverNames = ["Server A", "Server B", "Server C", "Server D"];
+const nutritionData = []; // Store food data here
 
 // Show selected section
 function showSection(sectionId) {
@@ -26,8 +27,6 @@ function showSection(sectionId) {
         quoteElement.classList.add("bubble-animation"); // Add the bubbly animation class
     }
 }
-
-// (Other functions remain the same)
 
 // Display workouts on the dashboard
 function displayWorkouts() {
@@ -175,35 +174,44 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
+
+// Nutrition tracking functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const nutritionLink = document.getElementById('nutrition-link');
     const nutritionSection = document.getElementById('nutrition-section');
-    const addFoodButton = document.getElementById('add-food');
-    const foodLog = document.getElementById('food-log');
+    const nutritionForm = document.getElementById('nutrition-form');
+    const nutritionList = document.getElementById('nutrition-list');
   
-    // Switch to Nutrition Page
-    nutritionLink.addEventListener('click', () => {
-      document.querySelectorAll('.content > div').forEach(section => section.classList.add('hidden'));
-      nutritionSection.classList.remove('hidden');
+    // Handle the submission of the nutrition form
+    nutritionForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const foodItem = document.getElementById('food-item').value;
+        const calories = document.getElementById('calories').value;
+        const proteins = document.getElementById('proteins').value;
+        const carbs = document.getElementById('carbs').value;
+        const fats = document.getElementById('fats').value;
+
+        // Add the new food entry to the nutrition data array
+        nutritionData.push({ foodItem, calories, proteins, carbs, fats });
+        nutritionForm.reset();
+
+        if (loggedIn) {
+            displayNutritionData();
+        }
     });
-  
-    // Add Food Entry
-    addFoodButton.addEventListener('click', () => {
-      const foodName = document.getElementById('food-name').value;
-      const calories = document.getElementById('calories').value;
-  
-      if (foodName && calories) {
-        const entry = document.createElement('div');
-        entry.classList.add('food-entry');
-        entry.innerText = `${foodName}: ${calories} kcal`;
-        foodLog.appendChild(entry);
-  
-        // Clear input fields
-        document.getElementById('food-name').value = '';
-        document.getElementById('calories').value = '';
-      } else {
-        alert('Please enter both food name and calorie count.');
-      }
-    });
-  });
-  
+
+    function displayNutritionData() {
+        nutritionList.innerHTML = '';
+        nutritionData.forEach((entry) => {
+            const div = document.createElement('div');
+            div.classList.add('nutrition-item');
+            div.innerHTML = `
+                <p><strong>${entry.foodItem}</strong></p>
+                <p>Calories: ${entry.calories} kcal</p>
+                <p>Proteins: ${entry.proteins} g</p>
+                <p>Carbs: ${entry.carbs} g</p>
+                <p>Fats: ${entry.fats} g</p>
+            `;
+            nutritionList.appendChild(div);
+        });
+    }
+});
