@@ -263,3 +263,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+// Open chatbot modal when the button is clicked
+document.getElementById('ai-recommendation-btn').addEventListener('click', function () {
+    document.getElementById('chatbot-modal').style.display = 'block';
+});
+
+// Close chatbot modal when the close button is clicked
+document.getElementById('close-chatbot-modal').addEventListener('click', function () {
+    document.getElementById('chatbot-modal').style.display = 'none';
+});

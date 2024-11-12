@@ -45,3 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+// Function to send a message and get a response from the AI
+function sendMessageToAI(userInput) {
+    // Example function that could call an AI model or process the input
+    let aiResponse = "This is a placeholder for AI's response based on " + userInput;
+    displayAIResponse(aiResponse);
+}
+
+// Function to display the AI's response in the modal
+function displayAIResponse(response) {
+    const responseContainer = document.getElementById('chatbot-response-container');
+    const newMessage = document.createElement('p');
+    newMessage.textContent = response;
+    responseContainer.appendChild(newMessage);
+}
+
+// Add event listener for sending messages
+document.getElementById('send-message-btn').addEventListener('click', function () {
+    const userInput = document.getElementById('user-input').value;
+    sendMessageToAI(userInput);
+});
