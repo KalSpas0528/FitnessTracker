@@ -222,3 +222,44 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
+// script.js
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Existing code for UI and interactivity
+    let workoutLogBtn = document.getElementById('log-workout-btn');
+    let nutritionSidebarBtn = document.getElementById('nutrition-sidebar-btn');
+    let aiRecommendationBtn = document.getElementById('ai-recommendation-btn'); // AI button for recommendations
+
+    if (workoutLogBtn) {
+        workoutLogBtn.addEventListener('click', function () {
+            // Show or redirect to workout logging page
+        });
+    }
+
+    if (nutritionSidebarBtn) {
+        nutritionSidebarBtn.addEventListener('click', function () {
+            // Show or redirect to nutrition sidebar
+        });
+    }
+
+    if (aiRecommendationBtn) {
+        aiRecommendationBtn.addEventListener('click', function () {
+            openAIChatbot();
+        });
+    }
+
+    // Function to handle AI chatbot opening
+    function openAIChatbot() {
+        const chatbotModal = document.getElementById('chatbot-modal');
+        chatbotModal.style.display = 'block'; // Show the chatbot modal
+    }
+
+    // Close chatbot when user clicks close button
+    const closeModalBtn = document.getElementById('close-chatbot-modal');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function () {
+            const chatbotModal = document.getElementById('chatbot-modal');
+            chatbotModal.style.display = 'none'; // Hide the chatbot modal
+        });
+    }
+});
