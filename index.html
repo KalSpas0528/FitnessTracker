@@ -105,37 +105,18 @@
             </section>
         </main>
     </div>
-<!-- Example for chatbot trigger button -->
-<button id="ai-recommendation-btn">Get AI Recommendations</button>
 
-<!-- Chatbot Modal -->
-<div id="chatbot-modal" style="display:none;">
-    <div id="chatbot-container">
-        <div id="chat-output"></div>
-        <input type="text" id="chat-input" placeholder="Ask me for meal suggestions, workouts, etc.">
-        <button id="send-btn">Send</button>
-        <button id="close-chatbot-modal">Close</button>
+    <!-- Chatbot Modal -->
+    <div id="chatbot-modal">
+        <div id="chatbot-container">
+            <div id="chat-output"></div>
+            <input type="text" id="chat-input" placeholder="Type your message">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+            <button id="close-chatbot-modal" onclick="toggleChatbot()">Close</button>
+        </div>
     </div>
-</div>
-<!-- Link to  main JavaScript file (script.js) -->
-<script src="script.js"></script>
 
-<!-- Link to  chatbot.js for AI  -->
-<script src="chatbot.js"></script>
-
+    <script src="script.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 </html>
-<!-- Chatbot Button -->
-<button id="chatbotButton">Chat with Titan AI</button>
-
-<!-- Chatbot Modal -->
-<div id="chatbotModal" class="modal">
-  <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <h2>Chat with Titan AI</h2>
-    <div id="chatbotOutput"></div>
-    <input type="text" id="chatbotInput" placeholder="Ask something..." />
-    <button id="sendChatbotMessage">Send</button>
-  </div>
-</div>
-

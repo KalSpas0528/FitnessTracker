@@ -71,53 +71,6 @@
     display: none;
 }
 
-/* Dashboard workout item styling */
-.workout-item {
-    border: 2px solid #5d77f7;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #f7f7f7;
-    text-align: left;
-}
-
-.workout-item table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.workout-item td {
-    padding: 5px;
-    border-bottom: 1px solid #ccc;
-}
-
-.delete-button {
-    display: block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    color: #ffffff;
-    background-color: #ff4c4c;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.delete-button:hover {
-    background-color: #ff1c1c;
-}
-
-/* Confirmation message styling */
-.confirmation-message {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    z-index: 1000;
-    transition: opacity 0.5s ease;
-}
 /* Motivational Quotes Styling */
 #motivation-content {
     font-size: 1.5em;
@@ -133,19 +86,6 @@
     position: relative;
 }
 
-/* Bubble animation effect */
-@keyframes bubble {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-.bubble-animation {
-    animation: bubble 1s ease-in-out infinite;
-}
 /* Nutrition Section Styles */
 #nutrition-section {
     margin-top: 20px;
@@ -194,18 +134,7 @@
     color: #333;
 }
 
-/* Additional styles to ensure UI consistency */
-button {
-    cursor: pointer;
-}
-
-input, button {
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}/* style.css */
-/* style.css */
-
-/* Modal styling remains unchanged */
+/* Chatbot Modal styling */
 #chatbot-modal {
     position: fixed;
     top: 0;
