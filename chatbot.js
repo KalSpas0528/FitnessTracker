@@ -65,35 +65,43 @@ document.getElementById('send-message-btn').addEventListener('click', function (
     const userInput = document.getElementById('user-input').value;
     sendMessageToAI(userInput);
 });
-// Toggle Chatbot Modal
-const chatbotButton = document.getElementById('chatbotButton');
-const chatbotModal = document.getElementById('chatbotModal');
-const closeButton = document.querySelector('.close-button');
-const chatbotInput = document.getElementById('chatbotInput');
-const chatbotOutput = document.getElementById('chatbotOutput');
-const sendChatbotMessage = document.getElementById('sendChatbotMessage');
+// Toggle the chatbot modal
+function toggleChatbot() {
+    const chatbotModal = document.getElementById('chatbot-modal');
+    chatbotModal.style.display = (chatbotModal.style.display === 'flex') ? 'none' : 'flex';
+}
 
-chatbotButton.onclick = () => chatbotModal.style.display = 'block';
-closeButton.onclick = () => chatbotModal.style.display = 'none';
-
-// Send Message to Chatbot
-sendChatbotMessage.onclick = () => {
-  const userInput = chatbotInput.value;
-  chatbotOutput.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
-  generateResponse(userInput);
-  chatbotInput.value = '';
+// Close the chatbot modal when the close button is clicked
+const closeChatbotButton = document.getElementById('close-chatbot-modal');
+closeChatbotButton.onclick = () => {
+    const chatbotModal = document.getElementById('chatbot-modal');
+    chatbotModal.style.display = 'none';
 };
 
-// Simple AI response based on input
-function generateResponse(input) {
-  let response;
+// Send the message to chatbot and show AI's response
+const sendButton = document.getElementById('send-btn');
+const chatInput = document.getElementById('chat-input');
+const chatOutput = document.getElementById('chat-output');
 
-  if (input.includes('recommendation')) {
-    response = 'Here’s a workout suggestion based on your recent logs!';
-    // Integrate with your actual workout data logic here
-  } else {
-    response = "I'm here to help! Ask about your workout history or goals.";
-  }
+sendButton.onclick = () => {
+    const userMessage = chatInput.value;
+    chatOutput.innerHTML += `<div class="chat-message user">${userMessage}</div>`;
+    generateAIResponse(userMessage);
+    chatInput.value = '';
+};
 
-  chatbotOutput.innerHTML += `<p><strong>Titan AI:</strong> ${response}</p>`;
+// Simple AI response generation
+function generateAIResponse(input) {
+    let aiResponse;
+
+    if (input.includes('recommendation')) {
+        aiResponse = 'Here’s a workout suggestion based on your recent logs!';
+        // Logic to fetch recommendations based on user’s data
+    } else if (input.includes('meal suggestions')) {
+        aiResponse = 'How about a protein-packed meal? Try grilled chicken with veggies!';
+    } else {
+        aiResponse = "I can help with workouts, meals, and more. Just ask!";
+    }
+
+    chatOutput.innerHTML += `<div class="chat-message ai">${aiResponse}</div>`;
 }
