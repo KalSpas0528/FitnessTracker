@@ -222,53 +222,26 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
-// script.js
 
+// script.js for AI recommendation
 document.addEventListener("DOMContentLoaded", function () {
-    // Existing code for UI and interactivity
-    let workoutLogBtn = document.getElementById('log-workout-btn');
-    let nutritionSidebarBtn = document.getElementById('nutrition-sidebar-btn');
-    let aiRecommendationBtn = document.getElementById('ai-recommendation-btn'); // AI button for recommendations
-
-    if (workoutLogBtn) {
-        workoutLogBtn.addEventListener('click', function () {
-            // Show or redirect to workout logging page
-        });
-    }
-
-    if (nutritionSidebarBtn) {
-        nutritionSidebarBtn.addEventListener('click', function () {
-            // Show or redirect to nutrition sidebar
-        });
-    }
-
+    let aiRecommendationBtn = document.getElementById('ai-recommendation-btn');
     if (aiRecommendationBtn) {
         aiRecommendationBtn.addEventListener('click', function () {
             openAIChatbot();
         });
     }
 
-    // Function to handle AI chatbot opening
     function openAIChatbot() {
         const chatbotModal = document.getElementById('chatbot-modal');
-        chatbotModal.style.display = 'block'; // Show the chatbot modal
+        chatbotModal.style.display = 'block'; 
     }
 
-    // Close chatbot when user clicks close button
     const closeModalBtn = document.getElementById('close-chatbot-modal');
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', function () {
             const chatbotModal = document.getElementById('chatbot-modal');
-            chatbotModal.style.display = 'none'; // Hide the chatbot modal
+            chatbotModal.style.display = 'none';
         });
     }
-});
-// Open chatbot modal when the button is clicked
-document.getElementById('ai-recommendation-btn').addEventListener('click', function () {
-    document.getElementById('chatbot-modal').style.display = 'block';
-});
-
-// Close chatbot modal when the close button is clicked
-document.getElementById('close-chatbot-modal').addEventListener('click', function () {
-    document.getElementById('chatbot-modal').style.display = 'none';
 });
