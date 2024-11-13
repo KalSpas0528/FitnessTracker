@@ -65,3 +65,35 @@ document.getElementById('send-message-btn').addEventListener('click', function (
     const userInput = document.getElementById('user-input').value;
     sendMessageToAI(userInput);
 });
+// Toggle Chatbot Modal
+const chatbotButton = document.getElementById('chatbotButton');
+const chatbotModal = document.getElementById('chatbotModal');
+const closeButton = document.querySelector('.close-button');
+const chatbotInput = document.getElementById('chatbotInput');
+const chatbotOutput = document.getElementById('chatbotOutput');
+const sendChatbotMessage = document.getElementById('sendChatbotMessage');
+
+chatbotButton.onclick = () => chatbotModal.style.display = 'block';
+closeButton.onclick = () => chatbotModal.style.display = 'none';
+
+// Send Message to Chatbot
+sendChatbotMessage.onclick = () => {
+  const userInput = chatbotInput.value;
+  chatbotOutput.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+  generateResponse(userInput);
+  chatbotInput.value = '';
+};
+
+// Simple AI response based on input
+function generateResponse(input) {
+  let response;
+
+  if (input.includes('recommendation')) {
+    response = 'Here’s a workout suggestion based on your recent logs!';
+    // Integrate with your actual workout data logic here
+  } else {
+    response = "I'm here to help! Ask about your workout history or goals.";
+  }
+
+  chatbotOutput.innerHTML += `<p><strong>Titan AI:</strong> ${response}</p>`;
+}
