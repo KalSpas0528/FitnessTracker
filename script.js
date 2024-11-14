@@ -245,3 +245,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const aiRecommendationBtn = document.getElementById("ai-recommendation-btn");
+    const chatbotModal = document.getElementById("chatbot-modal");
+
+    // Open the chatbot modal on button click
+    aiRecommendationBtn.addEventListener("click", function () {
+        chatbotModal.style.display = 'block';
+    });
+
+    // Close chatbot modal when clicking outside
+    window.addEventListener("click", function (event) {
+        if (event.target === chatbotModal) {
+            chatbotModal.style.display = 'none';
+        }
+    });
+});

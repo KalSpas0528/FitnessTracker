@@ -6,6 +6,7 @@
     <title>Fitness Tracker Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 </head>
 <body>
     <div class="container">
@@ -108,15 +109,15 @@
 <!-- Example for chatbot trigger button -->
 <button id="ai-recommendation-btn">Get AI Recommendations</button>
 
-<!-- Chatbot Modal -->
-<div id="chatbot-modal" style="display:none;">
-    <div id="chatbot-container">
-        <div id="chat-output"></div>
-        <input type="text" id="chat-input" placeholder="Ask me for meal suggestions, workouts, etc.">
-        <button id="send-btn">Send</button>
-        <button id="close-chatbot-modal">Close</button>
-    </div>
-</div>
+   <!-- Chatbot Modal Structure -->
+   <div id="chatbot-modal" class="chatbot-modal">
+    <div class="chatbot-content">
+        <span id="close-chatbot-modal" class="close">&times;</span>
+        <h2>AI Chatbot</h2>
+        <div id="chatbot-output">Ask me something about workouts or nutrition!</div>
+        <form id="chatbot-form">
+            <input type="text" id="chatbot-input" placeholder="Type your question...">
+            <button type="submit">Send</button>
 <!-- Link to  main JavaScript file (script.js) -->
 <script src="script.js"></script>
 
@@ -126,16 +127,3 @@
 </body>
 </html>
 <!-- Chatbot Button -->
-<button id="chatbotButton">Chat with Titan AI</button>
-
-<!-- Chatbot Modal -->
-<div id="chatbotModal" class="modal">
-  <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <h2>Chat with Titan AI</h2>
-    <div id="chatbotOutput"></div>
-    <input type="text" id="chatbotInput" placeholder="Ask something..." />
-    <button id="sendChatbotMessage">Send</button>
-  </div>
-</div>
-
