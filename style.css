@@ -70,7 +70,42 @@
 .hidden {
     display: none;
 }
+/* Workout Item Styling */
+.workout-item {
+    background-color: #fdf7e2; /* Light yellow for table effect */
+    border: 1px solid #e0c18c; /* Subtle border for definition */
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
 
+.workout-item table {
+    width: 100%;
+    font-size: 1rem;
+}
+
+.workout-item table td {
+    padding: 5px;
+    color: #666;
+}
+
+/* Delete button styling for workout items */
+.workout-item .delete-button {
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.workout-item .delete-button:hover {
+    background-color: #e07b00;
+}
 /* Motivational Quotes Styling */
 #motivation-content {
     font-size: 1.5em;
