@@ -58,6 +58,22 @@
     background-color: #555;
 }
 
+/* Chatbot button styling within the sidebar */
+#ai-recommendation-btn {
+    width: 100%;
+    background: none;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    text-align: left;
+    margin-top: 20px; /* Space from the last sidebar item */
+}
+
+#ai-recommendation-btn:hover {
+    background-color: #555;
+}
+
 /* Main content styling */
 .content {
     flex: 1;
@@ -70,6 +86,7 @@
 .hidden {
     display: none;
 }
+
 /* Workout Item Styling */
 .workout-item {
     background-color: #fdf7e2; /* Light yellow for table effect */
@@ -106,6 +123,7 @@
 .workout-item .delete-button:hover {
     background-color: #e07b00;
 }
+
 /* Motivational Quotes Styling */
 #motivation-content {
     font-size: 1.5em;
@@ -182,7 +200,7 @@
     align-items: center;
 }
 
-#chatbot-container {
+.chatbot-content {
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -190,7 +208,7 @@
     text-align: center;
 }
 
-#chat-output {
+#chatbot-output {
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 10px;
@@ -212,28 +230,13 @@
     text-align: right;
 }
 
-#chat-input {
+#chatbot-input {
     width: 80%;
     padding: 5px;
 }
 
-#send-btn, #close-chatbot-modal {
+#chatbot-form button,
+#close-chatbot-modal {
     padding: 5px 10px;
     margin: 5px;
-}
-
-/* Chatbot button styling within the sidebar */
-#chatbotButton {
-    width: 100%;
-    background: none;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    text-align: left;
-    margin-top: 20px; /* Space from the last sidebar item */
-}
-
-#chatbotButton:hover {
-    background-color: #555;
 }
