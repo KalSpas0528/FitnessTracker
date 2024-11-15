@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let model;
 
     async function loadModel() {
-        model = await tf.loadGraphModel('https://your-model-url/model.json');
+        model = await tf.loadGraphModel('://youhttpsr-model-url/model.json');
         console.log("Model Loaded");
     }
 
@@ -79,3 +79,44 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+document.getElementById("sendButton").addEventListener("click", function() {
+    const userInput = document.getElementById("userInput").value;
+    if (userInput.trim() === "") {
+      alert("Please enter a message.");
+      return;
+    }
+  
+    // Clear the input box
+    document.getElementById("userInput").value = "";
+  
+    // Display user's message in chat
+    const userMessage = document.createElement("div");
+    userMessage.classList.add("chat-message", "user-message");
+    userMessage.textContent = userInput;
+    document.getElementById("chatBox").appendChild(userMessage);
+  
+    // Call the AI model (assuming it's set up with TensorFlow.js)
+    getAIResponse(userInput);
+  });
+  
+  async function getAIResponse(userMessage) {
+    // Fetch AI response (assuming model loaded)
+    const modelResponse = await generateAIResponse(userMessage); // Replace with actual function
+    
+    // Display AI response in chat
+    const aiMessage = document.createElement("div");
+    aiMessage.classList.add("chat-message", "ai-message");
+    aiMessage.textContent = modelResponse;
+    document.getElementById("chatBox").appendChild(aiMessage);
+  }
+  
+  async function generateAIResponse(userMessage) {
+    // Logic for sending input to AI model and returning response
+    // For now, you can use a dummy response:
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve("AI response to: " + userMessage); // Replace this with real AI processing logic
+      }, 1000);
+    });
+  }
+  
