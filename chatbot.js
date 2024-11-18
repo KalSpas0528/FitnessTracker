@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Event listener for the chatbot form submission
     chatbotForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+        e.preventDefault();  // Prevent page reload on form submission
 
         const inputText = chatbotInput.value;
         chatbotInput.value = "";  // Clear the input field
