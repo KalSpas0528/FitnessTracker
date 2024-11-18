@@ -27,17 +27,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Convert the input text into a tensor using the Universal Sentence Encoder
         const embeddings = await model.embed([inputText]);
 
-        // Here, you would normally send this embedding to a backend for further processing,
-        // but for now, let's just simulate a basic response based on the similarity of embeddings
-        const response = getResponseBasedOnEmbedding(embeddings);
+        // Here, we’ll simulate a response based on the embedding (for simplicity)
+        const response = generateSimpleResponse(inputText);
         return response;
     };
 
-    // Simulated response function
-    const getResponseBasedOnEmbedding = (embedding) => {
-        // This would ideally compare embeddings to known responses or intent classifications
-        // For simplicity, we're just returning a generic response.
-        return "I'm still learning! I'll get better at this.";
+    // Simple response generator based on input
+    const generateSimpleResponse = (inputText) => {
+        // In a real scenario, this would process the input text to find a response
+        return `You said: "${inputText}". I'm learning to respond better!`;
     };
 
     // Event listener for the chatbot form submission
