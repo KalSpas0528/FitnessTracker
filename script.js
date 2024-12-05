@@ -223,45 +223,7 @@ window.onload = function () {
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
 
-// script.js for AI recommendation
-document.addEventListener("DOMContentLoaded", function () {
-    let aiRecommendationBtn = document.getElementById('ai-recommendation-btn');
-    if (aiRecommendationBtn) {
-        aiRecommendationBtn.addEventListener('click', function () {
-            openAIChatbot();
-        });
-    }
-
-    function openAIChatbot() {
-        const chatbotModal = document.getElementById('chatbot-modal');
-        chatbotModal.style.display = 'block'; 
-    }
-
-    const closeModalBtn = document.getElementById('close-chatbot-modal');
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', function () {
-            const chatbotModal = document.getElementById('chatbot-modal');
-            chatbotModal.style.display = 'none';
-        });
-    }
-});
-document.addEventListener("DOMContentLoaded", function () {
-    const aiRecommendationBtn = document.getElementById("ai-recommendation-btn");
-    const chatbotModal = document.getElementById("chatbot-modal");
-
-    // Open the chatbot modal on button click
-    aiRecommendationBtn.addEventListener("click", function () {
-        chatbotModal.style.display = 'block';
-    });
-
-    // Close chatbot modal when clicking outside
-    window.addEventListener("click", function (event) {
-        if (event.target === chatbotModal) {
-            chatbotModal.style.display = 'none';
-        }
-    });
-});
-
+//ai
 // Example usage within script.js
 import { predictNextWeight } from './ai-logic.js';
 
