@@ -261,3 +261,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Example usage within script.js
+import { predictNextWeight } from './ai-logic.js';
+
+// For example, use this inside an event handler for a workout form submission
+async function handleWorkoutInput(workoutData) {
+    const nextWeight = await predictNextWeight(workoutData);
+    console.log(`Recommended next weight: ${nextWeight}`);
+}
