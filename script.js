@@ -221,9 +221,17 @@ window.onload = function () {
     displayWorkouts();
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
-};
-document.getElementById('ai-recommendation-btn').addEventListener('click', function() {
-    // Add the functionality you want to trigger on button click
-    alert('AI Recommendation button clicked!');
-    // Or any function that triggers the chatbot, such as opening a modal or fetching AI responses.
+
+//ai
+    // Function to toggle the AI Chatbot modal visibility
+function toggleChatbot() {
+    const chatbotModal = document.getElementById('chatbot-modal');
+    chatbotModal.classList.toggle('hidden'); // Toggle the "hidden" class to show/hide the modal
+}
+
+// Function to close the chatbot modal when the close button is clicked
+document.getElementById('close-chatbot-modal').addEventListener('click', function () {
+    const chatbotModal = document.getElementById('chatbot-modal');
+    chatbotModal.classList.add('hidden'); // Hide the modal
 });
+}

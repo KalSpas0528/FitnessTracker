@@ -1,6 +1,4 @@
 
-// Import TensorFlow.js
-
 import * as tf from '@tensorflow/tfjs';
 
 // Example Training Data
