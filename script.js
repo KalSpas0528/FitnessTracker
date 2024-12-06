@@ -222,3 +222,8 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
+document.getElementById('ai-recommendation-btn').addEventListener('click', function() {
+    // Add the functionality you want to trigger on button click
+    alert('AI Recommendation button clicked!');
+    // Or any function that triggers the chatbot, such as opening a modal or fetching AI responses.
+});
