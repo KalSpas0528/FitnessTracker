@@ -223,15 +223,47 @@ window.onload = function () {
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 
 //ai
-    // Function to toggle the AI Chatbot modal visibility
+// Function to toggle the chatbot modal visibility
 function toggleChatbot() {
-    const chatbotModal = document.getElementById('chatbot-modal');
-    chatbotModal.classList.toggle('hidden'); // Toggle the "hidden" class to show/hide the modal
+    const chatbotModal = document.getElementById("chatbot-modal");
+    chatbotModal.style.display = chatbotModal.style.display === "flex" ? "none" : "flex";
 }
 
-// Function to close the chatbot modal when the close button is clicked
-document.getElementById('close-chatbot-modal').addEventListener('click', function () {
-    const chatbotModal = document.getElementById('chatbot-modal');
-    chatbotModal.classList.add('hidden'); // Hide the modal
+// Open the modal when clicking the chatbot button
+document.getElementById("ai-recommendation-btn").addEventListener("click", toggleChatbot);
+
+// Close the modal when clicking the close button
+document.getElementById("close-chatbot-modal").addEventListener("click", function() {
+    const chatbotModal = document.getElementById("chatbot-modal");
+    chatbotModal.style.display = "none";
 });
+
+// Handle the chatbot form submission
+document.getElementById("chatbot-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const userInput = document.getElementById("chatbot-input").value;
+    if (userInput) {
+        appendMessage(userInput, 'user');  // Display user message
+        generateAIResponse(userInput);  // Call function to get AI's response
+    }
+});
+
+// Function to append messages to the chatbox
+function appendMessage(message, sender) {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("chat-message", sender);
+    messageElement.textContent = message;
+    document.getElementById("chatbot-output").appendChild(messageElement);
+    document.getElementById("chatbot-input").value = "";  // Clear input field
+    document.getElementById("chatbot-output").scrollTop = document.getElementById("chatbot-output").scrollHeight;  // Auto-scroll
+}
+
+// AI response simulation
+function generateAIResponse(userMessage) {
+    // For simplicity, we're just echoing the user message as a response
+    // Replace this with actual AI logic if necessary
+    setTimeout(() => {
+        appendMessage("You said: " + userMessage, 'ai');  // Simulate AI response
+    }, 1000);
+}
 }
