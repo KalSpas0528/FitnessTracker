@@ -222,13 +222,3 @@ window.onload = function () {
     const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
     document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 };
-
-//ai
-// Example usage within script.js
-import { predictNextWeight } from './ai-logic.js';
-
-// For example, use this inside an event handler for a workout form submission
-async function handleWorkoutInput(workoutData) {
-    const nextWeight = await predictNextWeight(workoutData);
-    console.log(`Recommended next weight: ${nextWeight}`);
-}
