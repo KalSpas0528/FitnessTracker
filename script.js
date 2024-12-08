@@ -214,61 +214,55 @@ function updateChart() {
         }
     });
 }
-
-
-import { predictNextWeight } from './ai-logic.js';
-
-// Function to toggle chatbot modal visibility
-function toggleChatbot() {
-    const chatbotModal = document.getElementById("chatbot-modal");
-    chatbotModal.style.display = chatbotModal.style.display === "flex" ? "none" : "flex";
+// Simplify and fix showSection functionality
+function showSection(sectionId) {
+    document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
+    document.getElementById(sectionId).classList.remove("hidden");
 }
 
-// Open the modal when clicking the chatbot button
-document.getElementById("ai-recommendation-btn").addEventListener("click", toggleChatbot);
-
-// Close the modal when clicking the close button
-document.getElementById("close-chatbot-modal").addEventListener("click", () => {
-    document.getElementById("chatbot-modal").style.display = "none";
+// Attach event listeners to sidebar buttons dynamically
+document.querySelectorAll('.sidebar button').forEach(button => {
+    button.addEventListener('click', (event) => {
+        const sectionId = event.target.getAttribute('onclick').match(/'(.*?)'/)[1];
+        showSection(sectionId);
+    });
 });
 
-// Handle the chatbot form submission
+// Initialize: Ensure only login-wrapper or dashboard is visible
+window.onload = function () {
+    const loginWrapper = document.getElementById('login-wrapper');
+    const mainContent = document.getElementById('main-content');
+    if (loggedIn) {
+        loginWrapper.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+    } else {
+        loginWrapper.classList.remove('hidden');
+        mainContent.classList.add('hidden');
+    }
+};
+import { trainModel, handleChatResponse } from './ai-logic.js';
+
+// Train the AI model on page load
+(async () => {
+    await trainModel();
+    console.log("AI Model is ready.");
+})();
+
+// AI Chatbot logic
 document.getElementById("chatbot-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const userInput = document.getElementById("chatbot-input").value;
+    const userInput = document.getElementById("chatbot-input").value.trim();
 
-    if (userInput.trim()) {
-        appendMessage(userInput, 'user'); // Display user message
-        appendMessage("Titan AI is thinking...", 'ai'); // Placeholder AI response
+    if (userInput) {
+        appendMessage(userInput, 'user');
+        appendMessage("Titan AI is thinking...", 'ai');
 
         try {
-            // Generate AI response using the TensorFlow model
-            const simulatedInput = [1, 0, 0, 3, 10, 75]; // Example input; customize parsing logic as needed
-            const response = await predictNextWeight(simulatedInput);
-            const aiResponse = `Based on your input, I recommend ${response.toFixed(2)} lbs.`;
-            updateLastMessage(aiResponse, 'ai'); // Replace the placeholder with actual response
+            const aiResponse = await handleChatResponse(userInput);
+            updateLastMessage(aiResponse, 'ai');
         } catch (error) {
             console.error("AI Error:", error);
             updateLastMessage("Sorry, I couldn't process your request.", 'ai');
         }
     }
 });
-
-// Append chat messages to the output
-function appendMessage(message, sender) {
-    const chatOutput = document.getElementById("chatbot-output");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message", sender);
-    messageElement.textContent = message;
-    chatOutput.appendChild(messageElement);
-    chatOutput.scrollTop = chatOutput.scrollHeight;
-}
-
-// Update the last AI message with the actual response
-function updateLastMessage(message, sender) {
-    const chatOutput = document.getElementById("chatbot-output");
-    const lastMessage = [...chatOutput.querySelectorAll(`.chat-message.${sender}`)].pop();
-    if (lastMessage) {
-        lastMessage.textContent = message;
-    }
-}

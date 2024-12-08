@@ -1,55 +1,24 @@
-import React, { useState } from "react";
-import { predictNextWeight } from "./ai-logic";
+import * as tf from '@tensorflow/tfjs';
 
-const Chatbot = () => {
-  const [messages, setMessages] = useState([]);
-  const [userInput, setUserInput] = useState("");
+const trainingData = tf.tensor2d([
+    [1, 0, 0, 3, 10, 75], // Example inputs
+]);
+const outputData = tf.tensor2d([[80]]); // Example output
 
-  const handleSendMessage = async (event) => {
-    event.preventDefault();
-    if (!userInput.trim()) return;
+const model = tf.sequential();
+model.add(tf.layers.dense({ inputShape: [6], units: 8, activation: 'relu' }));
+model.add(tf.layers.dense({ units: 1 }));
 
-    const userMessage = { sender: "user", text: userInput };
-    setMessages((prev) => [...prev, userMessage]);
+model.compile({ optimizer: tf.train.adam(), loss: 'meanSquaredError' });
 
-    // Simulated AI response
-    let aiMessage = { sender: "ai", text: "AI is thinking..." };
-    setMessages((prev) => [...prev, aiMessage]);
+export async function trainModel() {
+    await model.fit(trainingData, outputData, { epochs: 10 });
+}
 
-    try {
-      const response = await predictNextWeight([1, 0, 0, 3, 10, 75]); // Example input
-      aiMessage.text = `Based on your input, I recommend ${response.toFixed(2)} lbs.`;
-    } catch (err) {
-      aiMessage.text = "Sorry, I couldn't process your request.";
-      console.error(err);
-    }
-
-    setMessages((prev) => [...prev.slice(0, -1), aiMessage]); // Replace "thinking" with actual response
-    setUserInput("");
-  };
-
-  return (
-    <div id="chatbot-modal" className="chatbot-modal">
-      <div className="chatbot-content">
-        <span onClick={() => (document.getElementById("chatbot-modal").style.display = "none")} className="close">&times;</span>
-        <h2>AI Chatbot</h2>
-        <div id="chatbot-output">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`chat-message ${msg.sender}`}>{msg.text}</div>
-          ))}
-        </div>
-        <form onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Type your question..."
-          />
-          <button type="submit">Send</button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-export default Chatbot;
+export async function handleChatResponse(userInput) {
+    // Example input parsing logic (update as needed)
+    const inputData = [1, 0, 0, 3, 10, 75];
+    const inputTensor = tf.tensor2d([inputData]);
+    const prediction = model.predict(inputTensor).dataSync()[0];
+    return `Based on your input, I recommend ${prediction.toFixed(2)} lbs.`;
+}

@@ -30,8 +30,15 @@
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
-
+<!-- Login Wrapper -->
+<div id="login-wrapper" class="login-screen">
+    <h1>Welcome to Fitness Tracker</h1>
+    <p>Please log in or sign up to continue.</p>
+    <button onclick="showSection('login-section')">Login</button>
+    <button onclick="showSection('signup-section')">Sign Up</button>
+</div>
         <!-- Main Content -->
+        <div class="container hidden" id="main-content">
         <main class="content">
             <!-- Dashboard Section -->
             <section id="dashboard" class="hidden">
