@@ -217,64 +217,52 @@ function updateChart() {
     });
 }
 
-// Initialize with example workouts and nutrition data
-window.onload = function () {
-    workouts = exampleWorkouts;
-    displayWorkouts();
-    const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
-    document.getElementById("server-name").textContent = `Server: ${randomServer}`;
+// Toggle Chatbot Modal
+window.toggleChatbot = function () {
+    const chatbotModal = document.getElementById("chatbot-modal");
+    chatbotModal.style.display = chatbotModal.style.display === "flex" ? "none" : "flex";
+};
 
+// Chatbot Form Submission
+document.getElementById("chatbot-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const userInput = document.getElementById("chatbot-input").value;
+    if (!userInput) return;
 
-    // Train AI Model on Page Load
-    trainModel();
-    
-    // Toggle Chatbot Modal
-    function toggleChatbot() {
-        const chatbotModal = document.getElementById("chatbot-modal");
-        chatbotModal.style.display = chatbotModal.style.display === "flex" ? "none" : "flex";
-    }
-    
-    // Chatbot Form Submission
-    document.getElementById("chatbot-form").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const userInput = document.getElementById("chatbot-input").value;
-        if (!userInput) return;
-    
-        // Append user message to chat
-        appendMessage(userInput, 'user');
-        setLoadingIndicator(true);
-    
-        // Simulate AI Processing
-        const simulatedInput = [1, 0, 0, 3, 10, 75]; // Example input; replace with parsed data from user input
-        const aiResponse = await generateAIResponse(simulatedInput);
-    
-        // Append AI response to chat
-        appendMessage(aiResponse, 'ai');
-        setLoadingIndicator(false);
-    });
-    
-    // Append Chat Message
-    function appendMessage(message, sender) {
-        const chatOutput = document.getElementById("chatbot-output");
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("chat-message", sender);
-        messageElement.textContent = message;
-        chatOutput.appendChild(messageElement);
-        chatOutput.scrollTop = chatOutput.scrollHeight;
-    }
-    
-    // Set Loading Indicator
-    function setLoadingIndicator(isLoading) {
-        const chatbotOutput = document.getElementById("chatbot-output");
-        if (isLoading) {
-            const loadingElement = document.createElement("div");
-            loadingElement.classList.add("loading-indicator");
-            loadingElement.textContent = "Titan AI is thinking...";
-            loadingElement.id = "loading-indicator";
-            chatbotOutput.appendChild(loadingElement);
-        } else {
-            const loadingElement = document.getElementById("loading-indicator");
-            if (loadingElement) loadingElement.remove();
-        }
+    appendMessage(userInput, 'user');
+    setLoadingIndicator(true);
+
+    const simulatedInput = [1, 0, 0, 3, 10, 75];
+    const aiResponse = await generateAIResponse(simulatedInput);
+
+    appendMessage(aiResponse, 'ai');
+    setLoadingIndicator(false);
+});
+
+// Append Chat Message
+function appendMessage(message, sender) {
+    const chatOutput = document.getElementById("chatbot-output");
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("chat-message", sender);
+    messageElement.textContent = message;
+    chatOutput.appendChild(messageElement);
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+}
+
+// Set Loading Indicator
+function setLoadingIndicator(isLoading) {
+    const chatbotOutput = document.getElementById("chatbot-output");
+    if (isLoading) {
+        const loadingElement = document.createElement("div");
+        loadingElement.classList.add("loading-indicator");
+        loadingElement.textContent = "Titan AI is thinking...";
+        loadingElement.id = "loading-indicator";
+        chatbotOutput.appendChild(loadingElement);
+    } else {
+        const loadingElement = document.getElementById("loading-indicator");
+        if (loadingElement) loadingElement.remove();
     }
 }
+
+// Train AI Model
+trainModel().then(() => console.log("AI model is ready."));
