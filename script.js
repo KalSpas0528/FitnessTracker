@@ -1,4 +1,3 @@
-// Import AI functions
 import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
 // Global variables
@@ -8,12 +7,6 @@ let model;
 
 // API URL
 const apiUrl = "https://fitnesstracker-41f0.onrender.com";
-
-
-// Train the model with existing workout data
-
-// Predict next weight for a given exercise
-
 
 // Show selected section
 function showSection(sectionId) {
@@ -55,31 +48,33 @@ function updateWorkoutSummary() {
 
 // Update workout chart
 function updateWorkoutChart() {
-    const ctx = document.getElementById("workoutProgressChart").getContext("2d");
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: workouts.map(w => w.exercise_name),
-            datasets: [{
-                label: 'Weight (lbs)',
-                data: workouts.map(w => w.weight),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    const ctx = document.getElementById("workoutProgressChart");
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: workouts.map(w => w.exercise_name),
+                datasets: [{
+                    label: 'Weight (lbs)',
+                    data: workouts.map(w => w.weight),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 // Delete a workout
-function deleteWorkout(index) {
+window.deleteWorkout = function(index) {
     workouts.splice(index, 1);
     displayWorkouts();
     showMessage("Workout deleted successfully!");
@@ -105,7 +100,7 @@ function displayNutritionData() {
 }
 
 // Delete a nutrition item
-function deleteNutritionItem(index) {
+window.deleteNutritionItem = function(index) {
     nutritionData.splice(index, 1);
     displayNutritionData();
     showMessage("Food entry deleted successfully!");
@@ -121,7 +116,7 @@ function showMessage(message) {
 }
 
 // Show dashboard
-function showDashboard() {
+window.showDashboard = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
@@ -145,7 +140,7 @@ function showDashboard() {
 }
 
 // Show add workout form
-function showAddWorkout() {
+window.showAddWorkout = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
@@ -195,7 +190,7 @@ async function handleAddWorkout(event) {
 }
 
 // Show nutrition form
-function showNutrition() {
+window.showNutrition = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Nutrition Tracker</h2>
@@ -248,7 +243,7 @@ function handleAddNutrition(event) {
 }
 
 // Show motivation section
-function showMotivation() {
+window.showMotivation = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
@@ -275,7 +270,7 @@ function showNewQuote() {
 }
 
 // Show chat with Titan AI
-function showChatWithTitanAI() {
+window.showChatWithTitanAI = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
@@ -325,12 +320,12 @@ function appendMessage(message) {
 }
 
 // Show login form
-function showLoginForm() {
+window.showLoginForm = function() {
     document.getElementById('loginModal').classList.remove('hidden');
 }
 
 // Show signup form
-function showSignupForm() {
+window.showSignupForm = function() {
     document.getElementById('signupModal').classList.remove('hidden');
 }
 
@@ -403,7 +398,7 @@ function updateUIAfterLogin(email) {
 }
 
 // Handle logout
-function logout() {
+window.logout = function() {
     localStorage.removeItem('token');
     document.getElementById('loginBtn').classList.remove('hidden');
     document.getElementById('signupBtn').classList.remove('hidden');

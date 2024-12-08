@@ -1,7 +1,7 @@
 let model;
 
 // TensorFlow.js model initialization
-async function initModel() {
+export async function initModel() {
     model = tf.sequential();
     model.add(tf.layers.dense({ inputShape: [4], units: 8, activation: 'relu' }));
     model.add(tf.layers.dense({ units: 1 }));
@@ -10,7 +10,7 @@ async function initModel() {
 }
 
 // Train the model with existing workout data
-async function trainModel(workouts) {
+export async function trainModel(workouts) {
     if (workouts.length < 5) {
         console.log("Not enough data to train the model");
         return;
@@ -32,12 +32,10 @@ async function trainModel(workouts) {
 }
 
 // Predict next weight for a given exercise
-async function predictNextWeight(sets, reps) {
+export async function predictNextWeight(sets, reps) {
     const input = tf.tensor2d([[sets, reps, 0, 1]]);
     const prediction = model.predict(input);
     const result = await prediction.data();
     return Math.round(result[0]);
 }
-
-export { initModel, trainModel, predictNextWeight };
 
