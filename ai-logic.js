@@ -1,64 +1,43 @@
+let model;
 
-import * as tf from '@tensorflow/tfjs';
+// TensorFlow.js model initialization
+async function initModel() {
+    model = tf.sequential();
+    model.add(tf.layers.dense({ inputShape: [4], units: 8, activation: 'relu' }));
+    model.add(tf.layers.dense({ units: 1 }));
+    model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+    console.log("AI model initialized");
+}
 
-// Example Training Data
-// Columns: [Exercise (one-hot), Sets, Reps, Weight] -> [Recommended Weight]
-const trainingData = tf.tensor2d([
-    [1, 0, 0, 3, 10, 75], // Lat Pulldowns: 3 sets, 10 reps, 75 lbs
-    [0, 1, 0, 4, 12, 90], // Bench Press: 4 sets, 12 reps, 90 lbs
-    [0, 0, 1, 3, 10, 25], // Hammer Curls: 3 sets, 10 reps, 25 lbs
-]);
+// Train the model with existing workout data
+async function trainModel(workouts) {
+    if (workouts.length < 5) {
+        console.log("Not enough data to train the model");
+        return;
+    }
 
-const outputData = tf.tensor2d([
-    [80], // Recommendation for Lat Pulldowns
-    [100], // Recommendation for Bench Press
-    [30], // Recommendation for Hammer Curls
-]);
+    const tensorData = tf.tensor2d(workouts.map(w => [w.sets, w.reps, w.weight, 1]));
+    const tensorLabels = tf.tensor2d(workouts.map(w => [w.weight]));
 
-// Define the Model Architecture
-const model = tf.sequential();
-model.add(tf.layers.dense({ inputShape: [6], units: 8, activation: 'relu' }));
-model.add(tf.layers.dense({ units: 8, activation: 'relu' }));
-model.add(tf.layers.dense({ units: 1 })); // Output layer for recommended weight
-
-model.compile({
-    optimizer: tf.train.adam(),
-    loss: 'meanSquaredError',
-});
-
-// Train the Model
-async function trainModel() {
-    await model.fit(trainingData, outputData, {
+    await model.fit(tensorData, tensorLabels, {
         epochs: 50,
-        batchSize: 4,
         callbacks: {
             onEpochEnd: (epoch, logs) => {
-                console.log(`Epoch ${epoch}: Loss = ${logs.loss}`);
-            },
-        },
+                console.log(`Epoch ${epoch}: loss = ${logs.loss}`);
+            }
+        }
     });
-    console.log('Model training complete');
+
+    console.log("Model training complete");
 }
 
-// Predict the next weight for an input
-async function predictNextWeight(inputData) {
-    const inputTensor = tf.tensor2d([inputData]);
-    const prediction = model.predict(inputTensor);
-    const predictedWeight = prediction.dataSync()[0];
-    inputTensor.dispose();
-    prediction.dispose();
-    return predictedWeight;
+// Predict next weight for a given exercise
+async function predictNextWeight(sets, reps) {
+    const input = tf.tensor2d([[sets, reps, 0, 1]]);
+    const prediction = model.predict(input);
+    const result = await prediction.data();
+    return Math.round(result[0]);
 }
 
-// Example Usage
-(async () => {
-    await trainModel();
+export { initModel, trainModel, predictNextWeight };
 
-    // Predict for a new workout [Exercise: Bench Press, 4 sets, 10 reps, 95 lbs]
-    const newWorkout = [0, 1, 0, 4, 10, 95];
-    const recommendation = await predictNextWeight(newWorkout);
-    console.log(`Recommended next weight: ${recommendation} lbs`);
-})();
-
-// Export functions for use in other parts of your app (optional if needed elsewhere)
-export { trainModel, predictNextWeight };

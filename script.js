@@ -1,20 +1,19 @@
-// Script modifications
-const apiUrl = "https://fitnesstracker-41f0.onrender.com"; // URL for your API
+// Import AI functions
+import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
+
+// Global variables
 let workouts = [];
-let nutritionData = []; // Store food data here
-const exampleWorkouts = [
-    { exercise_name: "Lat Pulldowns", sets: 3, reps: 10, weight: 75 },
-    { exercise_name: "Hammer Curls", sets: 3, reps: 12, weight: 25 }
-];
-const motivationQuotes = [
-    "Push yourself, because no one else is going to do it for you.",
-    "Success isn’t always about greatness. It’s about consistency.",
-    "All progress takes place outside the comfort zone.",
-    "Dream big and dare to fail.",
-    "Hard work beats talent when talent doesn’t work hard."
-];
-const serverNames = ["Server A", "Server B", "Server C", "Server D"];
-let loggedIn = false;
+let nutritionData = [];
+let model;
+
+// API URL
+const apiUrl = "https://fitnesstracker-41f0.onrender.com";
+
+
+// Train the model with existing workout data
+
+// Predict next weight for a given exercise
+
 
 // Show selected section
 function showSection(sectionId) {
@@ -22,11 +21,8 @@ function showSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
         section.classList.remove("hidden");
-    } else {
-        console.error("Section not found: " + sectionId);
     }
 }
-
 
 // Display workouts on the dashboard
 function displayWorkouts() {
@@ -34,51 +30,52 @@ function displayWorkouts() {
     workoutList.innerHTML = "";
     workouts.forEach((workout, index) => {
         const listItem = document.createElement("div");
-        listItem.className = "workout-item";
+        listItem.className = "workout-item card";
         listItem.innerHTML = `
-            <table>
-                <tr><td>Exercise</td><td>${workout.exercise_name}</td></tr>
-                <tr><td>Sets</td><td>${workout.sets}</td></tr>
-                <tr><td>Reps</td><td>${workout.reps}</td></tr>
-                <tr><td>Weight</td><td>${workout.weight}</td></tr>
-            </table>
-            <button class="delete-button" onclick="deleteWorkout(${index})">Delete</button>
+            <h3 class="font-bold">${workout.exercise_name}</h3>
+            <p>Sets: ${workout.sets}</p>
+            <p>Reps: ${workout.reps}</p>
+            <p>Weight: ${workout.weight} lbs</p>
+            <button class="btn btn-danger mt-2" onclick="deleteWorkout(${index})">Delete</button>
         `;
         workoutList.appendChild(listItem);
     });
 
-    document.getElementById("total-workouts").textContent = workouts.length;
+    updateWorkoutSummary();
+    updateWorkoutChart();
+}
+
+// Update workout summary
+function updateWorkoutSummary() {
+    const totalWorkouts = workouts.length;
     const totalWeight = workouts.reduce((sum, workout) => sum + workout.weight * workout.sets * workout.reps, 0);
+    document.getElementById("total-workouts").textContent = totalWorkouts;
     document.getElementById("total-weight").textContent = totalWeight;
-    updateChart();
 }
 
-// Display nutrition data on the nutrition page
-function displayNutritionData() {
-    const nutritionList = document.getElementById("nutrition-list");
-    nutritionList.innerHTML = "";
-    nutritionData.forEach((entry, index) => {
-        const div = document.createElement("div");
-        div.className = "nutrition-item";
-        div.innerHTML = `
-            <p><strong>${entry.foodItem}</strong></p>
-            <p>Calories: ${entry.calories} kcal</p>
-            <p>Proteins: ${entry.proteins} g</p>
-            <p>Carbs: ${entry.carbs} g</p>
-            <p>Fats: ${entry.fats} g</p>
-            <button class="delete-button" onclick="deleteNutritionItem(${index})">Delete</button>
-        `;
-        nutritionList.appendChild(div);
+// Update workout chart
+function updateWorkoutChart() {
+    const ctx = document.getElementById("workoutProgressChart").getContext("2d");
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: workouts.map(w => w.exercise_name),
+            datasets: [{
+                label: 'Weight (lbs)',
+                data: workouts.map(w => w.weight),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
-}
-
-// Confirmation message function
-function showMessage(message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = "confirmation-message";
-    messageDiv.textContent = message;
-    document.body.appendChild(messageDiv);
-    setTimeout(() => messageDiv.remove(), 3000);
 }
 
 // Delete a workout
@@ -88,6 +85,25 @@ function deleteWorkout(index) {
     showMessage("Workout deleted successfully!");
 }
 
+// Display nutrition data
+function displayNutritionData() {
+    const nutritionList = document.getElementById("nutrition-list");
+    nutritionList.innerHTML = "";
+    nutritionData.forEach((item, index) => {
+        const listItem = document.createElement("div");
+        listItem.className = "nutrition-item card";
+        listItem.innerHTML = `
+            <h3 class="font-bold">${item.foodItem}</h3>
+            <p>Calories: ${item.calories}</p>
+            <p>Proteins: ${item.proteins}g</p>
+            <p>Carbs: ${item.carbs}g</p>
+            <p>Fats: ${item.fats}g</p>
+            <button class="btn btn-danger mt-2" onclick="deleteNutritionItem(${index})">Delete</button>
+        `;
+        nutritionList.appendChild(listItem);
+    });
+}
+
 // Delete a nutrition item
 function deleteNutritionItem(index) {
     nutritionData.splice(index, 1);
@@ -95,175 +111,322 @@ function deleteNutritionItem(index) {
     showMessage("Food entry deleted successfully!");
 }
 
-// Handle workout form submission
-document.getElementById("workout-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    const exerciseName = document.getElementById("exercise-name").value;
-    const sets = parseInt(document.getElementById("sets").value);
-    const reps = parseInt(document.getElementById("reps").value);
-    const weight = parseInt(document.getElementById("weight").value);
+// Show confirmation message
+function showMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = "fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded";
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    setTimeout(() => messageDiv.remove(), 3000);
+}
 
-    const newWorkout = { exercise_name: exerciseName, sets: sets, reps: reps, weight: weight };
+// Show dashboard
+function showDashboard() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="card">
+                <h3 class="card-title">Recent Workouts</h3>
+                <div id="workout-list"></div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Workout Summary</h3>
+                <p>Total Workouts: <span id="total-workouts"></span></p>
+                <p>Total Weight Lifted: <span id="total-weight"></span> lbs</p>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Workout Progress</h3>
+                <canvas id="workoutProgressChart"></canvas>
+            </div>
+        </div>
+    `;
+    displayWorkouts();
+}
+
+// Show add workout form
+function showAddWorkout() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
+        <form id="workout-form" class="card">
+            <div class="mb-4">
+                <label for="exercise-name" class="block text-gray-700 text-sm font-bold mb-2">Exercise Name:</label>
+                <input type="text" id="exercise-name" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="sets" class="block text-gray-700 text-sm font-bold mb-2">Sets:</label>
+                <input type="number" id="sets" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="reps" class="block text-gray-700 text-sm font-bold mb-2">Reps:</label>
+                <input type="number" id="reps" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight (lbs):</label>
+                <input type="number" id="weight" class="form-input" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Workout</button>
+        </form>
+    `;
+    document.getElementById('workout-form').addEventListener('submit', handleAddWorkout);
+}
+
+// Handle add workout form submission
+async function handleAddWorkout(event) {
+    event.preventDefault();
+    const exerciseName = document.getElementById('exercise-name').value;
+    const sets = parseInt(document.getElementById('sets').value);
+    const reps = parseInt(document.getElementById('reps').value);
+    const weight = parseInt(document.getElementById('weight').value);
+
+    const newWorkout = { exercise_name: exerciseName, sets, reps, weight };
     workouts.push(newWorkout);
     displayWorkouts();
     showMessage("Workout added successfully!");
-    this.reset();
-});
+    event.target.reset();
 
-// Handle food form submission for adding food entry
-document.getElementById("nutrition-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    const foodItem = document.getElementById("food-item").value;
-    const calories = document.getElementById("calories").value;
-    const proteins = document.getElementById("proteins").value;
-    const carbs = document.getElementById("carbs").value;
-    const fats = document.getElementById("fats").value;
+    // Predict next weight
+    if (model) {
+        await trainModel(workouts);
+        const predictedWeight = await predictNextWeight(sets, reps);
+        showMessage(`AI suggests ${predictedWeight} lbs for your next ${exerciseName}`);
+    }
+}
 
-    const newFoodEntry = { foodItem, calories, proteins, carbs, fats };
-    nutritionData.push(newFoodEntry);
+// Show nutrition form
+function showNutrition() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Nutrition Tracker</h2>
+        <form id="nutrition-form" class="card">
+            <div class="mb-4">
+                <label for="food-item" class="block text-gray-700 text-sm font-bold mb-2">Food Item:</label>
+                <input type="text" id="food-item" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="calories" class="block text-gray-700 text-sm font-bold mb-2">Calories:</label>
+                <input type="number" id="calories" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="proteins" class="block text-gray-700 text-sm font-bold mb-2">Proteins (g):</label>
+                <input type="number" id="proteins" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="carbs" class="block text-gray-700 text-sm font-bold mb-2">Carbs (g):</label>
+                <input type="number" id="carbs" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="fats" class="block text-gray-700 text-sm font-bold mb-2">Fats (g):</label>
+                <input type="number" id="fats" class="form-input" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Food Item</button>
+        </form>
+        <div class="mt-8">
+            <h3 class="text-xl font-bold mb-4">Your Nutritional Data</h3>
+            <div id="nutrition-list"></div>
+        </div>
+    `;
+    document.getElementById('nutrition-form').addEventListener('submit', handleAddNutrition);
     displayNutritionData();
-    showMessage("Food entry added successfully!");
-    this.reset();
-});
+}
+
+// Handle add nutrition form submission
+function handleAddNutrition(event) {
+    event.preventDefault();
+    const foodItem = document.getElementById('food-item').value;
+    const calories = parseInt(document.getElementById('calories').value);
+    const proteins = parseInt(document.getElementById('proteins').value);
+    const carbs = parseInt(document.getElementById('carbs').value);
+    const fats = parseInt(document.getElementById('fats').value);
+
+    const newNutritionItem = { foodItem, calories, proteins, carbs, fats };
+    nutritionData.push(newNutritionItem);
+    displayNutritionData();
+    showMessage("Food item added successfully!");
+    event.target.reset();
+}
+
+// Show motivation section
+function showMotivation() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
+        <div class="card">
+            <p id="motivation-quote" class="text-xl italic"></p>
+            <button id="new-quote-btn" class="btn btn-primary mt-4">New Quote</button>
+        </div>
+    `;
+    document.getElementById('new-quote-btn').addEventListener('click', showNewQuote);
+    showNewQuote();
+}
+
+// Show a new motivational quote
+function showNewQuote() {
+    const quotes = [
+        "The only bad workout is the one that didn't happen.",
+        "Your body can stand almost anything. It's your mind that you have to convince.",
+        "The difference between try and triumph is just a little umph!",
+        "The only way to define your limits is by going beyond them.",
+        "You don't have to be extreme, just consistent."
+    ];
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('motivation-quote').textContent = quote;
+}
+
+// Show chat with Titan AI
+function showChatWithTitanAI() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
+        <div class="card">
+            <div id="chat-messages" class="mb-4 h-64 overflow-y-auto"></div>
+            <form id="chat-form" class="flex">
+                <input type="text" id="chat-input" class="form-input flex-grow mr-2" placeholder="Ask Titan AI...">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    `;
+    document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
+}
+
+// Handle chat form submission
+async function handleChatSubmit(event) {
+    event.preventDefault();
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (message) {
+        appendMessage('You: ' + message);
+        input.value = '';
+
+        // Simple AI response based on keywords
+        let response;
+        if (message.toLowerCase().includes('workout')) {
+            response = "Regular workouts are essential for maintaining good health and fitness. Remember to mix cardio and strength training for best results.";
+        } else if (message.toLowerCase().includes('nutrition')) {
+            response = "A balanced diet is key to supporting your fitness goals. Make sure to include plenty of protein, complex carbs, and healthy fats in your meals.";
+        } else if (message.toLowerCase().includes('motivation')) {
+            response = "Stay motivated by setting clear, achievable goals and tracking your progress. Remember, every small step counts towards your larger fitness journey!";
+        } else {
+            response = "I'm here to help with your fitness journey. Feel free to ask about workouts, nutrition, or motivation!";
+        }
+
+        setTimeout(() => appendMessage('Titan AI: ' + response), 1000);
+    }
+}
+
+// Append a message to the chat
+function appendMessage(message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Show login form
+function showLoginForm() {
+    document.getElementById('loginModal').classList.remove('hidden');
+}
+
+// Show signup form
+function showSignupForm() {
+    document.getElementById('signupModal').classList.remove('hidden');
+}
 
 // Handle login form submission
-document.getElementById("login-form").addEventListener("submit", async function (event) {
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
     try {
         const response = await fetch(`${apiUrl}/login`, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            loggedIn = true;
-            document.getElementById("login-status").textContent = `Logged in as ${email}`;
-            const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
-            document.getElementById("server-name").textContent = `Server: ${randomServer}`;
-            
-            workouts = exampleWorkouts.concat(data.workouts || []);
-            nutritionData = data.nutrition || [];
-            displayWorkouts();
-            displayNutritionData();
-            showSection('dashboard');
+            localStorage.setItem('token', data.access_token);
+            document.getElementById('loginModal').classList.add('hidden');
+            updateUIAfterLogin(email);
+            showMessage('Logged in successfully!');
+            showDashboard();
         } else {
-            document.getElementById("login-status").textContent = `Login failed: ${data.error}`;
+            showMessage('Login failed: ' + data.error);
         }
     } catch (error) {
-        document.getElementById("login-status").textContent = `Error: ${error.message}`;
+        showMessage('Error: ' + error.message);
     }
 });
+
+// Handle signup form submission
+document.getElementById('signupForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+
+    try {
+        const response = await fetch(`${apiUrl}/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('signupModal').classList.add('hidden');
+            showMessage('Signup successful! Please log in.');
+            showLoginForm();
+        } else {
+            showMessage('Signup failed: ' + data.error);
+        }
+    } catch (error) {
+        showMessage('Error: ' + error.message);
+    }
+});
+
+// Update UI after successful login
+function updateUIAfterLogin(email) {
+    document.getElementById('loginBtn').classList.add('hidden');
+    document.getElementById('signupBtn').classList.add('hidden');
+    document.getElementById('logoutBtn').classList.remove('hidden');
+    document.querySelector('#sidebar span').textContent = `Logged in as ${email}`;
+}
 
 // Handle logout
-document.getElementById("logout-button").addEventListener("click", function () {
-    document.getElementById("login-status").textContent = "Logged Out";
-    loggedIn = false;
+function logout() {
+    localStorage.removeItem('token');
+    document.getElementById('loginBtn').classList.remove('hidden');
+    document.getElementById('signupBtn').classList.remove('hidden');
+    document.getElementById('logoutBtn').classList.add('hidden');
+    document.querySelector('#sidebar span').textContent = 'Logged Out';
     workouts = [];
     nutritionData = [];
-    document.getElementById("workout-list").innerHTML = "";
-    document.getElementById("nutrition-list").innerHTML = "";
-    document.getElementById("total-workouts").textContent = "0";
-    document.getElementById("total-weight").textContent = "0";
-
-    if (workoutProgressChart) {
-        workoutProgressChart.destroy();
-    }
-
-    showSection('login-section');
-});
-
-// Chart.js for workout progress
-const ctx = document.getElementById("workoutProgressChart").getContext("2d");
-let workoutProgressChart;
-
-function updateChart() {
-    const labels = workouts.map(workout => workout.exercise_name);
-    const data = workouts.map(workout => workout.weight);
-
-    if (workoutProgressChart) {
-        workoutProgressChart.destroy();
-    }
-
-    workoutProgressChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Weights Lifted',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-// Simplify and fix showSection functionality
-function showSection(sectionId) {
-    document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
-    document.getElementById(sectionId).classList.remove("hidden");
+    showMessage('Logged out successfully!');
+    showDashboard();
 }
 
-// Attach event listeners to sidebar buttons dynamically
-document.querySelectorAll('.sidebar button').forEach(button => {
-    button.addEventListener('click', (event) => {
-        // Get the section ID from the button text, make it lowercase and replace spaces with hyphens
-        const sectionId = event.target.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-        showSection(sectionId);
-    });
-});
-
-// Initialize: Ensure only login-wrapper or dashboard is visible
-window.onload = function () {
-    const loginWrapper = document.getElementById('login-wrapper');
-    const mainContent = document.getElementById('main-content');
-    if (loggedIn) {
-        loginWrapper.classList.add('hidden');
-        mainContent.classList.remove('hidden');
-    } else {
-        loginWrapper.classList.remove('hidden');
-        mainContent.classList.add('hidden');
+// Initialize the application
+async function init() {
+    await initModel();
+    showDashboard();
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Implement token verification with your backend here
+        // For now, we'll just update the UI
+        updateUIAfterLogin('user@example.com');
     }
-};
-import { trainModel, handleChatResponse } from './ai-logic.js';
+}
 
-// Train the AI model on page load
-(async () => {
-    await trainModel();
-    console.log("AI Model is ready.");
-})();
+// Start the application
+init();
 
-// AI Chatbot logic
-document.getElementById("chatbot-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const userInput = document.getElementById("chatbot-input").value.trim();
-
-    if (userInput) {
-        appendMessage(userInput, 'user');
-        appendMessage("Titan AI is thinking...", 'ai');
-
-        try {
-            const aiResponse = await handleChatResponse(userInput);
-            updateLastMessage(aiResponse, 'ai');
-        } catch (error) {
-            console.error("AI Error:", error);
-            updateLastMessage("Sorry, I couldn't process your request.", 'ai');
-        }
-    }
-});

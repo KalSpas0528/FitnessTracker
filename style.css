@@ -1,314 +1,83 @@
-/* Container */
-.container {
-    display: flex;
-    height: 100vh;
-    flex-direction: row;
+/* Custom styles to complement Tailwind CSS */
+
+body {
+    font-family: 'Arial', sans-serif;
 }
 
-/* Login Screen Styling */
-.login-screen {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #6ac7a8, #4aa4a4);
-    text-align: center;
-    color: #fff;
+#sidebar {
+    transition: all 0.3s;
 }
 
-.login-screen h1 {
-    font-size: 3rem;
+#sidebar a {
+    transition: all 0.2s;
 }
 
-.login-screen button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    background-color: #ffffff;
-    color: #4aa4a4;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+#sidebar a:hover {
+    transform: translateX(5px);
 }
 
-.login-screen button:hover {
-    background-color: #e6e6e6;
+.card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Main Content Enhancements */
-.container {
-    flex: 1;
-    background: #f9f9f9;
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
 }
 
-/* Dashboard Header Styling */
-.dashboard-header {
-    background-color: #ffffff;
-    color: #333;
-    text-align: center;
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+.btn {
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    color: white;
+    border-radius: 0.5rem;
+    transition-duration: 200ms;
 }
 
-.dashboard-header h1 {
-    margin: 0;
-    font-size: 2rem;
+.btn-primary {
+    background-color: #3B82F6;
 }
 
-.dashboard-header p {
-    margin: 5px 0 0;
-    font-size: 1.2rem;
-    color: #666;
+.btn-primary:hover {
+    background-color: #2563EB;
 }
 
-/* Workout Summary Styling */
-.workout-summary {
-    margin: 20px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+.btn-success {
+    background-color: #10B981;
 }
 
-.workout-summary h2 {
-    margin-top: 0;
-    color: #333;
+.btn-success:hover {
+    background-color: #059669;
 }
 
-/* Sidebar styling */
-.sidebar {
-    width: 200px;
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+.btn-danger {
+    background-color: #EF4444;
 }
 
-.account-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
+.btn-danger:hover {
+    background-color: #DC2626;
 }
 
-.account-icon {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-}
-
-.server-status {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    flex: 1;
-}
-
-.sidebar ul li {
-    margin-bottom: 15px;
-}
-
-.sidebar button {
+.form-input {
     width: 100%;
-    background: none;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    text-align: left;
+    padding: 0.5rem 0.75rem;
+    color: #374151;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.5rem;
 }
 
-.sidebar button:hover {
-    background-color: #555;
+.form-input:focus {
+    outline: none;
+    border-color: #3B82F6;
 }
 
-/* Chatbot button styling within the sidebar */
-#ai-recommendation-btn {
-    width: 100%;
-    background: none;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    text-align: left;
-    margin-top: 20px; /* Space from the last sidebar item */
-}
-
-#ai-recommendation-btn:hover {
-    background-color: #555;
-}
-
-/* Main content styling */
-.content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: #6ac7a8;
-}
-
-/* Section visibility */
 .hidden {
     display: none;
 }
 
-/* Workout Item Styling */
-.workout-item {
-    background-color: #fdf7e2; /* Light yellow for table effect */
-    border: 1px solid #e0c18c; /* Subtle border for definition */
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    color: #333;
-}
+/* Add more custom styles as needed */
 
-.workout-item table {
-    width: 100%;
-    font-size: 1rem;
-}
-
-.workout-item table td {
-    padding: 5px;
-    color: #666;
-}
-
-/* Delete button styling for workout items */
-.workout-item .delete-button {
-    margin-top: 5px;
-    padding: 5px;
-    background-color: #ff8c00;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 0.9rem;
-}
-
-.workout-item .delete-button:hover {
-    background-color: #e07b00;
-}
-
-/* Motivational Quotes Styling */
-#motivation-content {
-    font-size: 1.5em;
-    color: #00aeff;
-    font-weight: bold;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    background-color: #fdf7e2;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    margin: auto;
-    position: relative;
-}
-
-/* Nutrition Section Styles */
-#nutrition-section {
-    margin-top: 20px;
-}
-
-#nutrition-section form {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-    margin: 20px auto;
-}
-
-#nutrition-section label,
-#nutrition-section input {
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-#nutrition-section button {
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-#nutrition-list {
-    margin-top: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.nutrition-item {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-}
-
-.nutrition-item p {
-    margin: 5px 0;
-}
-
-.nutrition-item strong {
-    font-size: 1.1rem;
-    color: #333;
-}
-
-/* Chatbot Modal styling */
-#chatbot-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-.chatbot-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    text-align: center;
-}
-
-#chatbot-output {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-}
-
-.chat-message {
-    margin: 5px;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.user {
-    background-color: lightblue;
-    text-align: left;
-}
-
-.ai {
-    background-color: lightgreen;
-    text-align: right;
-}
-
-#chatbot-input {
-    width: 80%;
-    padding: 5px;
-}
-
-#chatbot-form button,
-#close-chatbot-modal {
-    padding: 5px 10px;
-    margin: 5px;
-}
