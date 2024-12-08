@@ -19,14 +19,14 @@ let loggedIn = false;
 // Show selected section
 function showSection(sectionId) {
     document.querySelectorAll("section").forEach(section => section.classList.add("hidden"));
-    document.getElementById(sectionId).classList.remove("hidden");
-
-    if (sectionId === "motivation-section") {
-        const quoteElement = document.getElementById("motivation-content");
-        quoteElement.textContent = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
-        quoteElement.classList.add("bubble-animation");
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.classList.remove("hidden");
+    } else {
+        console.error("Section not found: " + sectionId);
     }
 }
+
 
 // Display workouts on the dashboard
 function displayWorkouts() {
@@ -223,7 +223,8 @@ function showSection(sectionId) {
 // Attach event listeners to sidebar buttons dynamically
 document.querySelectorAll('.sidebar button').forEach(button => {
     button.addEventListener('click', (event) => {
-        const sectionId = event.target.getAttribute('onclick').match(/'(.*?)'/)[1];
+        // Get the section ID from the button text, make it lowercase and replace spaces with hyphens
+        const sectionId = event.target.textContent.trim().toLowerCase().replace(/\s+/g, '-');
         showSection(sectionId);
     });
 });
