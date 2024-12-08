@@ -2,9 +2,7 @@ import React from "react";
 
 const Sidebar = () => {
   const handleButtonClick = (sectionId) => {
-    document.querySelectorAll("section").forEach((section) =>
-      section.classList.add("hidden")
-    );
+    document.querySelectorAll("section").forEach((section) => section.classList.add("hidden"));
     document.getElementById(sectionId).classList.remove("hidden");
   };
 

@@ -5,6 +5,41 @@
     flex-direction: row;
 }
 
+/* Dashboard Header Styling */
+.dashboard-header {
+    background-color: #ffffff;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.dashboard-header p {
+    margin: 5px 0 0;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Workout Summary Styling */
+.workout-summary {
+    margin: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.workout-summary h2 {
+    margin-top: 0;
+    color: #333;
+}
+
 /* Sidebar styling */
 .sidebar {
     width: 200px;

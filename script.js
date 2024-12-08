@@ -215,15 +215,10 @@ function updateChart() {
     });
 }
 
-// Initialize with example workouts and nutrition data
-window.onload = function () {
-    workouts = exampleWorkouts;
-    displayWorkouts();
-    const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
-    document.getElementById("server-name").textContent = `Server: ${randomServer}`;
 
-//ai
-// Function to toggle the chatbot modal visibility
+import { predictNextWeight } from './ai-logic.js';
+
+// Function to toggle chatbot modal visibility
 function toggleChatbot() {
     const chatbotModal = document.getElementById("chatbot-modal");
     chatbotModal.style.display = chatbotModal.style.display === "flex" ? "none" : "flex";
@@ -233,37 +228,47 @@ function toggleChatbot() {
 document.getElementById("ai-recommendation-btn").addEventListener("click", toggleChatbot);
 
 // Close the modal when clicking the close button
-document.getElementById("close-chatbot-modal").addEventListener("click", function() {
-    const chatbotModal = document.getElementById("chatbot-modal");
-    chatbotModal.style.display = "none";
+document.getElementById("close-chatbot-modal").addEventListener("click", () => {
+    document.getElementById("chatbot-modal").style.display = "none";
 });
 
 // Handle the chatbot form submission
-document.getElementById("chatbot-form").addEventListener("submit", function(event) {
+document.getElementById("chatbot-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const userInput = document.getElementById("chatbot-input").value;
-    if (userInput) {
-        appendMessage(userInput, 'user');  // Display user message
-        generateAIResponse(userInput);  // Call function to get AI's response
+
+    if (userInput.trim()) {
+        appendMessage(userInput, 'user'); // Display user message
+        appendMessage("Titan AI is thinking...", 'ai'); // Placeholder AI response
+
+        try {
+            // Generate AI response using the TensorFlow model
+            const simulatedInput = [1, 0, 0, 3, 10, 75]; // Example input; customize parsing logic as needed
+            const response = await predictNextWeight(simulatedInput);
+            const aiResponse = `Based on your input, I recommend ${response.toFixed(2)} lbs.`;
+            updateLastMessage(aiResponse, 'ai'); // Replace the placeholder with actual response
+        } catch (error) {
+            console.error("AI Error:", error);
+            updateLastMessage("Sorry, I couldn't process your request.", 'ai');
+        }
     }
 });
 
-// Function to append messages to the chatbox
+// Append chat messages to the output
 function appendMessage(message, sender) {
+    const chatOutput = document.getElementById("chatbot-output");
     const messageElement = document.createElement("div");
     messageElement.classList.add("chat-message", sender);
     messageElement.textContent = message;
-    document.getElementById("chatbot-output").appendChild(messageElement);
-    document.getElementById("chatbot-input").value = "";  // Clear input field
-    document.getElementById("chatbot-output").scrollTop = document.getElementById("chatbot-output").scrollHeight;  // Auto-scroll
+    chatOutput.appendChild(messageElement);
+    chatOutput.scrollTop = chatOutput.scrollHeight;
 }
 
-// AI response simulation
-function generateAIResponse(userMessage) {
-    // For simplicity, we're just echoing the user message as a response
-    // Replace this with actual AI logic if necessary
-    setTimeout(() => {
-        appendMessage("You said: " + userMessage, 'ai');  // Simulate AI response
-    }, 1000);
-}
+// Update the last AI message with the actual response
+function updateLastMessage(message, sender) {
+    const chatOutput = document.getElementById("chatbot-output");
+    const lastMessage = [...chatOutput.querySelectorAll(`.chat-message.${sender}`)].pop();
+    if (lastMessage) {
+        lastMessage.textContent = message;
+    }
 }
