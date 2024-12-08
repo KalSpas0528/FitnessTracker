@@ -1,3 +1,4 @@
+import { supabase } from './supabase-config.js';
 import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
 // Global variables
@@ -18,9 +19,23 @@ function showSection(sectionId) {
 }
 
 // Display workouts on the dashboard
-function displayWorkouts() {
+async function displayWorkouts() {
     const workoutList = document.getElementById("workout-list");
     workoutList.innerHTML = "";
+    
+    // Fetch workouts from Supabase
+    const { data, error } = await supabase
+        .from('workouts')
+        .select('*')
+        .order('date', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching workouts:', error);
+        return;
+    }
+
+    workouts = data;
+
     workouts.forEach((workout, index) => {
         const listItem = document.createElement("div");
         listItem.className = "workout-item card";
@@ -29,7 +44,8 @@ function displayWorkouts() {
             <p>Sets: ${workout.sets}</p>
             <p>Reps: ${workout.reps}</p>
             <p>Weight: ${workout.weight} lbs</p>
-            <button class="btn btn-danger mt-2" onclick="deleteWorkout(${index})">Delete</button>
+            <p>Date: ${new Date(workout.date).toLocaleDateString()}</p>
+            <button class="btn btn-danger mt-2" onclick="deleteWorkout(${workout.id})">Delete</button>
         `;
         workoutList.appendChild(listItem);
     });
@@ -74,10 +90,19 @@ function updateWorkoutChart() {
 }
 
 // Delete a workout
-window.deleteWorkout = function(index) {
-    workouts.splice(index, 1);
-    displayWorkouts();
-    showMessage("Workout deleted successfully!");
+window.deleteWorkout = async function(id) {
+    const { error } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error('Error deleting workout:', error);
+        showMessage("Error deleting workout");
+    } else {
+        await displayWorkouts();
+        showMessage("Workout deleted successfully!");
+    }
 }
 
 // Display nutrition data
@@ -175,17 +200,26 @@ async function handleAddWorkout(event) {
     const reps = parseInt(document.getElementById('reps').value);
     const weight = parseInt(document.getElementById('weight').value);
 
-    const newWorkout = { exercise_name: exerciseName, sets, reps, weight };
-    workouts.push(newWorkout);
-    displayWorkouts();
-    showMessage("Workout added successfully!");
-    event.target.reset();
+    const { data, error } = await supabase
+        .from('workouts')
+        .insert([
+            { exercise_name: exerciseName, sets, reps, weight, date: new Date() }
+        ]);
 
-    // Predict next weight
-    if (model) {
-        await trainModel(workouts);
-        const predictedWeight = await predictNextWeight(sets, reps);
-        showMessage(`AI suggests ${predictedWeight} lbs for your next ${exerciseName}`);
+    if (error) {
+        console.error('Error adding workout:', error);
+        showMessage("Error adding workout");
+    } else {
+        await displayWorkouts();
+        showMessage("Workout added successfully!");
+        event.target.reset();
+
+        // Predict next weight
+        if (model) {
+            await trainModel(workouts);
+            const predictedWeight = await predictNextWeight(sets, reps);
+            showMessage(`AI suggests ${predictedWeight} lbs for your next ${exerciseName}`);
+        }
     }
 }
 
@@ -281,6 +315,7 @@ window.showChatWithTitanAI = function() {
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
+    </div>
     `;
     document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
 }
@@ -335,28 +370,18 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    try {
-        const response = await fetch(`${apiUrl}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem('token', data.access_token);
-            document.getElementById('loginModal').classList.add('hidden');
-            updateUIAfterLogin(email);
-            showMessage('Logged in successfully!');
-            showDashboard();
-        } else {
-            showMessage('Login failed: ' + data.error);
-        }
-    } catch (error) {
-        showMessage('Error: ' + error.message);
+    if (error) {
+        showMessage('Login failed: ' + error.message);
+    } else {
+        document.getElementById('loginModal').classList.add('hidden');
+        updateUIAfterLogin(data.user.email);
+        showMessage('Logged in successfully!');
+        showDashboard();
     }
 });
 
@@ -366,26 +391,17 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
 
-    try {
-        const response = await fetch(`${apiUrl}/signup`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+    });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            document.getElementById('signupModal').classList.add('hidden');
-            showMessage('Signup successful! Please log in.');
-            showLoginForm();
-        } else {
-            showMessage('Signup failed: ' + data.error);
-        }
-    } catch (error) {
-        showMessage('Error: ' + error.message);
+    if (error) {
+        showMessage('Signup failed: ' + error.message);
+    } else {
+        document.getElementById('signupModal').classList.add('hidden');
+        showMessage('Signup successful! Please check your email to confirm your account.');
+        showLoginForm();
     }
 });
 
@@ -398,28 +414,30 @@ function updateUIAfterLogin(email) {
 }
 
 // Handle logout
-window.logout = function() {
-    localStorage.removeItem('token');
-    document.getElementById('loginBtn').classList.remove('hidden');
-    document.getElementById('signupBtn').classList.remove('hidden');
-    document.getElementById('logoutBtn').classList.add('hidden');
-    document.querySelector('#sidebar span').textContent = 'Logged Out';
-    workouts = [];
-    nutritionData = [];
-    showMessage('Logged out successfully!');
-    showDashboard();
+window.logout = async function() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+        showMessage('Error logging out: ' + error.message);
+    } else {
+        document.getElementById('loginBtn').classList.remove('hidden');
+        document.getElementById('signupBtn').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.add('hidden');
+        document.querySelector('#sidebar span').textContent = 'Logged Out';
+        workouts = [];
+        nutritionData = [];
+        showMessage('Logged out successfully!');
+        showDashboard();
+    }
 }
 
 // Initialize the application
 async function init() {
     await initModel();
-    showDashboard();
-    const token = localStorage.getItem('token');
-    if (token) {
-        // Implement token verification with your backend here
-        // For now, we'll just update the UI
-        updateUIAfterLogin('user@example.com');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        updateUIAfterLogin(user.email);
     }
+    showDashboard();
 }
 
 // Start the application
