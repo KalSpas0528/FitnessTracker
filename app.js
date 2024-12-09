@@ -1,4 +1,4 @@
-import express from 'express';
+/*import express from 'express';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -63,3 +63,4 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Supabase URL: ${supabaseUrl}`);
 });
+*/
