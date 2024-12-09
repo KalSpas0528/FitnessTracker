@@ -16,11 +16,11 @@
             <p id="loginStatus" class="text-sm text-gray-400 mb-4">Not logged in</p>
             <nav>
                 <ul class="space-y-2">
-                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" onclick="showDashboard()">Dashboard</a></li>
-                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" onclick="showAddWorkout()">Add Workout</a></li>
-                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" onclick="showNutrition()">Nutrition</a></li>
-                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" onclick="showMotivation()">Motivation</a></li>
-                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" onclick="showChatWithTitanAI()">Chat with Titan AI</a></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="showDashboard()">Dashboard</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="showAddWorkout()">Add Workout</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="showNutrition()">Nutrition</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="showMotivation()">Motivation</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="showChatWithTitanAI()">Chat with Titan AI</button></li>
                 </ul>
             </nav>
             <div class="mt-auto">
@@ -59,8 +59,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
-    <script src="script.js" type="module"></script>
+    <script src="ai-logic.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
 

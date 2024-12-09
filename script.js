@@ -18,6 +18,18 @@ function showSection(sectionId) {
     }
 }
 
+// Make functions available globally
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.logout = logout;
+window.deleteWorkout = deleteWorkout;
+window.deleteNutritionItem = deleteNutritionItem;
+
 // Display workouts on the dashboard
 async function displayWorkouts() {
     const workoutList = document.getElementById("workout-list");
@@ -90,7 +102,7 @@ function updateWorkoutChart() {
 }
 
 // Delete a workout
-window.deleteWorkout = async function(id) {
+async function deleteWorkout(id) {
     const { error } = await supabase
         .from('workouts')
         .delete()
@@ -125,7 +137,7 @@ function displayNutritionData() {
 }
 
 // Delete a nutrition item
-window.deleteNutritionItem = function(index) {
+function deleteNutritionItem(index) {
     nutritionData.splice(index, 1);
     displayNutritionData();
     showMessage("Food entry deleted successfully!");
@@ -141,7 +153,7 @@ function showMessage(message) {
 }
 
 // Show dashboard
-window.showDashboard = function() {
+function showDashboard() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
@@ -165,7 +177,7 @@ window.showDashboard = function() {
 }
 
 // Show add workout form
-window.showAddWorkout = function() {
+function showAddWorkout() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
@@ -240,7 +252,7 @@ async function handleAddWorkout(event) {
 }
 
 // Show nutrition form
-window.showNutrition = function() {
+function showNutrition() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Nutrition Tracker</h2>
@@ -293,7 +305,7 @@ function handleAddNutrition(event) {
 }
 
 // Show motivation section
-window.showMotivation = function() {
+function showMotivation() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
@@ -320,7 +332,7 @@ function showNewQuote() {
 }
 
 // Show chat with Titan AI
-window.showChatWithTitanAI = function() {
+function showChatWithTitanAI() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
@@ -371,12 +383,12 @@ function appendMessage(message) {
 }
 
 // Show login form
-window.showLoginForm = function() {
+function showLoginForm() {
     document.getElementById('loginModal').classList.remove('hidden');
 }
 
 // Show signup form
-window.showSignupForm = function() {
+function showSignupForm() {
     document.getElementById('signupModal').classList.remove('hidden');
 }
 
@@ -430,7 +442,7 @@ function updateUIAfterLogin(email) {
 }
 
 // Handle logout
-window.logout = async function() {
+async function logout() {
     const { error } = await supabase.auth.signOut();
     if (error) {
         showMessage('Error logging out: ' + error.message);
