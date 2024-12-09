@@ -1,9 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE'
-const supabase = createClient(supabaseUrl, supabaseKey)
-
+import { supabase } from './supabase-config.js';
 import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
 // Global variables
@@ -29,7 +24,18 @@ async function displayWorkouts() {
     workoutList.innerHTML = "";
     
     // Fetch workouts from Supabase
-    
+    const { data, error } = await supabase
+        .from('workouts')
+        .select('*')
+        .order('date', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching workouts:', error);
+        return;
+    }
+
+    workouts = data;
+
     workouts.forEach((workout, index) => {
         const listItem = document.createElement("div");
         listItem.className = "workout-item card";
@@ -85,17 +91,18 @@ function updateWorkoutChart() {
 
 // Delete a workout
 window.deleteWorkout = async function(id) {
-  const { error } = await supabase
-    .from('workouts')
-    .delete()
-    .eq('id', id)
+    const { error } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('id', id);
 
-  if (error) {
-    showMessage("Error deleting workout: " + error.message);
-  } else {
-    await fetchWorkouts(); // Refresh the workouts after deleting
-    showMessage("Workout deleted successfully!");
-  }
+    if (error) {
+        console.error('Error deleting workout:', error);
+        showMessage("Error deleting workout");
+    } else {
+        await displayWorkouts();
+        showMessage("Workout deleted successfully!");
+    }
 }
 
 // Display nutrition data
@@ -188,6 +195,15 @@ window.showAddWorkout = function() {
 // Handle add workout form submission
 async function handleAddWorkout(event) {
   event.preventDefault();
+  
+  // Get the current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    showMessage("Please log in to add a workout");
+    return;
+  }
+
   const exerciseName = document.getElementById('exercise-name').value;
   const sets = parseInt(document.getElementById('sets').value);
   const reps = parseInt(document.getElementById('reps').value);
@@ -196,13 +212,21 @@ async function handleAddWorkout(event) {
   const { data, error } = await supabase
     .from('workouts')
     .insert([
-      { exercise_name: exerciseName, sets, reps, weight }
-    ])
+      { 
+        exercise_name: exerciseName, 
+        sets, 
+        reps, 
+        weight, 
+        user_id: user.id,
+        date: new Date()
+      }
+    ]);
 
   if (error) {
+    console.error('Error adding workout:', error);
     showMessage("Error adding workout: " + error.message);
   } else {
-    await fetchWorkouts(); // Refresh the workouts after adding
+    await displayWorkouts();
     showMessage("Workout added successfully!");
     event.target.reset();
 
@@ -402,7 +426,7 @@ function updateUIAfterLogin(email) {
     document.getElementById('loginBtn').classList.add('hidden');
     document.getElementById('signupBtn').classList.add('hidden');
     document.getElementById('logoutBtn').classList.remove('hidden');
-    document.querySelector('#sidebar span').textContent = `Logged in as ${email}`;
+    document.getElementById('loginStatus').textContent = `Logged in as ${email}`;
 }
 
 // Handle logout
@@ -414,7 +438,7 @@ window.logout = async function() {
         document.getElementById('loginBtn').classList.remove('hidden');
         document.getElementById('signupBtn').classList.remove('hidden');
         document.getElementById('logoutBtn').classList.add('hidden');
-        document.querySelector('#sidebar span').textContent = 'Logged Out';
+        document.getElementById('loginStatus').textContent = 'Not logged in';
         workouts = [];
         nutritionData = [];
         showMessage('Logged out successfully!');
@@ -424,28 +448,16 @@ window.logout = async function() {
 
 // Initialize the application
 async function init() {
-  await initModel();
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    updateUIAfterLogin(user.email);
-    await fetchWorkouts(); // Add this line to fetch workouts on init
-  }
-  showDashboard();
-}
-
-async function fetchWorkouts() {
-  const { data, error } = await supabase
-    .from('workouts')
-    .select('*')
-    .order('created_at', { ascending: false })
-  
-  if (error) {
-    console.error('Error fetching workouts:', error);
-  } else {
-    workouts = data;
-    displayWorkouts();
-  }
+    await initModel();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        updateUIAfterLogin(user.email);
+    } else {
+        document.getElementById('loginStatus').textContent = 'Not logged in';
+    }
+    showDashboard();
 }
 
 // Start the application
-document.addEventListener('DOMContentLoaded', init);
+init();
+
