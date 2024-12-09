@@ -7,38 +7,31 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Supabase URL or Key is missing. Please check your .env file.');
-  console.log('SUPABASE_URL:', supabaseUrl);
-  console.log('SUPABASE_KEY:', supabaseKey);
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Serve static files
+app.use(express.static('public'));
 app.use(express.json());
 
-app.get('/test-supabase', async (req, res) => {
-  try {
-    const { data, error } = await supabase.from('workouts').select('*').limit(1);
-    if (error) throw error;
-    res.json({ success: true, message: 'Supabase connection successful', data });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Supabase connection failed', error: error.message });
-  }
+// Initialize Supabase with direct values for debugging
+const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE';
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Test endpoint
+app.get('/api/test', async (req, res) => {
+  res.json({ status: 'Server is running' });
 });
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log('Supabase URL:', supabaseUrl);
+  console.log('Database connection initialized');
 });
 
 export { supabase };
-
