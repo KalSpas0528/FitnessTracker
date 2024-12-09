@@ -1,7 +1,14 @@
-const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE';
+import { createClient } from '@supabase/supabase-js';
 
-const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
 
-window.supabase = supabase; // Make supabase available globally
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Supabase URL or Key is missing. Please check your .env file.');
+  throw new Error('Supabase configuration is incomplete');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export { supabase };
 

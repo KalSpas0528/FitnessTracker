@@ -1,3 +1,6 @@
+import { supabase } from './supabase-config.js';
+import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
+
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -100,32 +103,6 @@ async function deleteWorkout(id) {
         await displayWorkouts();
         showMessage("Workout deleted successfully!");
     }
-}
-
-// Display nutrition data
-function displayNutritionData() {
-    const nutritionList = document.getElementById("nutrition-list");
-    nutritionList.innerHTML = "";
-    nutritionData.forEach((item, index) => {
-        const listItem = document.createElement("div");
-        listItem.className = "nutrition-item card";
-        listItem.innerHTML = `
-            <h3 class="font-bold">${item.foodItem}</h3>
-            <p>Calories: ${item.calories}</p>
-            <p>Proteins: ${item.proteins}g</p>
-            <p>Carbs: ${item.carbs}g</p>
-            <p>Fats: ${item.fats}g</p>
-            <button class="btn btn-danger mt-2" onclick="deleteNutritionItem(${index})">Delete</button>
-        `;
-        nutritionList.appendChild(listItem);
-    });
-}
-
-// Delete a nutrition item
-function deleteNutritionItem(index) {
-    nutritionData.splice(index, 1);
-    displayNutritionData();
-    showMessage("Food entry deleted successfully!");
 }
 
 // Show confirmation message
@@ -236,137 +213,6 @@ async function handleAddWorkout(event) {
   }
 }
 
-// Show nutrition form
-function showNutrition() {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Nutrition Tracker</h2>
-        <form id="nutrition-form" class="card">
-            <div class="mb-4">
-                <label for="food-item" class="block text-gray-700 text-sm font-bold mb-2">Food Item:</label>
-                <input type="text" id="food-item" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="calories" class="block text-gray-700 text-sm font-bold mb-2">Calories:</label>
-                <input type="number" id="calories" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="proteins" class="block text-gray-700 text-sm font-bold mb-2">Proteins (g):</label>
-                <input type="number" id="proteins" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="carbs" class="block text-gray-700 text-sm font-bold mb-2">Carbs (g):</label>
-                <input type="number" id="carbs" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="fats" class="block text-gray-700 text-sm font-bold mb-2">Fats (g):</label>
-                <input type="number" id="fats" class="form-input" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Food Item</button>
-        </form>
-        <div class="mt-8">
-            <h3 class="text-xl font-bold mb-4">Your Nutritional Data</h3>
-            <div id="nutrition-list"></div>
-        </div>
-    `;
-    document.getElementById('nutrition-form').addEventListener('submit', handleAddNutrition);
-    displayNutritionData();
-}
-
-// Handle add nutrition form submission
-function handleAddNutrition(event) {
-    event.preventDefault();
-    const foodItem = document.getElementById('food-item').value;
-    const calories = parseInt(document.getElementById('calories').value);
-    const proteins = parseInt(document.getElementById('proteins').value);
-    const carbs = parseInt(document.getElementById('carbs').value);
-    const fats = parseInt(document.getElementById('fats').value);
-
-    const newNutritionItem = { foodItem, calories, proteins, carbs, fats };
-    nutritionData.push(newNutritionItem);
-    displayNutritionData();
-    showMessage("Food item added successfully!");
-    event.target.reset();
-}
-
-// Show motivation section
-function showMotivation() {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
-        <div class="card">
-            <p id="motivation-quote" class="text-xl italic"></p>
-            <button id="new-quote-btn" class="btn btn-primary mt-4">New Quote</button>
-        </div>
-    `;
-    document.getElementById('new-quote-btn').addEventListener('click', showNewQuote);
-    showNewQuote();
-}
-
-// Show a new motivational quote
-function showNewQuote() {
-    const quotes = [
-        "The only bad workout is the one that didn't happen.",
-        "Your body can stand almost anything. It's your mind that you have to convince.",
-        "The difference between try and triumph is just a little umph!",
-        "The only way to define your limits is by going beyond them.",
-        "You don't have to be extreme, just consistent."
-    ];
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById('motivation-quote').textContent = quote;
-}
-
-// Show chat with Titan AI
-function showChatWithTitanAI() {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
-        <div class="card">
-            <div id="chat-messages" class="mb-4 h-64 overflow-y-auto"></div>
-            <form id="chat-form" class="flex">
-                <input type="text" id="chat-input" class="form-input flex-grow mr-2" placeholder="Ask Titan AI...">
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
-        </div>
-    </div>
-    `;
-    document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
-}
-
-// Handle chat form submission
-async function handleChatSubmit(event) {
-    event.preventDefault();
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim();
-    if (message) {
-        appendMessage('You: ' + message);
-        input.value = '';
-
-        // Simple AI response based on keywords
-        let response;
-        if (message.toLowerCase().includes('workout')) {
-            response = "Regular workouts are essential for maintaining good health and fitness. Remember to mix cardio and strength training for best results.";
-        } else if (message.toLowerCase().includes('nutrition')) {
-            response = "A balanced diet is key to supporting your fitness goals. Make sure to include plenty of protein, complex carbs, and healthy fats in your meals.";
-        } else if (message.toLowerCase().includes('motivation')) {
-            response = "Stay motivated by setting clear, achievable goals and tracking your progress. Remember, every small step counts towards your larger fitness journey!";
-        } else {
-            response = "I'm here to help with your fitness journey. Feel free to ask about workouts, nutrition, or motivation!";
-        }
-
-        setTimeout(() => appendMessage('Titan AI: ' + response), 1000);
-    }
-}
-
-// Append a message to the chat
-function appendMessage(message) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageElement = document.createElement('p');
-    messageElement.textContent = message;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
 // Show login form
 function showLoginForm() {
     document.getElementById('loginModal').classList.remove('hidden');
@@ -378,7 +224,7 @@ function showSignupForm() {
 }
 
 // Handle login form submission
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
@@ -396,10 +242,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         showMessage('Logged in successfully!');
         showDashboard();
     }
-});
+}
 
 // Handle signup form submission
-document.getElementById('signupForm').addEventListener('submit', async function(event) {
+async function handleSignup(event) {
     event.preventDefault();
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
@@ -416,7 +262,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
         showMessage('Signup successful! Please check your email to confirm your account.');
         showLoginForm();
     }
-});
+}
 
 // Update UI after successful login
 function updateUIAfterLogin(email) {
@@ -453,8 +299,21 @@ async function init() {
         document.getElementById('loginStatus').textContent = 'Not logged in';
     }
     showDashboard();
+
+    // Set up event listeners
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('signupForm').addEventListener('submit', handleSignup);
+    document.getElementById('logoutBtn').addEventListener('click', logout);
 }
 
 // Start the application
 init();
+
+// Make functions globally available
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.logout = logout;
+window.deleteWorkout = deleteWorkout;
 
