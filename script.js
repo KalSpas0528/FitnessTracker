@@ -1,4 +1,4 @@
-/*import { supabase } from './supabase-config.js';
+import { supabase } from './supabase-config.js';
 import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
 // Global variables
@@ -316,4 +316,3 @@ window.showLoginForm = showLoginForm;
 window.showSignupForm = showSignupForm;
 window.logout = logout;
 window.deleteWorkout = deleteWorkout;
-*/
