@@ -1,3 +1,15 @@
+// Make functions globally available
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.logout = logout;
+window.deleteWorkout = deleteWorkout;
+window.deleteNutritionItem = deleteNutritionItem;
+
 import { supabase } from './supabase-config.js';
 import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
@@ -19,16 +31,8 @@ function showSection(sectionId) {
 }
 
 // Make functions available globally
-window.showDashboard = showDashboard;
-window.showAddWorkout = showAddWorkout;
-window.showNutrition = showNutrition;
-window.showMotivation = showMotivation;
-window.showChatWithTitanAI = showChatWithTitanAI;
-window.showLoginForm = showLoginForm;
-window.showSignupForm = showSignupForm;
-window.logout = logout;
-window.deleteWorkout = deleteWorkout;
-window.deleteNutritionItem = deleteNutritionItem;
+//This section is already included above
+
 
 // Display workouts on the dashboard
 async function displayWorkouts() {
