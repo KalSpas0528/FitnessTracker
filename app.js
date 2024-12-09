@@ -13,25 +13,45 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static('public'));
+// Serve static files from the 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Initialize Supabase with direct values for debugging
-const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE';
+// Initialize Supabase
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase configuration. Please check your .env file.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Test endpoint
-app.get('/api/test', async (req, res) => {
-  res.json({ status: 'Server is running' });
+// Root route for basic testing
+app.get('/', (req, res) => {
+  res.send('Welcome to the Fitness Tracker API!');
 });
 
+// Example API endpoint to test backend functionality
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Backend is running successfully!' });
+});
+
+// Another example: Fetch from Supabase (replace with actual table name)
+app.get('/api/data', async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('workouts').select('*');
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch data from Supabase.' });
+  }
+});
+
+// Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  console.log('Supabase URL:', supabaseUrl);
-  console.log('Database connection initialized');
+  console.log(`Supabase URL: ${supabaseUrl}`);
 });
-
-export { supabase };
