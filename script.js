@@ -1,4 +1,5 @@
-import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
+// Remove the import statement at the top
+// import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
 
 // Global variables
 let workouts = [];
@@ -204,9 +205,8 @@ async function handleAddWorkout(event) {
     event.target.reset();
 
     // Predict next weight
-    if (model) {
-      await trainModel(workouts);
-      const predictedWeight = await predictNextWeight(sets, reps);
+    if (window.predictWorkout) {
+      const predictedWeight = await window.predictWorkout(sets, reps);
       showMessage(`AI suggests ${predictedWeight} lbs for your next ${exerciseName}`);
     }
   }
@@ -214,12 +214,46 @@ async function handleAddWorkout(event) {
 
 // Show login form
 function showLoginForm() {
-    document.getElementById('loginModal').classList.remove('hidden');
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Login</h2>
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label for="loginEmail" class="block mb-1">Email:</label>
+                <input type="email" id="loginEmail" class="w-full p-2 border rounded" required>
+            </div>
+            <div>
+                <label for="loginPassword" class="block mb-1">Password:</label>
+                <input type="password" id="loginPassword" class="w-full p-2 border rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                Login
+            </button>
+        </form>
+    `;
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
 }
 
 // Show signup form
 function showSignupForm() {
-    document.getElementById('signupModal').classList.remove('hidden');
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
+        <form id="signupForm" class="space-y-4">
+            <div>
+                <label for="signupEmail" class="block mb-1">Email:</label>
+                <input type="email" id="signupEmail" class="w-full p-2 border rounded" required>
+            </div>
+            <div>
+                <label for="signupPassword" class="block mb-1">Password:</label>
+                <input type="password" id="signupPassword" class="w-full p-2 border rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+                Sign Up
+            </button>
+        </form>
+    `;
+    document.getElementById('signupForm').addEventListener('submit', handleSignup);
 }
 
 // Handle login form submission
@@ -236,7 +270,6 @@ async function handleLogin(event) {
     if (error) {
         showMessage('Login failed: ' + error.message);
     } else {
-        document.getElementById('loginModal').classList.add('hidden');
         updateUIAfterLogin(data.user.email);
         showMessage('Logged in successfully!');
         showDashboard();
@@ -257,7 +290,6 @@ async function handleSignup(event) {
     if (error) {
         showMessage('Signup failed: ' + error.message);
     } else {
-        document.getElementById('signupModal').classList.add('hidden');
         showMessage('Signup successful! Please check your email to confirm your account.');
         showLoginForm();
     }
@@ -288,9 +320,38 @@ async function logout() {
     }
 }
 
+// Show nutrition page
+function showNutrition() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Nutrition Tracking</h2>
+        <p>Nutrition tracking feature coming soon!</p>
+    `;
+}
+
+// Show motivation page
+function showMotivation() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
+        <p>Your daily motivation feature is coming soon!</p>
+    `;
+}
+
+// Show chat with Titan AI
+function showChatWithTitanAI() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
+        <p>Titan AI chat feature is coming soon!</p>
+    `;
+}
+
 // Initialize the application
 async function init() {
-    await initModel();
+    if (window.initModel) {
+        await window.initModel();
+    }
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
         updateUIAfterLogin(user.email);
@@ -298,15 +359,10 @@ async function init() {
         document.getElementById('loginStatus').textContent = 'Not logged in';
     }
     showDashboard();
-
-    // Set up event listeners
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
-    document.getElementById('signupForm').addEventListener('submit', handleSignup);
-    document.getElementById('logoutBtn').addEventListener('click', logout);
 }
 
-// Start the application
-//init();
+// Start the application when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', init);
 
 // Make functions globally available
 window.showDashboard = showDashboard;
@@ -320,7 +376,4 @@ window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
-
-// Start the application when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', init);
 
