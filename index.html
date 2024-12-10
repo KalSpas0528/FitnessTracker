@@ -14,7 +14,25 @@
 <body class="bg-gray-100">
     <!-- Your existing HTML content -->
     <div id="app">
-        <!-- ... (keep existing content) ... -->
+        <div class="flex">
+            <nav>
+                <ul class="space-y-2">
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="window.showDashboard()">Dashboard</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="window.showAddWorkout()">Add Workout</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="window.showNutrition()">Nutrition</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="window.showMotivation()">Motivation</button></li>
+                    <li><button class="block w-full text-left py-2 px-4 hover:bg-gray-700 rounded" onclick="window.showChatWithTitanAI()">Chat with Titan AI</button></li>
+                </ul>
+            </nav>
+            <div class="flex-grow p-4">
+                <!-- Main content will go here -->
+            </div>
+        </div>
+        <div class="mt-auto">
+            <button id="loginBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600" onclick="window.showLoginForm()">Login</button>
+            <button id="signupBtn" class="w-full mt-2 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600" onclick="window.showSignupForm()">Sign Up</button>
+            <button id="logoutBtn" class="w-full mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 hidden" onclick="window.logout()">Logout</button>
+        </div>
     </div>
 
     <!-- Initialize Supabase first -->

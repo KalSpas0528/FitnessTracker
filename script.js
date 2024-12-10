@@ -1,3 +1,5 @@
+import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
+
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -113,7 +115,6 @@ function showMessage(message) {
 
 // Show dashboard
 function showDashboard() {
-    console.log('Showing dashboard');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
@@ -138,7 +139,6 @@ function showDashboard() {
 
 // Show add workout form
 function showAddWorkout() {
-    console.log('Showing add workout');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
@@ -165,15 +165,60 @@ function showAddWorkout() {
     document.getElementById('workout-form').addEventListener('submit', handleAddWorkout);
 }
 
+// Handle add workout form submission
+async function handleAddWorkout(event) {
+  event.preventDefault();
+  
+  // Get the current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    showMessage("Please log in to add a workout");
+    return;
+  }
+
+  const exerciseName = document.getElementById('exercise-name').value;
+  const sets = parseInt(document.getElementById('sets').value);
+  const reps = parseInt(document.getElementById('reps').value);
+  const weight = parseInt(document.getElementById('weight').value);
+
+  const { data, error } = await supabase
+    .from('workouts')
+    .insert([
+      { 
+        exercise_name: exerciseName, 
+        sets, 
+        reps, 
+        weight, 
+        user_id: user.id,
+        date: new Date()
+      }
+    ]);
+
+  if (error) {
+    console.error('Error adding workout:', error);
+    showMessage("Error adding workout: " + error.message);
+  } else {
+    await displayWorkouts();
+    showMessage("Workout added successfully!");
+    event.target.reset();
+
+    // Predict next weight
+    if (model) {
+      await trainModel(workouts);
+      const predictedWeight = await predictNextWeight(sets, reps);
+      showMessage(`AI suggests ${predictedWeight} lbs for your next ${exerciseName}`);
+    }
+  }
+}
+
 // Show login form
 function showLoginForm() {
-    console.log('Showing login form');
     document.getElementById('loginModal').classList.remove('hidden');
 }
 
 // Show signup form
 function showSignupForm() {
-    console.log('Showing signup form');
     document.getElementById('signupModal').classList.remove('hidden');
 }
 
@@ -243,42 +288,9 @@ async function logout() {
     }
 }
 
-// Show nutrition page
-function showNutrition() {
-    console.log('Showing nutrition');
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Nutrition Tracking</h2>
-        <!-- Add nutrition tracking content here -->
-    `;
-}
-
-// Show motivation page
-function showMotivation() {
-    console.log('Showing motivation');
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
-        <!-- Add motivation content here -->
-    `;
-}
-
-// Show chat with Titan AI
-function showChatWithTitanAI() {
-    console.log('Showing AI chat');
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
-        <!-- Add AI chat interface here -->
-    `;
-}
-
 // Initialize the application
 async function init() {
-    console.log('Initializing app...');
-    if (typeof initModel === 'function') {
-        await initModel();
-    }
+    await initModel();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
         updateUIAfterLogin(user.email);
@@ -294,7 +306,7 @@ async function init() {
 }
 
 // Start the application
-document.addEventListener('DOMContentLoaded', init);
+//init();
 
 // Make functions globally available
 window.showDashboard = showDashboard;
@@ -308,3 +320,7 @@ window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
+
+// Start the application when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', init);
+
