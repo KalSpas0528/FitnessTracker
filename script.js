@@ -444,6 +444,88 @@ async function init() {
     showDashboard();
 }
 
+//timer+chart
+
+// Stopwatch/Timer Variables
+let timerInterval;
+let timerRunning = false;
+let elapsedTime = 0;
+
+// Start the timer
+function startTimer() {
+    if (!timerRunning) {
+        timerRunning = true;
+        timerInterval = setInterval(() => {
+            elapsedTime += 1;
+            updateTimerDisplay();
+        }, 1000);
+    }
+}
+
+// Pause the timer
+function pauseTimer() {
+    timerRunning = false;
+    clearInterval(timerInterval);
+}
+
+// Reset the timer
+function resetTimer() {
+    timerRunning = false;
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    updateTimerDisplay();
+}
+
+// Update the timer display
+function updateTimerDisplay() {
+    const hours = Math.floor(elapsedTime / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((elapsedTime % 3600) / 60).toString().padStart(2, '0');
+    const seconds = (elapsedTime % 60).toString().padStart(2, '0');
+    document.getElementById('timerDisplay').textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// Attach event listeners
+document.getElementById('startTimer').addEventListener('click', startTimer);
+document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
+document.getElementById('resetTimer').addEventListener('click', resetTimer);
+
+// Progress Tracker Chart
+function updateProgressTracker() {
+    const ctx = document.getElementById('progressTrackerChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: workouts.map(w => new Date(w.date).toLocaleDateString()),
+                datasets: [{
+                    label: 'Total Weight Lifted (lbs)',
+                    data: workouts.map(w => w.weight * w.sets * w.reps),
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Call the update functions when the dashboard loads
+function showDashboard() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <!-- Include the same HTML structure as above -->
+    `;
+    displayWorkouts(); // Updates the workout list
+    updateProgressTracker(); // Updates the progress chart
+}
+
 // Start the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
 
