@@ -320,32 +320,115 @@ async function logout() {
     }
 }
 
-// Show nutrition page
+// Nutrition tracking
 function showNutrition() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Nutrition Tracking</h2>
-        <p>Nutrition tracking feature coming soon!</p>
+        <form id="nutrition-form" class="mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <input type="text" id="food-item" placeholder="Food Item" class="form-input" required>
+                <input type="number" id="calories" placeholder="Calories" class="form-input" required>
+                <input type="number" id="protein" placeholder="Protein (g)" class="form-input" required>
+                <input type="number" id="carbs" placeholder="Carbs (g)" class="form-input" required>
+                <input type="number" id="fat" placeholder="Fat (g)" class="form-input" required>
+            </div>
+            <button type="submit" class="mt-2 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Food</button>
+        </form>
+        <div id="nutrition-list" class="space-y-2"></div>
     `;
+    document.getElementById('nutrition-form').addEventListener('submit', handleAddNutrition);
+    displayNutritionData();
 }
 
-// Show motivation page
+function handleAddNutrition(event) {
+    event.preventDefault();
+    const foodItem = document.getElementById('food-item').value;
+    const calories = document.getElementById('calories').value;
+    const protein = document.getElementById('protein').value;
+    const carbs = document.getElementById('carbs').value;
+    const fat = document.getElementById('fat').value;
+
+    nutritionData.push({ foodItem, calories, protein, carbs, fat });
+    event.target.reset();
+    displayNutritionData();
+}
+
+function displayNutritionData() {
+    const nutritionList = document.getElementById('nutrition-list');
+    nutritionList.innerHTML = '';
+    nutritionData.forEach((item, index) => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'bg-white p-2 rounded shadow';
+        itemElement.innerHTML = `
+            <p><strong>${item.foodItem}</strong></p>
+            <p>Calories: ${item.calories}, Protein: ${item.protein}g, Carbs: ${item.carbs}g, Fat: ${item.fat}g</p>
+        `;
+        nutritionList.appendChild(itemElement);
+    });
+}
+
+// Motivation quotes
+const motivationalQuotes = [
+    "The only bad workout is the one that didn't happen.",
+    "Your body can stand almost anything. It's your mind that you have to convince.",
+    "The pain you feel today will be the strength you feel tomorrow.",
+    "Fitness is not about being better than someone else. It's about being better than you used to be.",
+    "The only way to do great work is to love what you do."
+];
+
 function showMotivation() {
     const mainContent = document.getElementById('main-content');
+    const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Daily Motivation</h2>
-        <p>Your daily motivation feature is coming soon!</p>
+        <div class="bg-white p-6 rounded shadow text-center">
+            <p class="text-xl italic">"${randomQuote}"</p>
+        </div>
+        <button id="new-quote" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">New Quote</button>
     `;
+    document.getElementById('new-quote').addEventListener('click', showMotivation);
 }
 
-// Show chat with Titan AI
+// Chat with Titan AI
 function showChatWithTitanAI() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
-        <p>Titan AI chat feature is coming soon!</p>
+        <div id="chat-messages" class="bg-white p-4 rounded shadow mb-4 h-64 overflow-y-auto"></div>
+        <form id="chat-form" class="flex">
+            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow form-input mr-2" required>
+            <button type="submit" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600">Send</button>
+        </form>
     `;
+    document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
 }
+
+async function handleChatSubmit(event) {
+    event.preventDefault();
+    const input = document.getElementById('chat-input');
+    const message = input.value;
+    input.value = '';
+
+    addMessageToChat('You', message);
+
+    if (window.handleChatResponse) {
+        const response = await window.handleChatResponse(message);
+        addMessageToChat('Titan AI', response);
+    } else {
+        addMessageToChat('Titan AI', "I'm sorry, I'm not fully operational yet. Please try again later.");
+    }
+}
+
+function addMessageToChat(sender, message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.className = 'mb-2';
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
 
 // Initialize the application
 async function init() {
@@ -376,4 +459,8 @@ window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
+window.handleAddNutrition = handleAddNutrition;
+window.displayNutritionData = displayNutritionData;
+window.handleChatSubmit = handleChatSubmit;
+window.addMessageToChat = addMessageToChat;
 
