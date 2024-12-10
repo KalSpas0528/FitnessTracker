@@ -314,5 +314,11 @@ window.showDashboard = showDashboard;
 window.showAddWorkout = showAddWorkout;
 window.showLoginForm = showLoginForm;
 window.showSignupForm = showSignupForm;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
 window.logout = logout;
 window.deleteWorkout = deleteWorkout;
+window.handleLogin = handleLogin;
+window.handleSignup = handleSignup;
+

@@ -60,6 +60,7 @@
     </div>
 
     <!-- Initialize Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const supabaseUrl = 'https://pswsfndbnlpeqaznztss.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzd3NmbmRibmxwZXFhem56dHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk1MzczMjUsImV4cCI6MjA0NTExMzMyNX0.MvEiRJ-L9qpuQ7ma4PCBNbWYdQk6wInwnqvCCHvyuLE';
@@ -69,6 +70,19 @@
     <!-- Load application scripts -->
     <script src="ai-logic.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        // Initialize the application when the page loads
+        window.addEventListener('load', function() {
+            if (typeof init === 'function') {
+                init();
+            }
+        });
+
+        // Set up event listeners for forms
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('signupForm').addEventListener('submit', handleSignup);
+    </script>
 </body>
 </html>
 
