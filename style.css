@@ -75,10 +75,30 @@ body {
     border-color: #3B82F6;
 }
 
-#timerDisplay {
-    font-family: 'Courier New', Courier, monospace;
-    margin-bottom: 1rem;
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
 }
+
+#app {
+    display: flex;
+    height: 100vh; /* Ensures full viewport height */
+    overflow: hidden; /* Prevents scroll issues */
+}
+
+nav {
+    height: 100%; /* Matches the full height */
+    display: flex;
+    flex-direction: column;
+}
+
+#main-content {
+    overflow-y: auto; /* Enables scrolling for long content */
+    flex-grow: 1; /* Ensures it takes up remaining space */
+}
+
 
 .hidden {
     display: none;

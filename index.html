@@ -29,45 +29,44 @@
             </div>
         </nav>
         <main id="main-content" class="flex-grow p-4">
+
+
             <!-- Main content will go here -->
-        </main>
-    </div>
-    <!-- Timer + chart -->
-    <main id="main-content" class="flex-grow p-4">
-        <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Recent Workouts -->
-            <div class="card">
-                <h3 class="card-title">Recent Workouts</h3>
-                <div id="workout-list"></div>
-            </div>
-    
-            <!-- Workout Summary -->
-            <div class="card">
-                <h3 class="card-title">Workout Summary</h3>
-                <p>Total Workouts: <span id="total-workouts"></span></p>
-                <p>Total Weight Lifted: <span id="total-weight"></span> lbs</p>
-            </div>
-    
-            <!-- Progress Tracker -->
-            <div class="card">
-                <h3 class="card-title">Progress Tracker</h3>
-                <canvas id="progressTrackerChart" width="400" height="200"></canvas>
-            </div>
-    
-            <!-- Timer -->
-            <div class="card">
-                <h3 class="card-title">Stopwatch / Timer</h3>
-                <div id="timer" class="text-center">
-                    <p class="text-4xl font-bold" id="timerDisplay">00:00:00</p>
-                    <button class="btn btn-success" id="startTimer">Start</button>
-                    <button class="btn btn-primary" id="pauseTimer">Pause</button>
-                    <button class="btn btn-danger" id="resetTimer">Reset</button>
-                </div>
+
+             <!-- Timer + chart -->
+<main id="main-content" class="flex-grow p-4">
+    <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Recent Workouts -->
+        <div class="card">
+            <h3 class="card-title">Recent Workouts</h3>
+            <div id="workout-list"></div>
+        </div>
+        <!-- Workout Summary -->
+        <div class="card">
+            <h3 class="card-title">Workout Summary</h3>
+            <p>Total Workouts: <span id="total-workouts"></span></p>
+            <p>Total Weight Lifted: <span id="total-weight"></span> lbs</p>
+        </div>
+        <!-- Progress Tracker -->
+        <div class="card">
+            <h3 class="card-title">Progress Tracker</h3>
+            <canvas id="progressTrackerChart" width="400" height="200"></canvas>
+        </div>
+        <!-- Timer -->
+        <div class="card">
+            <h3 class="card-title">Stopwatch / Timer</h3>
+            <div id="timer" class="text-center">
+                <p class="text-4xl font-bold" id="timerDisplay">00:00:00</p>
+                <button class="btn btn-success" id="startTimer">Start</button>
+                <button class="btn btn-primary" id="pauseTimer">Pause</button>
+                <button class="btn btn-danger" id="resetTimer">Reset</button>
             </div>
         </div>
-    </main>
-    
+    </div>
+        </main>
+    </div>
+
     <!-- Initialize Supabase first -->
     <script>
         // Initialize Supabase client globally
