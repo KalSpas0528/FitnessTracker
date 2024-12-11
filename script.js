@@ -410,16 +410,22 @@ async function handleChatSubmit(event) {
     const message = input.value;
     input.value = '';
 
+    // Add user message to chat
     addMessageToChat('You', message);
 
-    if (window.handleChatResponse) {
-        const response = await window.handleChatResponse(message);
-        addMessageToChat('Titan AI', response);
-    } else {
-        addMessageToChat('Titan AI', "I'm sorry, I'm not fully operational yet. Please try again later.");
+    try {
+        // Generate AI response
+        if (window.handleChatResponse) {
+            const response = await window.handleChatResponse(message);
+            addMessageToChat('Titan AI', response || "I'm sorry, I couldn't process that. Please try again.");
+        } else {
+            addMessageToChat('Titan AI', "The AI module is still initializing. Please try again later.");
+        }
+    } catch (error) {
+        console.error('Error handling chat message:', error);
+        addMessageToChat('Titan AI', "An error occurred while processing your request.");
     }
 }
-
 function addMessageToChat(sender, message) {
     const chatMessages = document.getElementById('chat-messages');
     const messageElement = document.createElement('div');

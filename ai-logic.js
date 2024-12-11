@@ -98,7 +98,32 @@
             return null;
         }
     }
-
+    async function handleChatResponse(message) {
+        try {
+            // Example rule-based response logic
+            if (message.includes('workout')) {
+                return "I can suggest exercises or track your progress. What would you like help with?";
+            } else if (message.includes('nutrition')) {
+                return "I can assist with tracking your calorie intake and macros. Ask me anything!";
+            } else if (message.includes('motivation')) {
+                const quotes = [
+                    "The only bad workout is the one that didn't happen.",
+                    "Your body can stand almost anything. It's your mind that you have to convince.",
+                    "The pain you feel today will be the strength you feel tomorrow.",
+                ];
+                return quotes[Math.floor(Math.random() * quotes.length)];
+            } else {
+                return "I'm still learning! Can you ask something specific about workouts, nutrition, or motivation?";
+            }
+        } catch (error) {
+            console.error('Error generating AI response:', error);
+            return "I encountered an error while processing your request. Please try again.";
+        }
+    }
+    
+    // Expose function globally
+    window.handleChatResponse = handleChatResponse;
+    
     // Expose functions globally
     window.initModel = initModel;
     window.trainModel = trainModel;
