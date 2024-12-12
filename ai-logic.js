@@ -3,9 +3,10 @@
 
     let model = null;
     let isModelReady = false;
-    let userContext = ""; // Track user intent (e.g., "workout", "nutrition", etc.)
+    let userContext = null; // Context: 'workout', 'nutrition', 'motivation'
+    let chatHistory = []; // To track conversation flow
 
-    // Function to initialize the AI model
+    // Initialize the AI model
     async function initModel() {
         try {
             model = tf.sequential();
@@ -18,7 +19,7 @@
         }
     }
 
-    // Function to train the AI model
+    // Train the AI model
     async function trainModel() {
         try {
             if (!model) {
@@ -41,7 +42,7 @@
         }
     }
 
-    // Function to predict workout weights
+    // Predict workout weights
     async function predictWorkout(sets, reps) {
         if (!isModelReady) {
             return "The model is still initializing. Please try again later.";
@@ -50,45 +51,55 @@
             const input = tf.tensor2d([[sets, reps]]);
             const prediction = model.predict(input);
             const predictedWeight = prediction.dataSync()[0];
-            return `Recommended weight: ${predictedWeight.toFixed(2)} lbs for ${sets} sets of ${reps} reps.`;
+            return `Based on your input, I recommend ${predictedWeight.toFixed(2)} lbs for ${sets} sets of ${reps} reps.`;
         } catch (error) {
             console.error('Error during prediction:', error);
             return "I encountered an error while processing your request.";
         }
     }
 
-    // Function to handle chat responses
+    // Handle chat responses
     async function handleChatResponse(message) {
+        chatHistory.push(message.toLowerCase());
+
         if (!isModelReady) {
             return "Titan AI: The AI module is still initializing. Please try again later.";
         }
 
-        // Update user context based on input
         if (message.includes('workout')) {
-            userContext = "workout";
-            return "I can suggest exercises or track your progress. What would you like help with?";
+            userContext = 'workout';
+            return "Great! I can suggest exercises or track your progress. Do you want exercise suggestions or weight tracking?";
         } else if (message.includes('nutrition')) {
-            userContext = "nutrition";
-            return "I can assist with tracking your calorie intake and macros. Ask me anything!";
+            userContext = 'nutrition';
+            return "Let's talk nutrition. Are you looking for meal plans, calorie tracking, or bulking tips?";
         } else if (message.includes('motivation')) {
-            userContext = "motivation";
+            userContext = 'motivation';
             const quotes = [
-                "The only bad workout is the one that didn't happen.",
-                "Your body can stand almost anything. It's your mind that you have to convince.",
-                "The pain you feel today will be the strength you feel tomorrow.",
+                "Push yourself, because no one else is going to do it for you.",
+                "Success starts with self-discipline.",
+                "Wake up with determination. Go to bed with satisfaction.",
             ];
             return quotes[Math.floor(Math.random() * quotes.length)];
         }
 
-        // Handle follow-ups based on context
-        if (userContext === "workout") {
-            return "Would you like exercise suggestions or help with tracking sets and reps?";
-        } else if (userContext === "nutrition") {
-            return "Do you need help with gaining weight, losing weight, or meal planning?";
+        // Handle context-specific follow-ups
+        if (userContext === 'workout') {
+            if (message.includes('track')) {
+                const input = message.match(/(\d+)\s+sets.*?(\d+)\s+reps/i);
+                if (input) {
+                    const sets = parseInt(input[1]);
+                    const reps = parseInt(input[2]);
+                    return await predictWorkout(sets, reps);
+                }
+                return "Tell me the number of sets and reps, and I'll recommend a weight for you.";
+            }
+            return "Would you like help with sets, reps, or exercise suggestions?";
+        } else if (userContext === 'nutrition') {
+            return "Do you need advice on meal plans or tracking macros?";
         }
 
-        // Default response
-        return "I'm still learning! Can you ask something specific about workouts, nutrition, or motivation?";
+        // Fallback response
+        return "I didn't catch that. Can you ask about workouts, nutrition, or motivation?";
     }
 
     // Expose functions globally
@@ -97,7 +108,7 @@
     window.predictWorkout = predictWorkout;
     window.handleChatResponse = handleChatResponse;
 
-    // Initialize and train the model on startup
+    // Initialize and train the model
     (async () => {
         await initModel();
         await trainModel();
