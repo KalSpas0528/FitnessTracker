@@ -137,4 +137,96 @@
 })();
 
 } )
- 
+(function () {
+    console.log('Initializing AI system...');
+
+    let model = null;
+    let isModelReady = false; // Flag to track initialization state
+
+    // Function to initialize or load the model
+    async function initModel() {
+        try {
+            model = tf.sequential();
+            model.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [2] }));
+            model.add(tf.layers.dense({ units: 1 }));
+            model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+            console.log('AI model initialized successfully');
+        } catch (error) {
+            console.error('Error initializing AI model:', error);
+        }
+    }
+
+    // Function to train the model
+    async function trainModel() {
+        try {
+            if (!model) {
+                console.error('Model is not initialized');
+                return;
+            }
+            const trainingData = tf.tensor2d([[3, 10], [4, 8], [5, 5]]);
+            const targetData = tf.tensor2d([[50], [60], [80]]);
+            console.log('Training the model...');
+            await model.fit(trainingData, targetData, {
+                epochs: 100,
+                callbacks: {
+                    onEpochEnd: (epoch, logs) => console.log(`Epoch ${epoch}: Loss = ${logs.loss}`),
+                },
+            });
+            console.log('Model training completed');
+            isModelReady = true; // Mark the model as ready
+        } catch (error) {
+            console.error('Error training the AI model:', error);
+        }
+    }
+
+    // Function to make predictions
+    async function predictWorkout(sets, reps) {
+        if (!isModelReady) {
+            console.log('Model is still initializing');
+            return null;
+        }
+        try {
+            const input = tf.tensor2d([[sets, reps]]);
+            const prediction = model.predict(input);
+            const predictedWeight = prediction.dataSync()[0];
+            console.log(`Predicted weight for ${sets} sets of ${reps} reps: ${predictedWeight} lbs`);
+            return predictedWeight;
+        } catch (error) {
+            console.error('Prediction error:', error);
+            return null;
+        }
+    }
+
+    // Function to handle chat responses
+    async function handleChatResponse(message) {
+        if (!isModelReady) {
+            return "Titan AI: The AI module is still initializing. Please try again later.";
+        }
+        if (message.includes('workout')) {
+            return "I can suggest exercises or track your progress. What would you like help with?";
+        } else if (message.includes('nutrition')) {
+            return "I can assist with tracking your calorie intake and macros. Ask me anything!";
+        } else if (message.includes('motivation')) {
+            const quotes = [
+                "The only bad workout is the one that didn't happen.",
+                "Your body can stand almost anything. It's your mind that you have to convince.",
+                "The pain you feel today will be the strength you feel tomorrow.",
+            ];
+            return quotes[Math.floor(Math.random() * quotes.length)];
+        } else {
+            return "I'm still learning! Can you ask something specific about workouts, nutrition, or motivation?";
+        }
+    }
+
+    // Expose functions globally
+    window.initModel = initModel;
+    window.trainModel = trainModel;
+    window.predictWorkout = predictWorkout;
+    window.handleChatResponse = handleChatResponse;
+
+    // Initialize and train the model on startup
+    (async () => {
+        await initModel();
+        await trainModel();
+    })();
+})();
