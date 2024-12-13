@@ -3,8 +3,8 @@
 
     let model = null;
     let isModelReady = false;
-    let userContext = ""; // To track the ongoing topic ("workout", "nutrition", etc.)
-    let subContext = ""; // To track deeper intents within the topic
+    let userContext = ""; // Main topic (e.g., "workout", "nutrition")
+    let subContext = ""; // Sub-topic (e.g., "exercise", "track")
 
     // Function to initialize the AI model
     async function initModel() {
@@ -26,11 +26,15 @@
                 console.error('Model is not initialized');
                 return;
             }
-            const trainingData = tf.tensor2d([[3, 10], [4, 8], [5, 5]]); // Example: sets, reps
-            const targetData = tf.tensor2d([[50], [60], [80]]); // Example: recommended weights
+            const trainingData = tf.tensor2d([
+                [3, 10], [4, 8], [5, 5], [6, 12], [2, 15]
+            ]); // Expanded: sets, reps
+            const targetData = tf.tensor2d([
+                [50], [60], [80], [70], [40]
+            ]); // Expanded: recommended weights
             console.log('Training the model...');
             await model.fit(trainingData, targetData, {
-                epochs: 50,
+                epochs: 100, // Increased epochs for better training
                 callbacks: {
                     onEpochEnd: (epoch, logs) => console.log(`Epoch ${epoch}: Loss = ${logs.loss}`),
                 },
@@ -58,12 +62,43 @@
         }
     }
 
+    // Function to provide nutrition advice
+    function getNutritionAdvice(goal) {
+        if (goal === "bulking") {
+            return "For bulking, aim for a calorie surplus with plenty of protein (e.g., chicken, fish, eggs), carbs (e.g., rice, potatoes), and healthy fats (e.g., nuts, avocado).";
+        } else if (goal === "cutting") {
+            return "For cutting, focus on a calorie deficit while maintaining protein intake to preserve muscle. Include leafy greens and lean protein.";
+        } else if (goal === "maintaining") {
+            return "To maintain, eat at your maintenance calories with a balanced mix of protein, carbs, and fats. Avoid processed foods when possible.";
+        } else {
+            return "I can help you with bulking, cutting, or maintaining. Let me know your goal!";
+        }
+    }
+
+    // Function to provide motivational quotes
+    function getMotivationalQuote() {
+        const quotes = [
+            "The pain you feel today will be the strength you feel tomorrow.",
+            "Success is the sum of small efforts, repeated day in and day out.",
+            "Don’t limit your challenges. Challenge your limits.",
+            "Motivation is what gets you started. Habit is what keeps you going."
+        ];
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        return quotes[randomIndex];
+    }
+
     // Function to handle chat responses
     async function handleChatResponse(message) {
-        // Normalize input for easier comparison
         const normalizedMessage = message.toLowerCase().trim();
 
-        // Start by determining the main topic
+        // Reset context if user asks to start over
+        if (normalizedMessage.includes("start over") || normalizedMessage.includes("reset")) {
+            userContext = "";
+            subContext = "";
+            return "Okay, let’s start fresh! What do you want to talk about: workouts, nutrition, or motivation?";
+        }
+
+        // Determine the main topic
         if (userContext === "") {
             if (normalizedMessage.includes('workout')) {
                 userContext = "workout";
@@ -73,7 +108,7 @@
                 return "Got it. Are you focusing on bulking, cutting, or maintaining?";
             } else if (normalizedMessage.includes('motivation')) {
                 userContext = "motivation";
-                return "Let me share a motivational quote: 'The pain you feel today will be the strength you feel tomorrow.' What else can I help with?";
+                return getMotivationalQuote();
             } else {
                 return "I didn't catch that. Can you ask about workouts, nutrition, or motivation?";
             }
@@ -114,7 +149,27 @@
             }
         }
 
-        // Default response if nothing matches
+        // Handle nutrition context
+        if (userContext === "nutrition") {
+            if (subContext === "") {
+                if (normalizedMessage.includes('bulking')) {
+                    return getNutritionAdvice("bulking");
+                } else if (normalizedMessage.includes('cutting')) {
+                    return getNutritionAdvice("cutting");
+                } else if (normalizedMessage.includes('maintaining')) {
+                    return getNutritionAdvice("maintaining");
+                } else {
+                    return "Are you focusing on bulking, cutting, or maintaining?";
+                }
+            }
+        }
+
+        // Handle motivation context
+        if (userContext === "motivation") {
+            return getMotivationalQuote();
+        }
+
+        // Default response if no context matches
         return "I'm still learning! Could you provide more details about your question?";
     }
 
