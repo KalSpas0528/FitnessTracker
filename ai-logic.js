@@ -1,10 +1,11 @@
 (function () {
-    console.log('Initializing Titan AI...');
+    console.log('Initializing Enhanced Titan AI...');
 
     let model = null;
     let isModelReady = false;
-    let userContext = ""; // Main topic (e.g., "workout", "nutrition")
-    let subContext = ""; // Sub-topic (e.g., "exercise", "track")
+    let userContext = ""; // Main topic (e.g., "workout", "nutrition", "motivation")
+    let subContext = ""; // Sub-topic (e.g., "exercise", "track", "calculate")
+    let userMemory = {}; // Stores persistent user data (e.g., goals, preferences)
 
     // Function to initialize the AI model
     async function initModel() {
@@ -28,13 +29,13 @@
             }
             const trainingData = tf.tensor2d([
                 [3, 10], [4, 8], [5, 5], [6, 12], [2, 15]
-            ]); // Expanded: sets, reps
+            ]); // Example: sets, reps
             const targetData = tf.tensor2d([
                 [50], [60], [80], [70], [40]
-            ]); // Expanded: recommended weights
+            ]); // Example: recommended weights
             console.log('Training the model...');
             await model.fit(trainingData, targetData, {
-                epochs: 100, // Increased epochs for better training
+                epochs: 100,
                 callbacks: {
                     onEpochEnd: (epoch, logs) => console.log(`Epoch ${epoch}: Loss = ${logs.loss}`),
                 },
@@ -62,29 +63,41 @@
         }
     }
 
-    // Function to provide nutrition advice
-    function getNutritionAdvice(goal) {
+    // Function to store user preferences
+    function storeUserData(key, value) {
+        userMemory[key] = value;
+        console.log(`Stored ${key}: ${value}`);
+    }
+
+    // Function to retrieve user preferences
+    function retrieveUserData(key) {
+        return userMemory[key] || null;
+    }
+
+    // Function to provide personalized nutrition advice
+    function getNutritionAdvice(goal, weight, activityLevel) {
+        let baseCalories = weight * (activityLevel === "high" ? 15 : activityLevel === "moderate" ? 13 : 11);
         if (goal === "bulking") {
-            return "For bulking, aim for a calorie surplus with plenty of protein (e.g., chicken, fish, eggs), carbs (e.g., rice, potatoes), and healthy fats (e.g., nuts, avocado).";
+            return `To bulk, aim for a daily intake of about ${baseCalories + 500} calories, focusing on protein-rich foods (e.g., chicken, fish, eggs), complex carbs (e.g., oats, rice, sweet potatoes), and healthy fats (e.g., nuts, avocado).`;
         } else if (goal === "cutting") {
-            return "For cutting, focus on a calorie deficit while maintaining protein intake to preserve muscle. Include leafy greens and lean protein.";
-        } else if (goal === "maintaining") {
-            return "To maintain, eat at your maintenance calories with a balanced mix of protein, carbs, and fats. Avoid processed foods when possible.";
+            return `To cut, reduce your intake to around ${baseCalories - 500} calories per day. Prioritize lean protein, vegetables, and moderate carbs while avoiding processed sugars.`;
         } else {
-            return "I can help you with bulking, cutting, or maintaining. Let me know your goal!";
+            return `To maintain your weight, aim for around ${baseCalories} calories per day, ensuring a balance of macronutrients and staying hydrated.`;
         }
     }
 
-    // Function to provide motivational quotes
-    function getMotivationalQuote() {
-        const quotes = [
-            "The pain you feel today will be the strength you feel tomorrow.",
-            "Success is the sum of small efforts, repeated day in and day out.",
-            "Don’t limit your challenges. Challenge your limits.",
-            "Motivation is what gets you started. Habit is what keeps you going."
-        ];
-        const randomIndex = Math.floor(Math.random() * quotes.length);
-        return quotes[randomIndex];
+    // Function to provide contextual workout advice
+    function getWorkoutAdvice(muscleGroup) {
+        const workouts = {
+            chest: ["bench press", "push-ups", "chest flys"],
+            legs: ["squats", "lunges", "Romanian deadlifts"],
+            back: ["pull-ups", "deadlifts", "rows"],
+            shoulders: ["shoulder press", "lateral raises", "face pulls"],
+            arms: ["bicep curls", "tricep dips", "hammer curls"],
+        };
+        return workouts[muscleGroup]
+            ? `For ${muscleGroup}, I recommend exercises like ${workouts[muscleGroup].join(", ")}. Let me know if you need help with sets, reps, or form.`
+            : "I didn’t catch that muscle group. Could you specify chest, legs, back, shoulders, or arms?";
     }
 
     // Function to handle chat responses
@@ -129,13 +142,7 @@
             }
 
             if (subContext === "exercise") {
-                if (normalizedMessage.includes('chest')) {
-                    return "For chest, I recommend bench press, push-ups, and chest flys. How many sets and reps would you like advice on?";
-                } else if (normalizedMessage.includes('legs')) {
-                    return "For legs, I recommend squats, lunges, and Romanian deadlifts. Need help with sets and weights?";
-                } else {
-                    return "Let me know which muscle group you're working on! (e.g., chest, legs, back)";
-                }
+                return getWorkoutAdvice(normalizedMessage);
             }
 
             if (subContext === "track") {
@@ -153,24 +160,44 @@
         if (userContext === "nutrition") {
             if (subContext === "") {
                 if (normalizedMessage.includes('bulking')) {
-                    return getNutritionAdvice("bulking");
+                    storeUserData("goal", "bulking");
+                    return "What’s your current weight and activity level (low, moderate, high)?";
                 } else if (normalizedMessage.includes('cutting')) {
-                    return getNutritionAdvice("cutting");
+                    storeUserData("goal", "cutting");
+                    return "What’s your current weight and activity level (low, moderate, high)?";
                 } else if (normalizedMessage.includes('maintaining')) {
-                    return getNutritionAdvice("maintaining");
+                    storeUserData("goal", "maintaining");
+                    return "What’s your current weight and activity level (low, moderate, high)?";
                 } else {
                     return "Are you focusing on bulking, cutting, or maintaining?";
                 }
             }
-        }
 
-        // Handle motivation context
-        if (userContext === "motivation") {
-            return getMotivationalQuote();
+            const goal = retrieveUserData("goal");
+            const match = normalizedMessage.match(/\d+/);
+            if (goal && match) {
+                const weight = parseInt(match[0], 10);
+                const activityLevel = normalizedMessage.includes("high") ? "high" : normalizedMessage.includes("moderate") ? "moderate" : "low";
+                return getNutritionAdvice(goal, weight, activityLevel);
+            } else {
+                return "Please provide your weight and activity level (low, moderate, or high).";
+            }
         }
 
         // Default response if no context matches
         return "I'm still learning! Could you provide more details about your question?";
+    }
+
+    // Function to provide motivational quotes
+    function getMotivationalQuote() {
+        const quotes = [
+            "The pain you feel today will be the strength you feel tomorrow.",
+            "Success is the sum of small efforts, repeated day in and day out.",
+            "Don’t limit your challenges. Challenge your limits.",
+            "Motivation is what gets you started. Habit is what keeps you going."
+        ];
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        return quotes[randomIndex];
     }
 
     // Expose functions globally
