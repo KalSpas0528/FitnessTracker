@@ -61,7 +61,7 @@ function updateWorkoutSummary() {
     document.getElementById("total-workouts").textContent = totalWorkouts;
     document.getElementById("total-weight").textContent = totalWeight;
 }
-
+ 
 // Update workout chart
 function updateWorkoutChart() {
     const ctx = document.getElementById("workoutProgressChart");
