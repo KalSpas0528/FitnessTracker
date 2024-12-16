@@ -151,34 +151,27 @@ function showAddWorkout() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <form id="workout-form" class="card">
-                <div class="mb-4">
-                    <label for="exercise-name" class="block text-gray-700 text-sm font-bold mb-2">Exercise Name:</label>
-                    <input type="text" id="exercise-name" class="form-input" required>
-                </div>
-                <div class="mb-4">
-                    <label for="sets" class="block text-gray-700 text-sm font-bold mb-2">Sets:</label>
-                    <input type="number" id="sets" class="form-input" required>
-                </div>
-                <div class="mb-4">
-                    <label for="reps" class="block text-gray-700 text-sm font-bold mb-2">Reps:</label>
-                    <input type="number" id="reps" class="form-input" required>
-                </div>
-                <div class="mb-4">
-                    <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight (lbs):</label>
-                    <input type="number" id="weight" class="form-input" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Workout</button>
-            </form>
-            <div id="stopwatch-container" class="card"></div>
-        </div>
+        <form id="workout-form" class="card">
+            <div class="mb-4">
+                <label for="exercise-name" class="block text-gray-700 text-sm font-bold mb-2">Exercise Name:</label>
+                <input type="text" id="exercise-name" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="sets" class="block text-gray-700 text-sm font-bold mb-2">Sets:</label>
+                <input type="number" id="sets" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="reps" class="block text-gray-700 text-sm font-bold mb-2">Reps:</label>
+                <input type="number" id="reps" class="form-input" required>
+            </div>
+            <div class="mb-4">
+                <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight (lbs):</label>
+                <input type="number" id="weight" class="form-input" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Workout</button>
+        </form>
     `;
     document.getElementById('workout-form').addEventListener('submit', handleAddWorkout);
-    
-    // Render the Stopwatch component
-    const stopwatchContainer = document.getElementById('stopwatch-container');
-    ReactDOM.render(React.createElement(Stopwatch), stopwatchContainer);
 }
 
 // Handle add workout form submission
