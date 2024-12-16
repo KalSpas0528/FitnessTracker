@@ -1,6 +1,3 @@
-// Remove the import statement at the top
-// import { initModel, trainModel, predictNextWeight } from './ai-logic.js';
-
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -36,19 +33,24 @@ async function displayWorkouts() {
 
     workouts = data;
 
+    const workoutGrid = document.createElement('div');
+    workoutGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+
     workouts.forEach((workout, index) => {
-        const listItem = document.createElement("div");
-        listItem.className = "workout-item card";
-        listItem.innerHTML = `
-            <h3 class="font-bold">${workout.exercise_name}</h3>
-            <p>Sets: ${workout.sets}</p>
-            <p>Reps: ${workout.reps}</p>
-            <p>Weight: ${workout.weight} lbs</p>
-            <p>Date: ${new Date(workout.date).toLocaleDateString()}</p>
-            <button class="btn btn-danger mt-2" onclick="deleteWorkout(${workout.id})">Delete</button>
+        const workoutCard = document.createElement("div");
+        workoutCard.className = "workout-item card bg-white p-4 rounded shadow";
+        workoutCard.innerHTML = `
+            <h3 class="font-bold text-lg mb-2">${workout.exercise_name}</h3>
+            <p class="text-sm mb-1">Sets: ${workout.sets}</p>
+            <p class="text-sm mb-1">Reps: ${workout.reps}</p>
+            <p class="text-sm mb-1">Weight: ${workout.weight} lbs</p>
+            <p class="text-sm mb-2">Date: ${new Date(workout.date).toLocaleDateString()}</p>
+            <button class="btn btn-danger mt-2 text-sm px-2 py-1" onclick="deleteWorkout(${workout.id})">Delete</button>
         `;
-        workoutList.appendChild(listItem);
+        workoutGrid.appendChild(workoutCard);
     });
+
+    workoutList.appendChild(workoutGrid);
 
     updateWorkoutSummary();
     updateWorkoutChart();
@@ -61,7 +63,7 @@ function updateWorkoutSummary() {
     document.getElementById("total-workouts").textContent = totalWorkouts;
     document.getElementById("total-weight").textContent = totalWeight;
 }
- 
+
 // Update workout chart
 function updateWorkoutChart() {
     const ctx = document.getElementById("workoutProgressChart");
@@ -116,22 +118,27 @@ function showMessage(message) {
 
 // Show dashboard
 function showDashboard() {
+    console.log('showDashboard function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="card">
-                <h3 class="card-title">Recent Workouts</h3>
-                <div id="workout-list"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <h3 class="card-title">Recent Workouts</h3>
+                    <div id="workout-list" class="overflow-y-auto max-h-96"></div>
+                </div>
             </div>
-            <div class="card">
-                <h3 class="card-title">Workout Summary</h3>
-                <p>Total Workouts: <span id="total-workouts"></span></p>
-                <p>Total Weight Lifted: <span id="total-weight"></span> lbs</p>
-            </div>
-            <div class="card">
-                <h3 class="card-title">Workout Progress</h3>
-                <canvas id="workoutProgressChart"></canvas>
+            <div class="lg:col-span-1">
+                <div class="card mb-4">
+                    <h3 class="card-title">Workout Summary</h3>
+                    <p>Total Workouts: <span id="total-workouts"></span></p>
+                    <p>Total Weight Lifted: <span id="total-weight"></span> lbs</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Workout Progress</h3>
+                    <canvas id="workoutProgressChart"></canvas>
+                </div>
             </div>
         </div>
     `;
@@ -140,30 +147,38 @@ function showDashboard() {
 
 // Show add workout form
 function showAddWorkout() {
+    console.log('showAddWorkout function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Add New Workout</h2>
-        <form id="workout-form" class="card">
-            <div class="mb-4">
-                <label for="exercise-name" class="block text-gray-700 text-sm font-bold mb-2">Exercise Name:</label>
-                <input type="text" id="exercise-name" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="sets" class="block text-gray-700 text-sm font-bold mb-2">Sets:</label>
-                <input type="number" id="sets" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="reps" class="block text-gray-700 text-sm font-bold mb-2">Reps:</label>
-                <input type="number" id="reps" class="form-input" required>
-            </div>
-            <div class="mb-4">
-                <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight (lbs):</label>
-                <input type="number" id="weight" class="form-input" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Workout</button>
-        </form>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form id="workout-form" class="card">
+                <div class="mb-4">
+                    <label for="exercise-name" class="block text-gray-700 text-sm font-bold mb-2">Exercise Name:</label>
+                    <input type="text" id="exercise-name" class="form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sets" class="block text-gray-700 text-sm font-bold mb-2">Sets:</label>
+                    <input type="number" id="sets" class="form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label for="reps" class="block text-gray-700 text-sm font-bold mb-2">Reps:</label>
+                    <input type="number" id="reps" class="form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight (lbs):</label>
+                    <input type="number" id="weight" class="form-input" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Workout</button>
+            </form>
+            <div id="stopwatch-container" class="card"></div>
+        </div>
     `;
     document.getElementById('workout-form').addEventListener('submit', handleAddWorkout);
+    
+    // Render the Stopwatch component
+    const stopwatchContainer = document.getElementById('stopwatch-container');
+    ReactDOM.render(React.createElement(Stopwatch), stopwatchContainer);
 }
 
 // Handle add workout form submission
@@ -214,6 +229,7 @@ async function handleAddWorkout(event) {
 
 // Show login form
 function showLoginForm() {
+    console.log('showLoginForm function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Login</h2>
@@ -236,6 +252,7 @@ function showLoginForm() {
 
 // Show signup form
 function showSignupForm() {
+    console.log('showSignupForm function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
@@ -305,6 +322,7 @@ function updateUIAfterLogin(email) {
 
 // Handle logout
 async function logout() {
+    console.log('logout function called');
     const { error } = await supabase.auth.signOut();
     if (error) {
         showMessage('Error logging out: ' + error.message);
@@ -322,6 +340,7 @@ async function logout() {
 
 // Nutrition tracking
 function showNutrition() {
+    console.log('showNutrition function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Nutrition Tracking</h2>
@@ -359,13 +378,21 @@ function displayNutritionData() {
     nutritionList.innerHTML = '';
     nutritionData.forEach((item, index) => {
         const itemElement = document.createElement('div');
-        itemElement.className = 'bg-white p-2 rounded shadow';
+        itemElement.className = 'bg-white p-2 rounded shadow flex justify-between items-center';
         itemElement.innerHTML = `
-            <p><strong>${item.foodItem}</strong></p>
-            <p>Calories: ${item.calories}, Protein: ${item.protein}g, Carbs: ${item.carbs}g, Fat: ${item.fat}g</p>
+            <div>
+                <p><strong>${item.foodItem}</strong></p>
+                <p>Calories: ${item.calories}, Protein: ${item.protein}g, Carbs: ${item.carbs}g, Fat: ${item.fat}g</p>
+            </div>
+            <button class="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600" onclick="deleteNutritionItem(${index})">Delete</button>
         `;
         nutritionList.appendChild(itemElement);
     });
+}
+
+function deleteNutritionItem(index) {
+    nutritionData.splice(index, 1);
+    displayNutritionData();
 }
 
 // Motivation quotes
@@ -378,6 +405,7 @@ const motivationalQuotes = [
 ];
 
 function showMotivation() {
+    console.log('showMotivation function called');
     const mainContent = document.getElementById('main-content');
     const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
     mainContent.innerHTML = `
@@ -392,6 +420,7 @@ function showMotivation() {
 
 // Chat with Titan AI
 function showChatWithTitanAI() {
+    console.log('showChatWithTitanAI function called');
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Chat with Titan AI</h2>
@@ -404,28 +433,25 @@ function showChatWithTitanAI() {
     document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
 }
 
+// Update the handleChatSubmit function to use the TensorFlow.js model
 async function handleChatSubmit(event) {
     event.preventDefault();
     const input = document.getElementById('chat-input');
     const message = input.value;
     input.value = '';
 
-    // Add user message to chat
     addMessageToChat('You', message);
 
     try {
-        // Generate AI response
-        if (window.handleChatResponse) {
-            const response = await window.handleChatResponse(message);
-            addMessageToChat('Titan AI', response || "I'm sorry, I couldn't process that. Please try again.");
-        } else {
-            addMessageToChat('Titan AI', "The AI module is still initializing. Please try again later.");
-        }
+        // Use the TensorFlow.js model to generate a response
+        const response = await window.handleChatResponse(message);
+        addMessageToChat('Titan AI', response);
     } catch (error) {
-        console.error('Error handling chat message:', error);
-        addMessageToChat('Titan AI', "An error occurred while processing your request.");
+        console.error('Error in chat:', error);
+        addMessageToChat('Titan AI', "I'm sorry, I encountered an error. Please try again.");
     }
 }
+
 function addMessageToChat(sender, message) {
     const chatMessages = document.getElementById('chat-messages');
     const messageElement = document.createElement('div');
@@ -435,11 +461,11 @@ function addMessageToChat(sender, message) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-
 // Initialize the application
 async function init() {
     if (window.initModel) {
         await window.initModel();
+        console.log('TensorFlow.js model initialized');
     }
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -448,6 +474,46 @@ async function init() {
         document.getElementById('loginStatus').textContent = 'Not logged in';
     }
     showDashboard();
+
+    // Initialize and train the AI model
+    if (window.trainModel) {
+        await window.trainModel();
+        console.log('TensorFlow.js model trained');
+    }
+
+    // Add event listeners to sidebar buttons
+    document.getElementById('dashboardBtn').addEventListener('click', () => {
+        showDashboard();
+        console.log('Dashboard button clicked');
+    });
+    document.getElementById('addWorkoutBtn').addEventListener('click', () => {
+        showAddWorkout();
+        console.log('Add Workout button clicked');
+    });
+    document.getElementById('nutritionBtn').addEventListener('click', () => {
+        showNutrition();
+        console.log('Nutrition button clicked');
+    });
+    document.getElementById('motivationBtn').addEventListener('click', () => {
+        showMotivation();
+        console.log('Motivation button clicked');
+    });
+    document.getElementById('chatBtn').addEventListener('click', () => {
+        showChatWithTitanAI();
+        console.log('Chat button clicked');
+    });
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        showLoginForm();
+        console.log('Login button clicked');
+    });
+    document.getElementById('signupBtn').addEventListener('click', () => {
+        showSignupForm();
+        console.log('Signup button clicked');
+    });
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        logout();
+        console.log('Logout button clicked');
+    });
 }
 
 // Start the application when the DOM is fully loaded
@@ -467,6 +533,7 @@ window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
 window.handleAddNutrition = handleAddNutrition;
 window.displayNutritionData = displayNutritionData;
+window.deleteNutritionItem = deleteNutritionItem;
 window.handleChatSubmit = handleChatSubmit;
 window.addMessageToChat = addMessageToChat;
 
