@@ -88,6 +88,74 @@ function updateWorkoutChart() {
         });
     }
 }
+// Ensure this code is added to your script.js or equivalent file.
+
+// Function to initialize the workout progress chart
+function createWorkoutProgressChart(workouts) {
+    const ctx = document.getElementById('workoutProgressChart').getContext('2d');
+
+    // Prepare data for the chart
+    const labels = workouts.map(workout => workout.date); // Extract workout dates
+    const data = workouts.map(workout => workout.weight || workout.reps || 0); // Extract weight or reps
+
+    // Create the chart
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Workout Progress',
+                data: data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.3,
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Weight or Reps',
+                    },
+                },
+            },
+        },
+    });
+}
+
+// Example: Attach chart creation to your workout display logic
+document.addEventListener('DOMContentLoaded', () => {
+    const workoutContainer = document.getElementById('displayWorkouts'); // Existing workouts section
+
+    // Add chart canvas dynamically
+    const chartContainer = document.createElement('div');
+    chartContainer.innerHTML = '<canvas id="workoutProgressChart"></canvas>';
+    workoutContainer.appendChild(chartContainer);
+
+    // Fetch workouts from your existing database or array
+    const workouts = [
+        // Replace with actual workout data
+        { date: '2024-12-10', weight: 100 },
+        { date: '2024-12-11', weight: 105 },
+        { date: '2024-12-12', weight: 110 },
+    ];
+
+    // Create the chart
+    createWorkoutProgressChart(workouts);
+});
 
 // Delete a workout
 async function deleteWorkout(id) {
