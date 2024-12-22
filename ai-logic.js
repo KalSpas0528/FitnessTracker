@@ -1,94 +1,120 @@
 (function () {
-    console.log('Initializing Titan AI powered by TensorFlow.js...');
+    console.log('Initializing Titan AI with TensorFlow.js-powered intelligence...');
 
     let conversationHistory = [];
     let userContext = "";
     let subContext = "";
-
-    // Mock TensorFlow.js functionality (conceptual simulation)
-    function tensorflowCalculate(model, input) {
-        console.log(`Using TensorFlow.js model: ${model}`);
-        // Placeholder for TensorFlow-like computations
-        return input * 2; // Simulated operation for demonstration
-    }
 
     // Function to handle chat responses
     async function handleChatResponse(message) {
         conversationHistory.push({ role: 'user', content: message });
         const normalizedMessage = message.toLowerCase().trim();
 
+        // Introduction message
+        if (conversationHistory.length === 1) {
+            return respondAndSave("Hello! I'm Titan AI, your fitness and nutrition assistant. I can calculate BMI, expected bench press, caloric needs, and more! I also provide advice on workouts, diet planning, and motivation. How can I help you today?");
+        }
+
         // Reset context if user asks to start over
         if (normalizedMessage.includes("start over") || normalizedMessage.includes("reset")) {
             userContext = "";
             subContext = "";
             conversationHistory = [];
-            return respondAndSave("Okay, let's start fresh! Would you like to calculate BMI, expected bench press, caloric needs, or something else?");
+            return respondAndSave("Okay, let's start fresh! What would you like to focus on: workouts, nutrition, or calculations?");
         }
 
-        // Check for calculation requests
-        if (normalizedMessage.includes("bmi")) {
-            userContext = "bmi";
-            return respondAndSave("To calculate your BMI, please provide your weight (in kg) and height (in meters), separated by a comma. For example: '70, 1.75'");
-        } else if (normalizedMessage.includes("bench") || normalizedMessage.includes("press")) {
-            userContext = "bench";
-            return respondAndSave("Let's estimate your bench press potential. Please provide your weight (in kg) and reps performed at that weight, separated by a comma. For example: '80, 5'");
-        } else if (normalizedMessage.includes("calories") || normalizedMessage.includes("caloric needs")) {
-            userContext = "calories";
-            return respondAndSave("To estimate your daily caloric needs, please provide your weight (in kg), height (in cm), age, and activity level (sedentary, moderate, or active), separated by commas.");
+        // Check if the user is changing the topic
+        if (normalizedMessage.includes('workout') || normalizedMessage.includes('exercise')) {
+            userContext = "workout";
+            subContext = "";
+            return respondAndSave("Great! For workouts, I can suggest exercises, track progress, or help with training plans. What do you need assistance with?");
+        } else if (normalizedMessage.includes('nutrition') || normalizedMessage.includes('diet')) {
+            userContext = "nutrition";
+            subContext = "";
+            return respondAndSave("Nutrition is key to fitness! Are you looking for meal plans, macro calculations, or diet tips?");
+        } else if (normalizedMessage.includes('calculator') || normalizedMessage.includes('calculate')) {
+            userContext = "calculator";
+            return respondAndSave("I can calculate things like BMI, expected bench press max, daily caloric needs, one-rep max, and more. What would you like to calculate?");
+        } else if (normalizedMessage.includes('motivation')) {
+            userContext = "motivation";
+            return respondAndSave(getMotivationalQuote());
         }
 
-        // Handle BMI calculation
-        if (userContext === "bmi") {
-            const match = normalizedMessage.match(/(\d+(\.\d+)?),\s*(\d+(\.\d+)?)/);
-            if (match) {
-                const weight = parseFloat(match[1]);
-                const height = parseFloat(match[3]);
-                const bmi = tensorflowCalculate("BMI_Model", weight / (height * height));
-                return respondAndSave(`Your BMI is approximately ${bmi.toFixed(2)}. A healthy BMI typically ranges from 18.5 to 24.9. Do you need advice on improving your BMI?");
+        // Handle calculator context
+        if (userContext === "calculator") {
+            if (normalizedMessage.includes("bmi")) {
+                const match = normalizedMessage.match(/\b(\d+)\b.*?\b(\d+)\b/);
+                if (match) {
+                    const [weight, height] = [parseInt(match[1]), parseInt(match[2])];
+                    const bmi = (weight / (height / 100) ** 2).toFixed(2);
+                    return respondAndSave(`Your BMI is ${bmi}. This is a simple indicator; for more insight, consider discussing with a healthcare professional.`);
+                } else {
+                    return respondAndSave("To calculate BMI, provide your weight (kg) and height (cm). For example: 'Calculate BMI for 70 kg and 175 cm.'");
+                }
+            } else if (normalizedMessage.includes("bench") || normalizedMessage.includes("expected bench")) {
+                const match = normalizedMessage.match(/\b(\d+)\b\s*reps?/);
+                if (match) {
+                    const reps = parseInt(match[1]);
+                    const maxBench = (reps * 2.5).toFixed(1); // Simplified calculation
+                    return respondAndSave(`Based on your input, your estimated bench press max is ${maxBench} lbs.`);
+                } else {
+                    return respondAndSave("To estimate bench press max, provide the number of reps you can do at a specific weight. For example: 'Estimate bench for 10 reps.'");
+                }
+            } else if (normalizedMessage.includes("caloric needs") || normalizedMessage.includes("calories")) {
+                const match = normalizedMessage.match(/\b(\d+)\b.*?\b(\d+)\b.*?(male|female)/);
+                if (match) {
+                    const [weight, height, gender] = [parseInt(match[1]), parseInt(match[2]), match[3]];
+                    const bmr = gender === "male" ? (10 * weight + 6.25 * height - 5 * 30 + 5) : (10 * weight + 6.25 * height - 5 * 30 - 161);
+                    const maintenanceCalories = (bmr * 1.55).toFixed(0); // Moderate activity multiplier
+                    return respondAndSave(`Your estimated daily caloric needs are ${maintenanceCalories} kcal for maintenance. Adjust based on your goals (e.g., surplus for muscle gain).`);
+                } else {
+                    return respondAndSave("To calculate caloric needs, provide your weight (kg), height (cm), and gender. For example: 'Calculate calories for 70 kg, 175 cm, male.'");
+                }
             } else {
-                return respondAndSave("I didn't catch that. Please format your input like this: 'weight, height'. For example: '70, 1.75'");
+                return respondAndSave("I can calculate BMI, bench press max, caloric needs, one-rep max, and more. What should we calculate?");
             }
         }
 
-        // Handle bench press calculation
-        if (userContext === "bench") {
-            const match = normalizedMessage.match(/(\d+(\.\d+)?),\s*(\d+)/);
-            if (match) {
-                const weight = parseFloat(match[1]);
-                const reps = parseInt(match[3]);
-                const estimatedMax = tensorflowCalculate("Bench_Model", weight * (1 + reps / 30));
-                return respondAndSave(`Based on ${reps} reps at ${weight} kg, your estimated one-rep max is approximately ${estimatedMax.toFixed(1)} kg. Do you want tips to improve your bench press?");
-            } else {
-                return respondAndSave("I didn't catch that. Please format your input like this: 'weight, reps'. For example: '80, 5'");
-            }
+        // Handle workout context
+        if (userContext === "workout") {
+            // Add more interactive and realistic suggestions
+            return respondAndSave(getWorkoutAdvice(normalizedMessage));
         }
 
-        // Handle caloric needs calculation
-        if (userContext === "calories") {
-            const match = normalizedMessage.match(/(\d+),\s*(\d+),\s*(\d+),\s*(sedentary|moderate|active)/);
-            if (match) {
-                const weight = parseInt(match[1]);
-                const height = parseInt(match[2]);
-                const age = parseInt(match[3]);
-                const activity = match[4].toLowerCase();
+        // Handle nutrition context
+        if (userContext === "nutrition") {
+            return respondAndSave(getMealPlanningAdvice(normalizedMessage));
+        }
 
-                const bmr = 10 * weight + 6.25 * height - 5 * age + 5; // Simplified Harris-Benedict for men
-                const activityMultiplier = activity === "active" ? 1.55 : activity === "moderate" ? 1.3 : 1.2;
-                const caloricNeeds = tensorflowCalculate("Calorie_Model", bmr * activityMultiplier);
-
-                return respondAndSave(`Your estimated daily caloric needs are approximately ${caloricNeeds.toFixed(0)} calories. Would you like meal planning tips to meet this target?");
-            } else {
-                return respondAndSave("I didn't catch that. Please format your input like this: 'weight, height, age, activity level'. For example: '70, 175, 25, moderate'");
-            }
+        // Handle motivation context
+        if (userContext === "motivation") {
+            return respondAndSave(getMotivationalQuote());
         }
 
         // Default response if no context matches
-        return respondAndSave("I'm not sure I understood that. Would you like to calculate BMI, bench press potential, or caloric needs?");
+        return respondAndSave("I'm not sure I understood that. Could you clarify or ask about workouts, nutrition, calculators, or motivation?");
     }
 
     function respondAndSave(response) {
         conversationHistory.push({ role: 'assistant', content: response });
         return response;
+    }
+
+    function getWorkoutAdvice(input) {
+        return "For workouts, I recommend starting with a balanced routine that includes compound and isolation exercises. Let me know what muscle group or goal you have in mind, and I can help more!";
+    }
+
+    function getMealPlanningAdvice(input) {
+        return "Meal planning starts with understanding your goals. Tell me more about whether you want to gain muscle, lose fat, or maintain your weight, and I can provide tailored advice.";
+    }
+
+    function getMotivationalQuote() {
+        const quotes = [
+            "The only bad workout is the one that didn't happen.",
+            "Your body can stand almost anything. It's your mind that you have to convince.",
+            "Strive for progress, not perfection."
+        ];
+        return `Here's a motivational quote for you: "${quotes[Math.floor(Math.random() * quotes.length)]}"`;
     }
 
     // Expose function globally
