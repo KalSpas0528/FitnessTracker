@@ -1,5 +1,7 @@
 // Titan AI: Fitness and Nutrition Assistant with Expanded Prompts
 
+
+//prompts.
 const prompts = {
     greeting: "Hello! I'm Titan AI, your fitness and nutrition assistant. Ready to crush your goals today?",
     help: "I can calculate BMI, one-rep max, caloric needs, protein requirements, and much more. Ask me anything about fitness, nutrition, or staying motivated!",
