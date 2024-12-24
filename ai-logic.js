@@ -1,5 +1,7 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
+    console.log('99^%...');
+    console.log('TITAN AI INITIALIZED...');
 
     const prompts = {
         greeting: "Hi! I'm Titan AI, your comprehensive fitness assistant. I can help with calculations, workout advice, nutrition tips, and more. What can I help you with today?",
