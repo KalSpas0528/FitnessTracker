@@ -1,149 +1,231 @@
-// Titan AI: Fitness and Nutrition Assistant with Expanded Prompts
+(function () {
+    console.log('Initializing Enhanced Titan AI Calculator...');
 
+    // Comprehensive prompt templates
+    const prompts = {
+        greeting: "Hi! I'm Titan AI, your fitness calculator. I can help with BMI, calories, protein needs, and more. What would you like to calculate?",
+        calculations: [
+            "BMI Calculator",
+            "One-Rep Max Calculator",
+            "Calorie Calculator",
+            "Protein Calculator",
+            "Water Intake Calculator",
+            "Ideal Weight Calculator",
+            "Body Fat Calculator",
+            "Macro Calculator"
+        ],
+        examples: {
+            bmi: "Calculate BMI: 170 lbs, 5 ft 10 in",
+            oneRepMax: "Calculate max bench: 185 lbs for 5 reps",
+            calories: "Calculate calories: 170 lbs, 5 ft 10 in, 30 years, male, moderate activity",
+            protein: "Protein needs: 170 lbs, muscle gain",
+            water: "Water intake: 170 lbs, moderate activity",
+            macros: "Calculate macros: 170 lbs, muscle gain, moderate activity"
+        },
+        motivational: [
+            "Every calculation brings you closer to your goals!",
+            "Numbers don't lie - trust the process!",
+            "Knowledge is power, especially in fitness!",
+            "Let's make these calculations work for you!",
+            "Small changes lead to big results!"
+        ]
+    };
 
-//prompts.
-const prompts = {
-    greeting: "Hello! I'm Titan AI, your fitness and nutrition assistant. Ready to crush your goals today?",
-    help: "I can calculate BMI, one-rep max, caloric needs, protein requirements, and much more. Ask me anything about fitness, nutrition, or staying motivated!",
-    bmiRequest: "Sure, to calculate BMI, I need your weight (lbs or kg) and height (feet/inches or cm). Example: '125 lbs, 5 ft 7 in'.",
-    benchPressRequest: "To estimate your bench press max, I need the reps and weight you lifted. Example: '5 reps at 100 lbs'.",
-    caloricNeedsRequest: "To estimate your daily caloric needs, tell me your weight (lbs or kg), height (cm or ft/in), age, and gender. Example: '125 lbs, 5 ft 7 in, 20 years, male'.",
-    proteinNeedsRequest: "To calculate your daily protein needs, provide your weight and fitness goal (e.g., muscle gain, maintenance, fat loss). Example: '125 lbs for muscle gain'.",
-    hydrationRequest: "To calculate daily water intake, share your weight and activity level (e.g., sedentary, moderate, intense). Example: '125 lbs, moderate activity'.",
-    workoutSuggestion: "Need workout advice? I can suggest routines for muscle gain, fat loss, or endurance. Just let me know your goal!",
-    motivation: [
-        "Every rep counts. Keep going!",
-        "The only bad workout is the one you didn’t do.",
-        "You’re stronger than you think. Prove it.",
-        "Progress, not perfection."
-    ],
-    error: "Hmm, I didn’t quite catch that. Could you clarify or ask a different way?",
-};
+    // Main handler function
+    async function handleChatResponse(message) {
+        const input = message.toLowerCase().trim();
 
-function detectIntent(input) {
-    input = input.toLowerCase();
-    if (input.includes("bmi")) return "bmi";
-    if (input.includes("bench press") || input.includes("estimate bench")) return "benchPress";
-    if (input.includes("caloric needs") || input.includes("calories")) return "caloricNeeds";
-    if (input.includes("protein needs") || input.includes("protein")) return "proteinNeeds";
-    if (input.includes("water intake") || input.includes("hydration")) return "hydration";
-    if (input.includes("workout")) return "workoutSuggestion";
-    if (input.includes("motivate") || input.includes("motivation")) return "motivation";
-    return "unknown";
-}
-function parseUnits(input) {
-    const weightMatch = input.match(/(\d+\.?\d*)\s*(lbs|kg)/);
-    const heightMatch = input.match(/(\d+)\s*ft\s*(\d+)?\s*in|((\d+\.?\d*)\s*(cm|in))/);
-    const repsMatch = input.match(/(\d+)\s*reps/);
-    const ageMatch = input.match(/(\d+)\s*years/);
-    const genderMatch = input.match(/male|female/i);
-    const activityMatch = input.match(/(sedentary|moderate|intense)/i);
+        // Check for help or examples request
+        if (input.includes('help') || input.includes('example') || input.includes('what') || input === 'hi' || input === 'hello') {
+            return `${prompts.greeting}\n\nI can help with:\n${prompts.calculations.join('\n')}\n\nExample commands:\n${Object.values(prompts.examples).join('\n')}`;
+        }
 
-    let height = null;
-    if (heightMatch) {
-        if (heightMatch[1] && heightMatch[2]) {
-            height = { value: parseFloat(heightMatch[1]) * 12 + parseFloat(heightMatch[2]), unit: "in" };
-        } else if (heightMatch[4] && heightMatch[6]) {
-            height = { value: parseFloat(heightMatch[4]), unit: heightMatch[6] };
+        // Handle calculations
+        try {
+            if (input.includes('bmi')) {
+                return handleBMICalculation(input);
+            } else if (input.includes('max') || input.includes('orm')) {
+                return handleOneRepMaxCalculation(input);
+            } else if (input.includes('calorie')) {
+                return handleCalorieCalculation(input);
+            } else if (input.includes('protein')) {
+                return handleProteinCalculation(input);
+            } else if (input.includes('water')) {
+                return handleWaterCalculation(input);
+            } else if (input.includes('macro')) {
+                return handleMacroCalculation(input);
+            } else if (input.includes('motivat')) {
+                return prompts.motivational[Math.floor(Math.random() * prompts.motivational.length)];
+            }
+
+            // If no specific calculation is detected
+            return "I'm not sure what you'd like to calculate. Try asking for 'help' to see what I can do!";
+        } catch (error) {
+            console.error('Calculation error:', error);
+            return "I couldn't process that calculation. Please check the format and try again!";
         }
     }
 
-    return {
-        weight: weightMatch ? { value: parseFloat(weightMatch[1]), unit: weightMatch[2] } : null,
-        height: height,
-        reps: repsMatch ? parseInt(repsMatch[1], 10) : null,
-        age: ageMatch ? parseInt(ageMatch[1], 10) : null,
-        gender: genderMatch ? genderMatch[0].toLowerCase() : null,
-        activity: activityMatch ? activityMatch[1].toLowerCase() : null,
-    };
-}
-
-function calculateBMI(weight, height) {
-    const weightKg = weight.unit === "lbs" ? weight.value * 0.453592 : weight.value;
-    const heightM = height.unit === "cm" ? height.value / 100 : height.value * 0.0254;
-    return (weightKg / (heightM ** 2)).toFixed(2);
-}
-
-function estimateBenchPress(reps, weight) {
-    return (weight.value * (1 + reps / 30)).toFixed(2);
-}
-
-function calculateCaloricNeeds(weight, height, age, gender) {
-    const weightKg = weight.unit === "lbs" ? weight.value * 0.453592 : weight.value;
-    const heightCm = height.unit === "in" ? height.value * 2.54 : height.value;
-
-    const bmr = gender === "male"
-        ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
-        : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
-
-    return Math.round(bmr * 1.55); // Moderate activity multiplier
-}
-
-function calculateProteinNeeds(weight, goal) {
-    const weightKg = weight.unit === "lbs" ? weight.value * 0.453592 : weight.value;
-    let factor = goal === "muscle gain" ? 2.0 : goal === "fat loss" ? 1.6 : 1.2;
-    return Math.round(weightKg * factor);
-}
-
-function calculateWaterIntake(weight, activity) {
-    const weightKg = weight.unit === "lbs" ? weight.value * 0.453592 : weight.value;
-    let multiplier = activity === "intense" ? 0.05 : activity === "moderate" ? 0.04 : 0.03;
-    return (weightKg * multiplier).toFixed(1);
-}
-
-function generateResponse(intent, input) {
-    const parsed = parseUnits(input);
-
-    switch (intent) {
-        case "bmi":
-            if (parsed.weight && parsed.height) {
-                return `Hmm... calculating... Your BMI is approximately ${calculateBMI(parsed.weight, parsed.height)}.`;
-            } else {
-                return prompts.bmiRequest;
-            }
-        case "benchPress":
-            if (parsed.weight && parsed.reps) {
-                return `Let me think... Okay! Your estimated bench press max is ${estimateBenchPress(parsed.reps, parsed.weight)} lbs.`;
-            } else {
-                return prompts.benchPressRequest;
-            }
-        case "caloricNeeds":
-            if (parsed.weight && parsed.height && parsed.age && parsed.gender) {
-                return `Just a moment... Got it! Your estimated daily caloric needs are ${calculateCaloricNeeds(parsed.weight, parsed.height, parsed.age, parsed.gender)} kcal.`;
-            } else {
-                return prompts.caloricNeedsRequest;
-            }
-        case "proteinNeeds":
-            if (parsed.weight && parsed.activity) {
-                return `Thinking... For your goal, your daily protein needs are around ${calculateProteinNeeds(parsed.weight, parsed.activity)} grams.`;
-            } else {
-                return prompts.proteinNeedsRequest;
-            }
-        case "hydration":
-            if (parsed.weight && parsed.activity) {
-                return `Calculating... You should aim for about ${calculateWaterIntake(parsed.weight, parsed.activity)} liters of water daily.`;
-            } else {
-                return prompts.hydrationRequest;
-            }
-        case "workoutSuggestion":
-            return `Based on your goal, here’s a suggestion: Focus on compound lifts like squats, deadlifts, and bench presses for strength. Need more details? Let me know!`;
-        case "motivation":
-            return prompts.motivation[Math.floor(Math.random() * prompts.motivation.length)];
-        case "unknown":
-        default:
-            return prompts.error;
+    // Helper functions for calculations
+    function extractNumbers(input) {
+        const numbers = input.match(/\d+(\.\d+)?/g);
+        return numbers ? numbers.map(Number) : [];
     }
-}
 
-function handleInput(input) {
-    const intent = detectIntent(input);
-    return generateResponse(intent, input);
-}
+    function handleBMICalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 3) {
+            const [weight, feet, inches] = numbers;
+            const heightInches = (feet * 12) + (inches || 0);
+            const bmi = (weight * 703) / (heightInches * heightInches);
+            const category = getBMICategory(bmi);
+            return `Your BMI is ${bmi.toFixed(1)} (${category}). Remember, BMI is just one measure of health!`;
+        }
+        return "For BMI, please provide weight in pounds and height (e.g., 'Calculate BMI: 170 lbs, 5 ft 10 in')";
+    }
 
-// Example Usage
-console.log(handleInput("Calculate BMI for 125 lbs, 5 ft 7 in"));
-console.log(handleInput("Estimate bench for 5 reps at 100 lbs"));
-console.log(handleInput("Calculate caloric needs for 125 lbs, 5 ft 7 in, 20 years, male"));
-console.log(handleInput("How much protein do I need for muscle gain at 150 lbs?"));
-console.log(handleInput("How much water should I drink for 130 lbs, intense activity?"));
-console.log(handleInput("Motivate me to work out!"));
+    function getBMICategory(bmi) {
+        if (bmi < 18.5) return "Underweight";
+        if (bmi < 25) return "Normal weight";
+        if (bmi < 30) return "Overweight";
+        return "Obese";
+    }
+
+    function handleOneRepMaxCalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 2) {
+            const [weight, reps] = numbers;
+            const oneRM = weight * (1 + (reps / 30));
+            return `Your estimated one-rep max is ${Math.round(oneRM)} lbs. This is theoretical - always practice safe lifting!`;
+        }
+        return "For one-rep max, please provide weight and reps (e.g., 'Calculate max: 185 lbs for 5 reps')";
+    }
+
+    function handleCalorieCalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 4) {
+            const [weight, feet, inches, age] = numbers;
+            const heightInches = (feet * 12) + (inches || 0);
+            const isMale = input.includes('male');
+            const activity = getActivityLevel(input);
+            const bmr = calculateBMR(weight, heightInches, age, isMale);
+            const tdee = calculateTDEE(bmr, activity);
+            return `Your estimated daily calorie needs are:\nMaintenance: ${Math.round(tdee)} calories\nWeight loss: ${Math.round(tdee - 500)} calories\nWeight gain: ${Math.round(tdee + 500)} calories`;
+        }
+        return "For calories, please provide weight, height, age, gender, and activity level";
+    }
+
+    function handleProteinCalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 1) {
+            const weight = numbers[0];
+            const goal = getGoal(input);
+            const proteinNeeds = calculateProteinNeeds(weight, goal);
+            return `Your daily protein target is ${proteinNeeds.min}-${proteinNeeds.max}g. Try to spread this across 4-6 meals!`;
+        }
+        return "For protein needs, please provide your weight and goal (muscle gain, maintenance, or fat loss)";
+    }
+
+    function handleWaterCalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 1) {
+            const weight = numbers[0];
+            const activity = getActivityLevel(input);
+            const waterNeeds = calculateWaterNeeds(weight, activity);
+            return `You should aim for ${waterNeeds.min}-${waterNeeds.max} liters of water daily. Adjust based on climate and sweating!`;
+        }
+        return "For water intake, please provide your weight and activity level";
+    }
+
+    function handleMacroCalculation(input) {
+        const numbers = extractNumbers(input);
+        if (numbers.length >= 1) {
+            const weight = numbers[0];
+            const goal = getGoal(input);
+            const activity = getActivityLevel(input);
+            const macros = calculateMacros(weight, goal, activity);
+            return `Recommended daily macros:\nProtein: ${macros.protein}g\nCarbs: ${macros.carbs}g\nFat: ${macros.fat}g`;
+        }
+        return "For macro split, please provide weight, goal (muscle gain, fat loss, maintenance), and activity level";
+    }
+
+    // Utility functions
+    function getActivityLevel(input) {
+        if (input.includes('sedentary')) return 1.2;
+        if (input.includes('light')) return 1.375;
+        if (input.includes('moderate')) return 1.55;
+        if (input.includes('very active') || input.includes('intense')) return 1.725;
+        return 1.55; // Default to moderate
+    }
+
+    function getGoal(input) {
+        if (input.includes('muscle') || input.includes('gain')) return 'muscle_gain';
+        if (input.includes('loss') || input.includes('cut')) return 'fat_loss';
+        return 'maintenance';
+    }
+
+    function calculateBMR(weight, heightInches, age, isMale) {
+        const heightCm = heightInches * 2.54;
+        const weightKg = weight * 0.453592;
+        return isMale
+            ? (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5
+            : (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+    }
+
+    function calculateTDEE(bmr, activityMultiplier) {
+        return bmr * activityMultiplier;
+    }
+
+    function calculateProteinNeeds(weight, goal) {
+        const weightKg = weight * 0.453592;
+        switch (goal) {
+            case 'muscle_gain':
+                return { min: Math.round(weightKg * 2.2), max: Math.round(weightKg * 2.4) };
+            case 'fat_loss':
+                return { min: Math.round(weightKg * 2.0), max: Math.round(weightKg * 2.2) };
+            default:
+                return { min: Math.round(weightKg * 1.6), max: Math.round(weightKg * 1.8) };
+        }
+    }
+
+    function calculateWaterNeeds(weight, activity) {
+        const weightKg = weight * 0.453592;
+        const baseNeeds = weightKg * 0.033;
+        return {
+            min: Math.round(baseNeeds * 10) / 10,
+            max: Math.round(baseNeeds * activity * 10) / 10
+        };
+    }
+
+    function calculateMacros(weight, goal, activity) {
+        const calories = calculateBMR(weight, 70, 30, true) * activity; // Using average height/age
+        let proteinPct, carbPct, fatPct;
+
+        switch (goal) {
+            case 'muscle_gain':
+                proteinPct = 0.3;
+                carbPct = 0.45;
+                fatPct = 0.25;
+                break;
+            case 'fat_loss':
+                proteinPct = 0.4;
+                carbPct = 0.3;
+                fatPct = 0.3;
+                break;
+            default:
+                proteinPct = 0.3;
+                carbPct = 0.4;
+                fatPct = 0.3;
+        }
+
+        return {
+            protein: Math.round((calories * proteinPct) / 4),
+            carbs: Math.round((calories * carbPct) / 4),
+            fat: Math.round((calories * fatPct) / 9)
+        };
+    }
+
+    // Expose the main function globally
+    window.handleChatResponse = handleChatResponse;
+})();
+
