@@ -112,18 +112,33 @@
         return `
 Welcome to Titan AI! I'm here to assist you with your fitness journey.
 
-I can help with:
-• Calculations (BMI, calories, etc.)
-• Workout plans
-• Nutrition advice
-• Injury prevention
-• Motivation and more
+📊 Calculations
+   • BMI (Body Mass Index)
+   • Daily Calorie Needs
+   • Protein Intake
+   • And more...
 
-Try asking:
-• "Calculate my BMI"
-• "Workout for muscle gain"
-• "Nutrition for weight loss"
-• "Prevent running injuries"
+💪 Workouts
+   • Muscle Gain Plans
+   • Weight Loss Routines
+   • General Fitness Advice
+
+🥗 Nutrition
+   • Meal Planning
+   • Pre/Post-Workout Nutrition
+   • Specialized Diets
+
+🌟 Other Topics
+   • Motivation
+   • Injury Prevention
+   • Recovery Techniques
+   • Fitness Myths
+
+To get started, try asking:
+• "What calculations can you do?"
+• "Give me a workout for muscle gain"
+• "Nutrition advice for weight loss"
+• "How to prevent running injuries"
 
 What would you like to know?`;
     }
