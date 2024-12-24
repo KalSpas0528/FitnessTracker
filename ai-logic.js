@@ -31,7 +31,6 @@ function detectIntent(input) {
     if (input.includes("motivate") || input.includes("motivation")) return "motivation";
     return "unknown";
 }
-
 function parseUnits(input) {
     const weightMatch = input.match(/(\d+\.?\d*)\s*(lbs|kg)/);
     const heightMatch = input.match(/(\d+)\s*ft\s*(\d+)?\s*in|((\d+\.?\d*)\s*(cm|in))/);
