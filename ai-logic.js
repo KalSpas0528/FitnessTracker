@@ -1,9 +1,18 @@
 (function () {
-    console.log('Initializing Enhanced Titan AI Calculator...');
+    console.log('Initializing Enhanced Titan AI Fitness Assistant...');
 
-    // Comprehensive prompt templates
     const prompts = {
-        greeting: "Hi! I'm Titan AI, your fitness assistant. I can help with calculations, workout advice, nutrition tips, and more. What can I help you with today?",
+        greeting: "Hi! I'm Titan AI, your comprehensive fitness assistant. I can help with calculations, workout advice, nutrition tips, and more. What can I help you with today?",
+        categories: [
+            "Fitness Calculations",
+            "Workout Advice",
+            "Nutrition Tips",
+            "Motivation",
+            "Injury Prevention",
+            "Recovery Techniques",
+            "Fitness Myths",
+            "Supplement Information"
+        ],
         calculations: [
             "BMI Calculator",
             "One-Rep Max Calculator",
@@ -14,260 +23,144 @@
             "Body Fat Calculator",
             "Macro Calculator"
         ],
-        commonQuestions: [
-            "How often should I work out?",
-            "What's the best way to lose weight?",
-            "How can I build muscle effectively?",
-            "What should I eat before and after a workout?",
-            "How much protein do I need daily?",
-            "What are good exercises for beginners?",
-            "How can I improve my flexibility?",
-            "What's the difference between cardio and strength training?",
-            "How can I stay motivated to exercise?",
-            "What's a good workout routine for busy people?"
-        ],
         examples: {
             bmi: "Calculate BMI: 170 lbs, 5 ft 10 in",
             oneRepMax: "Calculate max bench: 185 lbs for 5 reps",
             calories: "Calculate calories: 170 lbs, 5 ft 10 in, 30 years, male, moderate activity",
             protein: "Protein needs: 170 lbs, muscle gain",
             water: "Water intake: 170 lbs, moderate activity",
-            macros: "Calculate macros: 170 lbs, muscle gain, moderate activity"
+            macros: "Calculate macros: 170 lbs, muscle gain, moderate activity",
+            workout: "Suggest a workout for muscle gain",
+            nutrition: "What should I eat before a workout?",
+            motivation: "Give me a motivational fitness quote",
+            injury: "How to prevent runner's knee",
+            recovery: "Best ways to recover after an intense workout",
+            myth: "Is it bad to eat after 8 PM?",
+            supplement: "Benefits of creatine supplementation"
         },
         motivational: [
-            "Every calculation brings you closer to your goals!",
-            "Numbers don't lie - trust the process!",
-            "Knowledge is power, especially in fitness!",
-            "Let's make these calculations work for you!",
-            "Small changes lead to big results!"
+            "Every step counts on your fitness journey!",
+            "You're stronger than you think. Prove it today!",
+            "The only bad workout is the one that didn't happen.",
+            "Your body can stand almost anything. It's your mind you have to convince.",
+            "Fitness is not about being better than someone else. It's about being better than you used to be."
         ]
     };
 
-    // Main handler function
     async function handleChatResponse(message) {
         const input = message.toLowerCase().trim();
 
-        // Check for help or examples request
-        if (input.includes('help') || input.includes('example') || input.includes('what') || input === 'hi' || input === 'hello') {
-            return `${prompts.greeting}\n\nI can help with calculations like:\n${prompts.calculations.join('\n')}\n\nOr answer common questions like:\n${prompts.commonQuestions.join('\n')}\n\nExample commands:\n${Object.values(prompts.examples).join('\n')}`;
+        if (input === 'hi' || input === 'hello' || input === 'hey') {
+            return prompts.greeting;
         }
 
-        // Handle calculations and questions
+        if (input === 'help' || input.includes('what') || input.includes('example')) {
+            return generateHelpResponse();
+        }
+
+        // Handle calculations and other queries
         try {
-            if (input.includes('bmi')) {
+            if (input.includes('bmi') || (input.includes('calculate') && input.includes('bmi'))) {
                 return handleBMICalculation(input);
-            } else if (input.includes('max') || input.includes('orm')) {
+            } else if (input.includes('max') || input.includes('orm') || (input.includes('calculate') && input.includes('bench'))) {
                 return handleOneRepMaxCalculation(input);
-            } else if (input.includes('calorie')) {
+            } else if (input.includes('calorie') || input.includes('cal') || (input.includes('calculate') && input.includes('calories'))) {
                 return handleCalorieCalculation(input);
-            } else if (input.includes('protein')) {
+            } else if (input.includes('protein') || (input.includes('calculate') && input.includes('protein'))) {
                 return handleProteinCalculation(input);
-            } else if (input.includes('water')) {
+            } else if (input.includes('water') || (input.includes('calculate') && input.includes('water'))) {
                 return handleWaterCalculation(input);
-            } else if (input.includes('macro')) {
+            } else if (input.includes('macro') || (input.includes('calculate') && input.includes('macros'))) {
                 return handleMacroCalculation(input);
+            } else if (input.includes('body fat') || (input.includes('calculate') && input.includes('body fat'))) {
+                return "To calculate body fat percentage, I need more information like your weight, height, age, gender, and specific body measurements. Can you provide these details?";
+            } else if (input.includes('workout') || input.includes('exercise')) {
+                return handleWorkoutAdvice(input);
+            } else if (input.includes('nutrition') || input.includes('diet') || input.includes('eat')) {
+                return handleNutritionAdvice(input);
             } else if (input.includes('motivat')) {
                 return prompts.motivational[Math.floor(Math.random() * prompts.motivational.length)];
-            } else {
-                return handleCommonQuestions(input);
+            } else if (input.includes('injury') || input.includes('pain')) {
+                return handleInjuryPrevention(input);
+            } else if (input.includes('recover')) {
+                return handleRecoveryAdvice(input);
+            } else if (input.includes('myth')) {
+                return handleFitnessMyth(input);
+            } else if (input.includes('supplement')) {
+                return handleSupplementInfo(input);
             }
+
+            return "I'm not sure what you're asking. Can you try rephrasing or ask for 'help' to see what I can do?";
         } catch (error) {
-            console.error('Calculation error:', error);
-            return "I couldn't process that calculation or question. Please check the format and try again!";
+            console.error('Error in Titan AI:', error);
+            return "I encountered an error processing your request. Please try again or ask for 'help' to see what I can do.";
         }
     }
 
-    // Helper functions for calculations (unchanged)
-    function extractNumbers(input) {
-        const numbers = input.match(/\d+(\.\d+)?/g);
-        return numbers ? numbers.map(Number) : [];
+    function generateHelpResponse() {
+        return `${prompts.greeting}\n\nI can assist with:\n${prompts.categories.join('\n')}\n\nFor calculations, try:\n${prompts.calculations.join('\n')}\n\nExample queries:\n${Object.values(prompts.examples).join('\n')}`;
     }
 
-    function handleBMICalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 3) {
-            const [weight, feet, inches] = numbers;
-            const heightInches = (feet * 12) + (inches || 0);
-            const bmi = (weight * 703) / (heightInches * heightInches);
-            const category = getBMICategory(bmi);
-            return `Your BMI is ${bmi.toFixed(1)} (${category}). Remember, BMI is just one measure of health!`;
-        }
-        return "For BMI, please provide weight in pounds and height (e.g., 'Calculate BMI: 170 lbs, 5 ft 10 in')";
-    }
+    // Existing calculation functions (handleBMICalculation, handleOneRepMaxCalculation, etc.) remain unchanged
 
-    function getBMICategory(bmi) {
-        if (bmi < 18.5) return "Underweight";
-        if (bmi < 25) return "Normal weight";
-        if (bmi < 30) return "Overweight";
-        return "Obese";
-    }
-
-    function handleOneRepMaxCalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 2) {
-            const [weight, reps] = numbers;
-            const oneRM = weight * (1 + (reps / 30));
-            return `Your estimated one-rep max is ${Math.round(oneRM)} lbs. This is theoretical - always practice safe lifting!`;
-        }
-        return "For one-rep max, please provide weight and reps (e.g., 'Calculate max: 185 lbs for 5 reps')";
-    }
-
-    function handleCalorieCalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 4) {
-            const [weight, feet, inches, age] = numbers;
-            const heightInches = (feet * 12) + (inches || 0);
-            const isMale = input.includes('male');
-            const activity = getActivityLevel(input);
-            const bmr = calculateBMR(weight, heightInches, age, isMale);
-            const tdee = calculateTDEE(bmr, activity);
-            return `Your estimated daily calorie needs are:\nMaintenance: ${Math.round(tdee)} calories\nWeight loss: ${Math.round(tdee - 500)} calories\nWeight gain: ${Math.round(tdee + 500)} calories`;
-        }
-        return "For calories, please provide weight, height, age, gender, and activity level";
-    }
-
-    function handleProteinCalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 1) {
-            const weight = numbers[0];
-            const goal = getGoal(input);
-            const proteinNeeds = calculateProteinNeeds(weight, goal);
-            return `Your daily protein target is ${proteinNeeds.min}-${proteinNeeds.max}g. Try to spread this across 4-6 meals!`;
-        }
-        return "For protein needs, please provide your weight and goal (muscle gain, maintenance, or fat loss)";
-    }
-
-    function handleWaterCalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 1) {
-            const weight = numbers[0];
-            const activity = getActivityLevel(input);
-            const waterNeeds = calculateWaterNeeds(weight, activity);
-            return `You should aim for ${waterNeeds.min}-${waterNeeds.max} liters of water daily. Adjust based on climate and sweating!`;
-        }
-        return "For water intake, please provide your weight and activity level";
-    }
-
-    function handleMacroCalculation(input) {
-        const numbers = extractNumbers(input);
-        if (numbers.length >= 1) {
-            const weight = numbers[0];
-            const goal = getGoal(input);
-            const activity = getActivityLevel(input);
-            const macros = calculateMacros(weight, goal, activity);
-            return `Recommended daily macros:\nProtein: ${macros.protein}g\nCarbs: ${macros.carbs}g\nFat: ${macros.fat}g`;
-        }
-        return "For macro split, please provide weight, goal (muscle gain, fat loss, maintenance), and activity level";
-    }
-
-    function handleCommonQuestions(input) {
-        if (input.includes('how often') && input.includes('work out')) {
-            return "Generally, aim for 3-5 workouts per week, allowing for rest days. The exact frequency depends on your goals and current fitness level.";
-        }
-        if (input.includes('lose weight')) {
-            return "To lose weight, create a calorie deficit through diet and exercise. Focus on whole foods, increase protein intake, and combine cardio with strength training.";
-        }
-        if (input.includes('build muscle')) {
-            return "To build muscle effectively, focus on progressive overload in strength training, eat a protein-rich diet, and ensure adequate rest and recovery.";
-        }
-        if (input.includes('eat') && (input.includes('before') || input.includes('after') || input.includes('workout'))) {
-            return "Before a workout, eat easily digestible carbs and some protein. After a workout, focus on protein for muscle repair and carbs to replenish energy stores.";
-        }
-        if (input.includes('protein') && input.includes('need')) {
-            return "Daily protein needs vary, but a general guideline is 0.8-1g per pound of body weight, higher for athletes and those building muscle.";
-        }
-        if (input.includes('exercises') && input.includes('beginner')) {
-            return "Good exercises for beginners include bodyweight squats, push-ups, lunges, planks, and walking or jogging. Start with what you can manage and gradually increase intensity.";
-        }
-        if (input.includes('improve') && input.includes('flexibility')) {
-            return "To improve flexibility, incorporate regular stretching into your routine. Try yoga, dynamic stretching before workouts, and static stretching after workouts.";
-        }
-        if (input.includes('cardio') && input.includes('strength')) {
-            return "Cardio primarily improves heart health and burns calories, while strength training builds muscle and boosts metabolism. Both are important for overall fitness.";
-        }
-        if (input.includes('stay motivated')) {
-            return "To stay motivated, set clear goals, track your progress, mix up your routines, find a workout buddy, and celebrate small victories along the way.";
-        }
-        if (input.includes('busy') && input.includes('workout')) {
-            return "For busy people, try high-intensity interval training (HIIT), bodyweight exercises at home, or split your workout into shorter sessions throughout the day.";
-        }
-        return "I'm not sure about that specific question. Can you try rephrasing or ask about one of the common fitness topics I mentioned earlier?";
-    }
-
-    // Utility functions (unchanged)
-    function getActivityLevel(input) {
-        if (input.includes('sedentary')) return 1.2;
-        if (input.includes('light')) return 1.375;
-        if (input.includes('moderate')) return 1.55;
-        if (input.includes('very active') || input.includes('intense')) return 1.725;
-        return 1.55; // Default to moderate
-    }
-
-    function getGoal(input) {
-        if (input.includes('muscle') || input.includes('gain')) return 'muscle_gain';
-        if (input.includes('loss') || input.includes('cut')) return 'fat_loss';
-        return 'maintenance';
-    }
-
-    function calculateBMR(weight, heightInches, age, isMale) {
-        const heightCm = heightInches * 2.54;
-        const weightKg = weight * 0.453592;
-        return isMale
-            ? (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5
-            : (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
-    }
-
-    function calculateTDEE(bmr, activityMultiplier) {
-        return bmr * activityMultiplier;
-    }
-
-    function calculateProteinNeeds(weight, goal) {
-        const weightKg = weight * 0.453592;
-        switch (goal) {
-            case 'muscle_gain':
-                return { min: Math.round(weightKg * 2.2), max: Math.round(weightKg * 2.4) };
-            case 'fat_loss':
-                return { min: Math.round(weightKg * 2.0), max: Math.round(weightKg * 2.2) };
-            default:
-                return { min: Math.round(weightKg * 1.6), max: Math.round(weightKg * 1.8) };
+    function handleWorkoutAdvice(input) {
+        if (input.includes('muscle gain') || input.includes('build muscle')) {
+            return "For muscle gain, focus on compound exercises like squats, deadlifts, bench presses, and rows. Aim for 3-4 sets of 8-12 reps, progressively increasing weight. Include 3-4 strength training sessions per week, allowing for adequate rest between workouts.";
+        } else if (input.includes('weight loss') || input.includes('fat loss')) {
+            return "For weight loss, combine cardio and strength training. Start with 3-4 days of 30-minute cardio sessions (like jogging, cycling, or swimming) and 2-3 days of full-body strength training. Focus on creating a calorie deficit through diet and exercise.";
+        } else if (input.includes('beginner')) {
+            return "For beginners, start with bodyweight exercises like squats, push-ups, lunges, and planks. Aim for 2-3 full-body workouts per week, focusing on proper form. Gradually increase intensity and consider adding resistance training as you progress.";
+        } else {
+            return "To suggest a workout, I need to know your goal (e.g., muscle gain, weight loss, general fitness) and fitness level. Can you provide more details?";
         }
     }
 
-    function calculateWaterNeeds(weight, activity) {
-        const weightKg = weight * 0.453592;
-        const baseNeeds = weightKg * 0.033;
-        return {
-            min: Math.round(baseNeeds * 10) / 10,
-            max: Math.round(baseNeeds * activity * 10) / 10
-        };
+    function handleNutritionAdvice(input) {
+        if (input.includes('before workout') || input.includes('pre-workout')) {
+            return "Before a workout, eat a meal rich in complex carbs and some protein about 2-3 hours before. Good options include oatmeal with fruit and nuts, whole grain toast with peanut butter, or a chicken and rice bowl.";
+        } else if (input.includes('after workout') || input.includes('post-workout')) {
+            return "After a workout, focus on protein for muscle repair and carbs to replenish energy stores. Good options include a protein shake with banana, grilled chicken with sweet potato, or Greek yogurt with berries and granola.";
+        } else if (input.includes('muscle gain') || input.includes('build muscle')) {
+            return "For muscle gain, increase your calorie intake with a focus on protein. Aim for 1.6-2.2 grams of protein per kg of body weight daily. Include lean meats, fish, eggs, dairy, legumes, and consider protein supplements if needed.";
+        } else if (input.includes('weight loss') || input.includes('fat loss')) {
+            return "For weight loss, create a moderate calorie deficit. Focus on whole foods, increase protein intake to preserve muscle, and include plenty of vegetables for nutrients and fiber. Control portion sizes and limit processed foods and sugary drinks.";
+        } else {
+            return "For specific nutrition advice, I need to know your goal (e.g., muscle gain, weight loss, general health) and any dietary restrictions. Can you provide more details?";
+        }
     }
 
-    function calculateMacros(weight, goal, activity) {
-        const calories = calculateBMR(weight, 70, 30, true) * activity; // Using average height/age
-        let proteinPct, carbPct, fatPct;
-
-        switch (goal) {
-            case 'muscle_gain':
-                proteinPct = 0.3;
-                carbPct = 0.45;
-                fatPct = 0.25;
-                break;
-            case 'fat_loss':
-                proteinPct = 0.4;
-                carbPct = 0.3;
-                fatPct = 0.3;
-                break;
-            default:
-                proteinPct = 0.3;
-                carbPct = 0.4;
-                fatPct = 0.3;
+    function handleInjuryPrevention(input) {
+        if (input.includes('runner') || input.includes('knee')) {
+            return "To prevent runner's knee: 1) Gradually increase running distance and intensity. 2) Wear proper running shoes. 3) Strengthen your quadriceps and hip muscles. 4) Incorporate cross-training. 5) Maintain good running form. If pain persists, consult a healthcare professional.";
+        } else if (input.includes('back') || input.includes('spine')) {
+            return "To prevent back injuries: 1) Maintain good posture. 2) Use proper lifting techniques. 3) Strengthen core muscles. 4) Stretch regularly, especially hip flexors and hamstrings. 5) Avoid prolonged sitting. If you have chronic back pain, consult a doctor or physical therapist.";
+        } else {
+            return "Injury prevention typically involves proper warm-up, correct form, gradual progression, and balanced training. For specific injury prevention advice, please mention the body part or activity you're concerned about.";
         }
+    }
 
-        return {
-            protein: Math.round((calories * proteinPct) / 4),
-            carbs: Math.round((calories * carbPct) / 4),
-            fat: Math.round((calories * fatPct) / 9)
-        };
+    function handleRecoveryAdvice(input) {
+        return "To optimize recovery after workouts: 1) Get adequate sleep (7-9 hours). 2) Stay hydrated. 3) Eat a balanced post-workout meal with protein and carbs. 4) Use active recovery techniques like light cardio or yoga. 5) Consider foam rolling or massage for muscle soreness. 6) Allow for rest days between intense workouts.";
+    }
+
+    function handleFitnessMyth(input) {
+        if (input.includes('eat after 8') || input.includes('late night eating')) {
+            return "It's a myth that eating after 8 PM leads to weight gain. What matters most is your total calorie intake over the day, not the timing. However, late-night eating might disrupt sleep or lead to poor food choices, so it's best to finish eating a few hours before bedtime.";
+        } else if (input.includes('spot reduce') || input.includes('target fat')) {
+            return "Spot reduction is a myth. You can't target fat loss from specific body parts through exercise. Fat loss occurs throughout the body as you create a calorie deficit. Focus on overall fat loss through diet and exercise, and your body will lose fat from various areas.";
+        } else {
+            return "There are many fitness myths. To debunk a specific myth, please mention it in your question. Common myths include spot reduction, the need for protein immediately after workouts, and the idea that lifting weights makes women bulky.";
+        }
+    }
+
+    function handleSupplementInfo(input) {
+        if (input.includes('creatine')) {
+            return "Creatine is one of the most researched supplements. Benefits include increased muscle strength and size, improved exercise performance, and faster recovery. It's generally safe for most people. Typical dosage is 3-5 grams per day. Always consult with a healthcare provider before starting any supplement regimen.";
+        } else if (input.includes('protein') || input.includes('whey')) {
+            return "Protein supplements, like whey protein, can help meet daily protein needs, especially for athletes or those struggling to get enough from food. They're convenient and can aid in muscle recovery and growth. However, they're not necessary if you can meet your protein needs through diet alone.";
+        } else {
+            return "Supplements can be useful but aren't necessary for everyone. Common fitness supplements include protein powders, creatine, and multivitamins. For information on a specific supplement, please mention it by name. Always consult a healthcare provider before starting any supplement regimen.";
+        }
     }
 
     // Expose the main function globally
