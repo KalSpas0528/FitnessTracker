@@ -1,3 +1,12 @@
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
+window.logout = logout;
+
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -435,6 +444,15 @@ async function handleChatSubmit(event) {
 
     addMessageToChat('You', message);
 
+    try {
+        // Use the TensorFlow.js model to generate a response
+        const response = await window.handleChatResponse(message);
+        addMessageToChat('Titan AI', response);
+    } catch (error) {
+        console.error('Error in chat:', error);
+        addMessageToChat('Titan AI', "I'm sorry, I encountered an error. Please try again.");
+    }
+}
 
 function addMessageToChat(sender, message) {
     const chatMessages = document.getElementById('chat-messages');
@@ -503,15 +521,6 @@ async function init() {
 // Start the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
 
-// Make functions globally available
-window.showDashboard = showDashboard;
-window.showAddWorkout = showAddWorkout;
-window.showLoginForm = showLoginForm;
-window.showSignupForm = showSignupForm;
-window.showNutrition = showNutrition;
-window.showMotivation = showMotivation;
-window.showChatWithTitanAI = showChatWithTitanAI;
-window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
