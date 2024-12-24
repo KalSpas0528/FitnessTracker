@@ -1,12 +1,3 @@
-window.showDashboard = showDashboard;
-window.showAddWorkout = showAddWorkout;
-window.showLoginForm = showLoginForm;
-window.showSignupForm = showSignupForm;
-window.showNutrition = showNutrition;
-window.showMotivation = showMotivation;
-window.showChatWithTitanAI = showChatWithTitanAI;
-window.logout = logout;
-
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -521,6 +512,15 @@ async function init() {
 // Start the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
 
+// Make functions globally available
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
+window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
