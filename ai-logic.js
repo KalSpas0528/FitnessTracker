@@ -3,7 +3,7 @@
 
     // Comprehensive prompt templates
     const prompts = {
-        greeting: "Hi! I'm Titan AI, your fitness calculator. I can help with BMI, calories, protein needs, and more. What would you like to calculate?",
+        greeting: "Hi! I'm Titan AI, your fitness assistant. I can help with calculations, workout advice, nutrition tips, and more. What can I help you with today?",
         calculations: [
             "BMI Calculator",
             "One-Rep Max Calculator",
@@ -13,6 +13,18 @@
             "Ideal Weight Calculator",
             "Body Fat Calculator",
             "Macro Calculator"
+        ],
+        commonQuestions: [
+            "How often should I work out?",
+            "What's the best way to lose weight?",
+            "How can I build muscle effectively?",
+            "What should I eat before and after a workout?",
+            "How much protein do I need daily?",
+            "What are good exercises for beginners?",
+            "How can I improve my flexibility?",
+            "What's the difference between cardio and strength training?",
+            "How can I stay motivated to exercise?",
+            "What's a good workout routine for busy people?"
         ],
         examples: {
             bmi: "Calculate BMI: 170 lbs, 5 ft 10 in",
@@ -37,10 +49,10 @@
 
         // Check for help or examples request
         if (input.includes('help') || input.includes('example') || input.includes('what') || input === 'hi' || input === 'hello') {
-            return `${prompts.greeting}\n\nI can help with:\n${prompts.calculations.join('\n')}\n\nExample commands:\n${Object.values(prompts.examples).join('\n')}`;
+            return `${prompts.greeting}\n\nI can help with calculations like:\n${prompts.calculations.join('\n')}\n\nOr answer common questions like:\n${prompts.commonQuestions.join('\n')}\n\nExample commands:\n${Object.values(prompts.examples).join('\n')}`;
         }
 
-        // Handle calculations
+        // Handle calculations and questions
         try {
             if (input.includes('bmi')) {
                 return handleBMICalculation(input);
@@ -56,17 +68,16 @@
                 return handleMacroCalculation(input);
             } else if (input.includes('motivat')) {
                 return prompts.motivational[Math.floor(Math.random() * prompts.motivational.length)];
+            } else {
+                return handleCommonQuestions(input);
             }
-
-            // If no specific calculation is detected
-            return "I'm not sure what you'd like to calculate. Try asking for 'help' to see what I can do!";
         } catch (error) {
             console.error('Calculation error:', error);
-            return "I couldn't process that calculation. Please check the format and try again!";
+            return "I couldn't process that calculation or question. Please check the format and try again!";
         }
     }
 
-    // Helper functions for calculations
+    // Helper functions for calculations (unchanged)
     function extractNumbers(input) {
         const numbers = input.match(/\d+(\.\d+)?/g);
         return numbers ? numbers.map(Number) : [];
@@ -149,7 +160,41 @@
         return "For macro split, please provide weight, goal (muscle gain, fat loss, maintenance), and activity level";
     }
 
-    // Utility functions
+    function handleCommonQuestions(input) {
+        if (input.includes('how often') && input.includes('work out')) {
+            return "Generally, aim for 3-5 workouts per week, allowing for rest days. The exact frequency depends on your goals and current fitness level.";
+        }
+        if (input.includes('lose weight')) {
+            return "To lose weight, create a calorie deficit through diet and exercise. Focus on whole foods, increase protein intake, and combine cardio with strength training.";
+        }
+        if (input.includes('build muscle')) {
+            return "To build muscle effectively, focus on progressive overload in strength training, eat a protein-rich diet, and ensure adequate rest and recovery.";
+        }
+        if (input.includes('eat') && (input.includes('before') || input.includes('after') || input.includes('workout'))) {
+            return "Before a workout, eat easily digestible carbs and some protein. After a workout, focus on protein for muscle repair and carbs to replenish energy stores.";
+        }
+        if (input.includes('protein') && input.includes('need')) {
+            return "Daily protein needs vary, but a general guideline is 0.8-1g per pound of body weight, higher for athletes and those building muscle.";
+        }
+        if (input.includes('exercises') && input.includes('beginner')) {
+            return "Good exercises for beginners include bodyweight squats, push-ups, lunges, planks, and walking or jogging. Start with what you can manage and gradually increase intensity.";
+        }
+        if (input.includes('improve') && input.includes('flexibility')) {
+            return "To improve flexibility, incorporate regular stretching into your routine. Try yoga, dynamic stretching before workouts, and static stretching after workouts.";
+        }
+        if (input.includes('cardio') && input.includes('strength')) {
+            return "Cardio primarily improves heart health and burns calories, while strength training builds muscle and boosts metabolism. Both are important for overall fitness.";
+        }
+        if (input.includes('stay motivated')) {
+            return "To stay motivated, set clear goals, track your progress, mix up your routines, find a workout buddy, and celebrate small victories along the way.";
+        }
+        if (input.includes('busy') && input.includes('workout')) {
+            return "For busy people, try high-intensity interval training (HIIT), bodyweight exercises at home, or split your workout into shorter sessions throughout the day.";
+        }
+        return "I'm not sure about that specific question. Can you try rephrasing or ask about one of the common fitness topics I mentioned earlier?";
+    }
+
+    // Utility functions (unchanged)
     function getActivityLevel(input) {
         if (input.includes('sedentary')) return 1.2;
         if (input.includes('light')) return 1.375;
