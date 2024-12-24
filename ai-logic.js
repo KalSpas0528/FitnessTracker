@@ -1,6 +1,7 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
     console.log('TITAN AI Initilized...');
+    console.log('Welcome');
 
     const categories = {
         calculations: [
