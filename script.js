@@ -1,3 +1,12 @@
+window.showDashboard = showDashboard;
+window.showAddWorkout = showAddWorkout;
+window.showLoginForm = showLoginForm;
+window.showSignupForm = showSignupForm;
+window.showNutrition = showNutrition;
+window.showMotivation = showMotivation;
+window.showChatWithTitanAI = showChatWithTitanAI;
+window.logout = logout;
+
 // Global variables
 let workouts = [];
 let nutritionData = [];
@@ -338,12 +347,13 @@ function showNutrition() {
     mainContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Nutrition Tracking</h2>
         <form id="nutrition-form" class="mb-4">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <input type="text" id="food-item" placeholder="Food Item" class="form-input" required>
                 <input type="number" id="calories" placeholder="Calories" class="form-input" required>
                 <input type="number" id="protein" placeholder="Protein (g)" class="form-input" required>
                 <input type="number" id="carbs" placeholder="Carbs (g)" class="form-input" required>
                 <input type="number" id="fat" placeholder="Fat (g)" class="form-input" required>
+                <input type="date" id="food-date" class="form-input" required>
             </div>
             <button type="submit" class="mt-2 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Food</button>
         </form>
@@ -360,8 +370,9 @@ function handleAddNutrition(event) {
     const protein = document.getElementById('protein').value;
     const carbs = document.getElementById('carbs').value;
     const fat = document.getElementById('fat').value;
+    const date = document.getElementById('food-date').value;
 
-    nutritionData.push({ foodItem, calories, protein, carbs, fat });
+    nutritionData.push({ foodItem, calories, protein, carbs, fat, date });
     event.target.reset();
     displayNutritionData();
 }
@@ -374,7 +385,7 @@ function displayNutritionData() {
         itemElement.className = 'bg-white p-2 rounded shadow flex justify-between items-center';
         itemElement.innerHTML = `
             <div>
-                <p><strong>${item.foodItem}</strong></p>
+                <p><strong>${item.foodItem}</strong> (${item.date})</p>
                 <p>Calories: ${item.calories}, Protein: ${item.protein}g, Carbs: ${item.carbs}g, Fat: ${item.fat}g</p>
             </div>
             <button class="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600" onclick="deleteNutritionItem(${index})">Delete</button>
@@ -512,15 +523,6 @@ async function init() {
 // Start the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
 
-// Make functions globally available
-window.showDashboard = showDashboard;
-window.showAddWorkout = showAddWorkout;
-window.showLoginForm = showLoginForm;
-window.showSignupForm = showSignupForm;
-window.showNutrition = showNutrition;
-window.showMotivation = showMotivation;
-window.showChatWithTitanAI = showChatWithTitanAI;
-window.logout = logout;
 window.deleteWorkout = deleteWorkout;
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;

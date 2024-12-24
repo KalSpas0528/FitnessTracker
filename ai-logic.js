@@ -1,6 +1,6 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
-    console.log('Welcome to TITAN AI...');
+    console.log('TITAN AI HAS BEEN INITIALIZED...');
 
     const categories = {
         calculations: [
@@ -60,7 +60,7 @@
             return "Hello! I'm Titan AI, your fitness assistant. How can I help you today? Type 'help' to see what I can do.";
         }
 
-        if (input === 'help') {
+        if (input === 'help' || input === '?') {
             return generateHelpResponse();
         }
 
@@ -167,11 +167,11 @@ Which one would you like to calculate?`;
     }
 
     function calculateBMI(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|'|feet)/i;
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|feet|\d+)/i;
         const match = input.match(regex);
         
         if (match) {
-            const [, weight, weightUnit, height, heightUnit] = match;
+            let [, weight, weightUnit, height, heightUnit] = match;
             let weightKg = parseFloat(weight);
             let heightM = parseFloat(height);
 
@@ -183,6 +183,11 @@ Which one would you like to calculate?`;
                 heightM /= 100;
             } else if (heightUnit.toLowerCase() === 'ft' || heightUnit === "'") {
                 heightM *= 0.3048;
+            } else if (!isNaN(parseInt(heightUnit))) {
+                // Handle cases like "5 6" for 5 feet 6 inches
+                const feet = parseInt(height);
+                const inches = parseInt(heightUnit);
+                heightM = (feet * 12 + inches) * 0.0254;
             }
 
             const bmi = weightKg / (heightM * heightM);
@@ -197,7 +202,7 @@ Which one would you like to calculate?`;
             return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
         }
         
-        return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5'9\"'";
+        return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5 6'";
     }
 
     function calculateOneRepMax(input) {
