@@ -1,7 +1,6 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
-    console.log('TITAN AI Initilized...');
-    console.log('Welcome');
+    console.log('Welcome to TITAN AI...');
 
     const categories = {
         calculations: [
@@ -52,6 +51,9 @@
     ];
 
     async function handleChatResponse(message) {
+        // Simulate processing time
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 1000));
+
         const input = message.toLowerCase().trim();
 
         if (['hi', 'hello', 'hey', 'greetings'].includes(input)) {
@@ -66,8 +68,21 @@
             return listCalculations();
         }
 
-        if (input.includes('bmi') || input.includes('calorie') || input.includes('protein')) {
-            return handleCalculationRequest(input);
+        const calculationTypes = [
+            { type: 'bmi', keywords: ['bmi', 'body mass index'] },
+            { type: 'one-rep max', keywords: ['one-rep max', 'one rep max', '1rm'] },
+            { type: 'daily calorie', keywords: ['daily calorie', 'calorie needs', 'tdee'] },
+            { type: 'protein intake', keywords: ['protein intake', 'protein needs'] },
+            { type: 'water intake', keywords: ['water intake', 'hydration needs'] },
+            { type: 'ideal weight', keywords: ['ideal weight', 'target weight'] },
+            { type: 'body fat', keywords: ['body fat', 'fat percentage'] },
+            { type: 'macronutrient', keywords: ['macronutrient', 'macro', 'macros'] }
+        ];
+
+        for (const calc of calculationTypes) {
+            if (calc.keywords.some(keyword => input.includes(keyword))) {
+                return handleCalculationRequest(calc.type, input);
+            }
         }
 
         if (input.includes('workout') || input.includes('exercise')) {
@@ -95,43 +110,27 @@
 
     function generateHelpResponse() {
         return `
-Welcome to Titan AI! I'm here to assist you with your fitness journey. Here's what I can do:
+Welcome to Titan AI! I'm here to assist you with your fitness journey.
 
-📊 Calculations
-   • BMI (Body Mass Index)
-   • Daily Calorie Needs
-   • Protein Intake
-   • And more...
+I can help with:
+• Calculations (BMI, calories, etc.)
+• Workout plans
+• Nutrition advice
+• Injury prevention
+• Motivation and more
 
-💪 Workouts
-   • Muscle Gain Plans
-   • Weight Loss Routines
-   • General Fitness Advice
+Try asking:
+• "Calculate my BMI"
+• "Workout for muscle gain"
+• "Nutrition for weight loss"
+• "Prevent running injuries"
 
-🥗 Nutrition
-   • Meal Planning
-   • Pre/Post-Workout Nutrition
-   • Specialized Diets
-
-🌟 Other Topics
-   • Motivation
-   • Injury Prevention
-   • Recovery Techniques
-   • Fitness Myths
-
-To get started, try asking:
-• "What calculations can you do?"
-• "Give me a workout for muscle gain"
-• "Nutrition advice for weight loss"
-• "How to prevent running injuries"
-
-What would you like to know more about?`;
+What would you like to know?`;
     }
 
     function listCalculations() {
         return `
-I can help you with the following fitness calculations:
-
+I can help with these calculations:
 1. BMI (Body Mass Index)
 2. One-Rep Max
 3. Daily Calorie Needs
@@ -141,47 +140,261 @@ I can help you with the following fitness calculations:
 7. Body Fat Percentage
 8. Macronutrient Balance
 
-Which calculation would you like to perform? Please provide the necessary information for the calculation.
-For example: "Calculate BMI: 70 kg, 175 cm" or "Calculate daily calories: 30 years, male, 80 kg, 180 cm, moderately active"`;
+Which one would you like to calculate?`;
     }
 
-    function handleCalculationRequest(input) {
-        if (input.includes('bmi')) {
-            const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|'|feet)/i;
-            const match = input.match(regex);
-            
-            if (match) {
-                const [, weight, weightUnit, height, heightUnit] = match;
-                return calculateBMI(parseFloat(weight), weightUnit, parseFloat(height), heightUnit);
+    function handleCalculationRequest(type, input) {
+        switch (type) {
+            case 'bmi':
+                return calculateBMI(input);
+            case 'one-rep max':
+                return calculateOneRepMax(input);
+            case 'daily calorie':
+                return calculateDailyCalories(input);
+            case 'protein intake':
+                return calculateProteinIntake(input);
+            case 'water intake':
+                return calculateWaterIntake(input);
+            case 'ideal weight':
+                return calculateIdealWeight(input);
+            case 'body fat':
+                return calculateBodyFat(input);
+            case 'macronutrient':
+                return calculateMacros(input);
+            default:
+                return "I'm sorry, I couldn't recognize the calculation type. Please try again with more details.";
+        }
+    }
+
+    function calculateBMI(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|'|feet)/i;
+        const match = input.match(regex);
+        
+        if (match) {
+            const [, weight, weightUnit, height, heightUnit] = match;
+            let weightKg = parseFloat(weight);
+            let heightM = parseFloat(height);
+
+            if (weightUnit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592;
             }
+
+            if (heightUnit.toLowerCase() === 'cm') {
+                heightM /= 100;
+            } else if (heightUnit.toLowerCase() === 'ft' || heightUnit === "'") {
+                heightM *= 0.3048;
+            }
+
+            const bmi = weightKg / (heightM * heightM);
+            const roundedBMI = Math.round(bmi * 10) / 10;
+
+            let category;
+            if (bmi < 18.5) category = "Underweight";
+            else if (bmi < 25) category = "Normal weight";
+            else if (bmi < 30) category = "Overweight";
+            else category = "Obese";
+
+            return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
         }
         
-        return "To calculate, I need specific information. For example, for BMI, please provide your height and weight like this: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5'9\"'";
+        return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5'9\"'";
     }
 
-    function calculateBMI(weight, weightUnit, height, heightUnit) {
-        // Convert weight to kg if necessary
-        if (weightUnit.toLowerCase() === 'lbs') {
-            weight = weight * 0.453592;
+    function calculateOneRepMax(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(?:kg|lbs).*?(\d+)\s*reps/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, weight, reps] = match;
+            const oneRM = parseFloat(weight) / (1.0278 - 0.0278 * parseFloat(reps));
+            return `Your estimated one-rep max is ${Math.round(oneRM)} ${input.includes('kg') ? 'kg' : 'lbs'}.`;
         }
 
-        // Convert height to meters if necessary
-        if (heightUnit.toLowerCase() === 'cm') {
-            height = height / 100;
-        } else if (heightUnit.toLowerCase() === 'ft' || heightUnit === "'") {
-            height = height * 0.3048;
+        return "To calculate one-rep max, please provide the weight and number of reps. For example: 'Calculate 1RM: 100 kg for 5 reps'";
+    }
+
+    function calculateDailyCalories(input) {
+        // This is a simplified calculation. In a real app, you'd use a more complex formula.
+        const regex = /(\d+)\s*years.*?(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|'|feet).*?(male|female).*?(sedentary|light|moderate|active|very active)/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, age, weight, weightUnit, height, heightUnit, gender, activity] = match;
+            let weightKg = parseFloat(weight);
+            let heightCm = parseFloat(height);
+
+            if (weightUnit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592;
+            }
+
+            if (heightUnit.toLowerCase() === 'm') {
+                heightCm *= 100;
+            } else if (heightUnit.toLowerCase() === 'ft' || heightUnit === "'") {
+                heightCm *= 30.48;
+            }
+
+            let bmr;
+            if (gender.toLowerCase() === 'male') {
+                bmr = 88.362 + (13.397 * weightKg) + (4.799 * heightCm) - (5.677 * parseFloat(age));
+            } else {
+                bmr = 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * parseFloat(age));
+            }
+
+            let activityFactor;
+            switch (activity.toLowerCase()) {
+                case 'sedentary': activityFactor = 1.2; break;
+                case 'light': activityFactor = 1.375; break;
+                case 'moderate': activityFactor = 1.55; break;
+                case 'active': activityFactor = 1.725; break;
+                case 'very active': activityFactor = 1.9; break;
+                default: activityFactor = 1.55;
+            }
+
+            const tdee = Math.round(bmr * activityFactor);
+            return `Your estimated daily calorie needs (TDEE) are ${tdee} calories.`;
         }
 
-        const bmi = weight / (height * height);
-        const roundedBMI = Math.round(bmi * 10) / 10;
+        return "To calculate daily calories, please provide age, weight, height, gender, and activity level. For example: 'Calculate calories: 30 years, 70 kg, 175 cm, male, moderately active'";
+    }
 
-        let category;
-        if (bmi < 18.5) category = "Underweight";
-        else if (bmi < 25) category = "Normal weight";
-        else if (bmi < 30) category = "Overweight";
-        else category = "Obese";
+    function calculateProteinIntake(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs)/i;
+        const match = input.match(regex);
 
-        return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
+        if (match) {
+            const [, weight, unit] = match;
+            let weightKg = parseFloat(weight);
+            if (unit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592;
+            }
+
+            const lowEnd = Math.round(weightKg * 1.6);
+            const highEnd = Math.round(weightKg * 2.2);
+
+            return `Based on your weight, your daily protein intake should be between ${lowEnd}g and ${highEnd}g.`;
+        }
+
+        return "To calculate protein intake, please provide your weight. For example: 'Calculate protein intake: 70 kg' or 'Protein needs: 154 lbs'";
+    }
+
+    function calculateWaterIntake(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs)/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, weight, unit] = match;
+            let weightKg = parseFloat(weight);
+            if (unit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592;
+            }
+
+            const waterLiters = Math.round(weightKg * 0.033 * 10) / 10;
+
+            return `Based on your weight, you should aim to drink about ${waterLiters} liters of water per day. This is a general guideline and may vary based on activity level and climate.`;
+        }
+
+        return "To calculate water intake, please provide your weight. For example: 'Calculate water intake: 70 kg' or 'Water needs: 154 lbs'";
+    }
+
+    function calculateIdealWeight(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(cm|m|ft|'|feet).*?(male|female)/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, height, unit, gender] = match;
+            let heightCm = parseFloat(height);
+
+            if (unit.toLowerCase() === 'm') {
+                heightCm *= 100;
+            } else if (unit.toLowerCase() === 'ft' || unit === "'") {
+                heightCm *= 30.48;
+            }
+
+            let idealWeight;
+            if (gender.toLowerCase() === 'male') {
+                idealWeight = Math.round((heightCm - 100) * 0.9);
+            } else {
+                idealWeight = Math.round((heightCm - 100) * 0.85);
+            }
+
+            return `Based on your height and gender, your estimated ideal weight is around ${idealWeight} kg. Remember, this is a general estimate and doesn't account for factors like body composition and muscle mass.`;
+        }
+
+        return "To calculate ideal weight, please provide your height and gender. For example: 'Calculate ideal weight: 175 cm, male' or 'Ideal weight: 5'9\", female'";
+    }
+
+    function calculateBodyFat(input) {
+        // This is a simplified calculation using the Navy method. In a real app, you'd use more accurate methods.
+        const regex = /(male|female).*?(\d+(?:\.\d+)?)\s*(cm|in).*?waist.*?(\d+(?:\.\d+)?)\s*(cm|in).*?neck/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, gender, waist, waistUnit, neck, neckUnit] = match;
+            let waistCm = parseFloat(waist);
+            let neckCm = parseFloat(neck);
+
+            if (waistUnit.toLowerCase() === 'in') {
+                waistCm *= 2.54;
+            }
+            if (neckUnit.toLowerCase() === 'in') {
+                neckCm *= 2.54;
+            }
+
+            let bodyFat;
+            if (gender.toLowerCase() === 'male') {
+                bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waistCm - neckCm) + 0.15456 * Math.log10(180)) - 450;
+            } else {
+                // For females, we'd need hip measurement as well. This is just an approximation.
+                bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waistCm - neckCm) + 0.22100 * Math.log10(170)) - 450;
+            }
+
+            return `Your estimated body fat percentage is ${Math.round(bodyFat * 10) / 10}%. This is a rough estimate and may not be as accurate as other methods like DEXA scans or hydrostatic weighing.`;
+        }
+
+        return "To estimate body fat percentage, please provide your gender, waist circumference, and neck circumference. For example: 'Calculate body fat: male, 85 cm waist, 38 cm neck' or 'Body fat: female, 32 in waist, 13 in neck'";
+    }
+
+    function calculateMacros(input) {
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(muscle gain|weight loss|maintenance)/i;
+        const match = input.match(regex);
+
+        if (match) {
+            const [, weight, unit, goal] = match;
+            let weightKg = parseFloat(weight);
+            if (unit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592;
+            }
+
+            let protein, carbs, fats;
+            const calories = weightKg * 30; // Rough estimate
+
+            switch (goal.toLowerCase()) {
+                case 'muscle gain':
+                    protein = Math.round(weightKg * 2.2);
+                    fats = Math.round(weightKg * 1);
+                    carbs = Math.round((calories - (protein * 4 + fats * 9)) / 4);
+                    break;
+                case 'weight loss':
+                    protein = Math.round(weightKg * 2.2);
+                    fats = Math.round(weightKg * 0.8);
+                    carbs = Math.round((calories - (protein * 4 + fats * 9)) / 4);
+                    break;
+                default: // maintenance
+                    protein = Math.round(weightKg * 1.8);
+                    fats = Math.round(weightKg * 1);
+                    carbs = Math.round((calories - (protein * 4 + fats * 9)) / 4);
+            }
+
+            return `Based on your weight and goal, here's a suggested macro split:
+Protein: ${protein}g
+Carbs: ${carbs}g
+Fats: ${fats}g
+Total Calories: ${calories}
+
+Remember, this is a general guideline and may need adjustment based on your specific needs and activity level.`;
+        }
+
+        return "To calculate macronutrients, please provide your weight and goal. For example: 'Calculate macros: 70 kg, muscle gain' or 'Macro split: 154 lbs, weight loss'";
     }
 
     function handleWorkoutAdvice(input) {
