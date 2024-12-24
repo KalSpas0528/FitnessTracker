@@ -435,15 +435,6 @@ async function handleChatSubmit(event) {
 
     addMessageToChat('You', message);
 
-    try {
-        // Use the TensorFlow.js model to generate a response
-        const response = await window.handleChatResponse(message);
-        addMessageToChat('Titan AI', response);
-    } catch (error) {
-        console.error('Error in chat:', error);
-        addMessageToChat('Titan AI', "I'm sorry, I encountered an error. Please try again.");
-    }
-}
 
 function addMessageToChat(sender, message) {
     const chatMessages = document.getElementById('chat-messages');
