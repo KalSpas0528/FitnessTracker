@@ -50,55 +50,56 @@
     async function handleChatResponse(message) {
         const input = message.toLowerCase().trim();
 
-        if (input === 'hi' || input === 'hello' || input === 'hey') {
+        // Handle greetings
+        if (['hi', 'hello', 'hey', 'greetings'].includes(input)) {
             return prompts.greeting;
         }
 
-        if (input === 'help' || input.includes('what') || input.includes('example')) {
+        // Handle help request
+        if (input.includes('help') || input === '?') {
             return generateHelpResponse();
         }
 
-        // Handle calculations and other queries
-        try {
-            if (input.includes('bmi') || (input.includes('calculate') && input.includes('bmi'))) {
-                return handleBMICalculation(input);
-            } else if (input.includes('max') || input.includes('orm') || (input.includes('calculate') && input.includes('bench'))) {
-                return handleOneRepMaxCalculation(input);
-            } else if (input.includes('calorie') || input.includes('cal') || (input.includes('calculate') && input.includes('calories'))) {
-                return handleCalorieCalculation(input);
-            } else if (input.includes('protein') || (input.includes('calculate') && input.includes('protein'))) {
-                return handleProteinCalculation(input);
-            } else if (input.includes('water') || (input.includes('calculate') && input.includes('water'))) {
-                return handleWaterCalculation(input);
-            } else if (input.includes('macro') || (input.includes('calculate') && input.includes('macros'))) {
-                return handleMacroCalculation(input);
-            } else if (input.includes('body fat') || (input.includes('calculate') && input.includes('body fat'))) {
-                return "To calculate body fat percentage, I need more information like your weight, height, age, gender, and specific body measurements. Can you provide these details?";
-            } else if (input.includes('workout') || input.includes('exercise')) {
-                return handleWorkoutAdvice(input);
-            } else if (input.includes('nutrition') || input.includes('diet') || input.includes('eat')) {
-                return handleNutritionAdvice(input);
-            } else if (input.includes('motivat')) {
-                return prompts.motivational[Math.floor(Math.random() * prompts.motivational.length)];
-            } else if (input.includes('injury') || input.includes('pain')) {
-                return handleInjuryPrevention(input);
-            } else if (input.includes('recover')) {
-                return handleRecoveryAdvice(input);
-            } else if (input.includes('myth')) {
-                return handleFitnessMyth(input);
-            } else if (input.includes('supplement')) {
-                return handleSupplementInfo(input);
-            }
-
-            return "I'm not sure what you're asking. Can you try rephrasing or ask for 'help' to see what I can do?";
-        } catch (error) {
-            console.error('Error in Titan AI:', error);
-            return "I encountered an error processing your request. Please try again or ask for 'help' to see what I can do.";
+        // Handle short or vague inputs
+        if (input.length < 5) {
+            return "I'm not sure what you're asking. Could you please provide more details or ask for 'help' to see what I can do?";
         }
+
+        // Process input for typos and abbreviations
+        const processedInput = processInput(input);
+
+        // Handle specific categories
+        if (processedInput.includes('calculation')) {
+            return handleCalculations(processedInput);
+        } else if (processedInput.includes('workout') || processedInput.includes('exercise')) {
+            return handleWorkoutAdvice(processedInput);
+        } else if (processedInput.includes('nutrition') || processedInput.includes('diet') || processedInput.includes('eat')) {
+            return handleNutritionAdvice(processedInput);
+        } else if (processedInput.includes('motivat')) {
+            return getMotivationalQuote();
+        } else if (processedInput.includes('injury') || processedInput.includes('pain')) {
+            return handleInjuryPrevention(processedInput);
+        } else if (processedInput.includes('recover')) {
+            return handleRecoveryAdvice(processedInput);
+        } else if (processedInput.includes('myth')) {
+            return handleFitnessMyth(processedInput);
+        } else if (processedInput.includes('supplement')) {
+            return handleSupplementInfo(processedInput);
+        }
+
+        // If no specific category is matched, provide a more helpful response
+        return `I'm not sure I understood that correctly. Could you please rephrase your question or specify which area you need help with? You can ask about calculations, workouts, nutrition, motivation, injury prevention, recovery, fitness myths, or supplements.`;
     }
 
     function generateHelpResponse() {
-        return `${prompts.greeting}\n\nI can assist with:\n${prompts.categories.join('\n')}\n\nFor calculations, try:\n${prompts.calculations.join('\n')}\n\nExample queries:\n${Object.values(prompts.examples).join('\n')}`;
+        return `I can assist with various fitness topics. Here are some examples of what you can ask me:
+
+1. Calculations: "Calculate my BMI" or "What's my daily calorie need?"
+2. Workouts: "Suggest a workout for muscle gain" or "Beginner exercises?"
+3. Nutrition: "What should I eat for weight loss?" or "Pre-workout meal ideas?"
+4. Other topics: Ask about motivation, injury prevention, recovery, fitness myths, or supplements.
+
+What would you like to know more about?`;
     }
 
     // Existing calculation functions (handleBMICalculation, handleOneRepMaxCalculation, etc.) remain unchanged
@@ -111,23 +112,47 @@
         } else if (input.includes('beginner')) {
             return "For beginners, start with bodyweight exercises like squats, push-ups, lunges, and planks. Aim for 2-3 full-body workouts per week, focusing on proper form. Gradually increase intensity and consider adding resistance training as you progress.";
         } else {
-            return "To suggest a workout, I need to know your goal (e.g., muscle gain, weight loss, general fitness) and fitness level. Can you provide more details?";
+            return "To provide the best workout advice, I need to know your specific goal (e.g., muscle gain, weight loss, general fitness) and fitness level. Could you please provide more details?";
         }
     }
 
     function handleNutritionAdvice(input) {
-        if (input.includes('before workout') || input.includes('pre-workout')) {
-            return "Before a workout, eat a meal rich in complex carbs and some protein about 2-3 hours before. Good options include oatmeal with fruit and nuts, whole grain toast with peanut butter, or a chicken and rice bowl.";
-        } else if (input.includes('after workout') || input.includes('post-workout')) {
-            return "After a workout, focus on protein for muscle repair and carbs to replenish energy stores. Good options include a protein shake with banana, grilled chicken with sweet potato, or Greek yogurt with berries and granola.";
-        } else if (input.includes('muscle gain') || input.includes('build muscle')) {
-            return "For muscle gain, increase your calorie intake with a focus on protein. Aim for 1.6-2.2 grams of protein per kg of body weight daily. Include lean meats, fish, eggs, dairy, legumes, and consider protein supplements if needed.";
+        if (input.includes('muscle gain') || input.includes('build muscle')) {
+            return "For muscle gain, increase your calorie intake with a focus on protein. Aim for 1.6-2.2 grams of protein per kg of body weight daily. Include lean meats, fish, eggs, dairy, legumes, and consider protein supplements if needed. Don't forget to increase your overall calorie intake and include complex carbohydrates for energy.";
         } else if (input.includes('weight loss') || input.includes('fat loss')) {
-            return "For weight loss, create a moderate calorie deficit. Focus on whole foods, increase protein intake to preserve muscle, and include plenty of vegetables for nutrients and fiber. Control portion sizes and limit processed foods and sugary drinks.";
+            return "For weight loss, create a moderate calorie deficit. Focus on whole foods, increase protein intake to preserve muscle, and include plenty of vegetables for nutrients and fiber. Control portion sizes and limit processed foods and sugary drinks. Aim for a balanced diet with lean proteins, complex carbohydrates, and healthy fats.";
+        } else if (input.includes('before workout') || input.includes('pre-workout')) {
+            return "Before a workout, eat a meal rich in complex carbs and some protein about 2-3 hours before. Good options include oatmeal with fruit and nuts, whole grain toast with peanut butter, or a chicken and rice bowl. This will provide sustained energy for your workout.";
+        } else if (input.includes('after workout') || input.includes('post-workout')) {
+            return "After a workout, focus on protein for muscle repair and carbs to replenish energy stores. Good options include a protein shake with banana, grilled chicken with sweet potato, or Greek yogurt with berries and granola. Aim to eat within 30 minutes to an hour after your workout for optimal recovery.";
         } else {
-            return "For specific nutrition advice, I need to know your goal (e.g., muscle gain, weight loss, general health) and any dietary restrictions. Can you provide more details?";
+            return "For personalized nutrition advice, I need to know your specific goal (e.g., muscle gain, weight loss, general health) and any dietary restrictions. Could you please provide more details about what you're trying to achieve with your diet?";
         }
     }
+
+    function getMotivationalQuote() {
+        return prompts.motivational[Math.floor(Math.random() * prompts.motivational.length)];
+    }
+
+    function processInput(input) {
+        const commonAbbreviations = {
+            'calc': 'calculation',
+            'wo': 'workout',
+            'nut': 'nutrition',
+            'supp': 'supplement',
+            'mot': 'motivation',
+            'inj': 'injury',
+            'rec': 'recovery',
+        };
+
+        let processedInput = input;
+        for (const [abbr, full] of Object.entries(commonAbbreviations)) {
+            processedInput = processedInput.replace(new RegExp(`\\b${abbr}\\b`, 'g'), full);
+        }
+
+        return processedInput;
+    }
+
 
     function handleInjuryPrevention(input) {
         if (input.includes('runner') || input.includes('knee')) {
