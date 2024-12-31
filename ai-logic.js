@@ -1,7 +1,5 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
-    console.log('Titan Model Initialized...');
-    console.log('Titan Model 100%...');
 
     const categories = {
         calculations: [
@@ -52,7 +50,6 @@
     ];
 
     async function handleChatResponse(message) {
-        // Simulate processing time
         await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500));
 
         const input = message.toLowerCase().trim();
@@ -115,6 +112,7 @@
 Welcome to Titan AI! I'm here to assist you with your fitness journey.
 
 I can help with:
+
 • Calculations
   - BMI
   - One-Rep Max
@@ -156,6 +154,7 @@ What would you like to know?`;
     function listCalculations() {
         return `
 I can help with these calculations:
+
 • BMI (Body Mass Index)
 • One-Rep Max
 • Daily Calorie Needs
@@ -207,7 +206,6 @@ Which one would you like to calculate?`;
             if (!heightUnit || heightUnit.toLowerCase() === 'cm') {
                 heightM /= 100;
             } else if (heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' || !isNaN(parseInt(heightUnit))) {
-                // Handle cases like "5 6" for 5 feet 6 inches
                 const feet = parseInt(height);
                 const inches = heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' ? 0 : parseInt(heightUnit);
                 heightM = (feet * 12 + inches) * 0.0254;
@@ -226,20 +224,6 @@ Which one would you like to calculate?`;
         }
         
         return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5 6'";
-    }
-
-    function calculateOneRepMax(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs|pounds|kilos).*?(\d+)\s*(reps?|repetitions?)/i;
-        const match = input.match(regex);
-
-        if (match) {
-            const [, weight, weightUnit, reps] = match;
-            const oneRM = parseFloat(weight) / (1.0278 - 0.0278 * parseFloat(reps));
-            const unit = weightUnit.toLowerCase() === 'kg' || weightUnit.toLowerCase() === 'kilos' ? 'kg' : 'lbs';
-            return `Your estimated one-rep max is ${Math.round(oneRM)} ${unit}.`;
-        }
-
-        return "To calculate one-rep max, please provide the weight and number of reps. For example: 'Calculate 1RM: 100 kg for 5 reps' or 'One rep max: 225 lbs, 8 repetitions'";
     }
 
     function calculateProteinIntake(input) {
@@ -287,6 +271,7 @@ Remember to combine this with proper nutrition and rest for optimal results.`;
             return `
 For personalized workout advice, I need to know your specific goal and current fitness level. 
 Please specify if you're looking for:
+
 • Muscle gain
 • Weight loss
 • General fitness
@@ -363,6 +348,7 @@ Remember, sustainable weight loss is typically 0.5-1 kg per week.`;
             return `
 For personalized nutrition advice, I need to know your specific goal and any dietary restrictions. 
 Please specify if you're looking for:
+
 • Muscle gain diet
 • Weight loss diet
 • General health improvement
@@ -393,6 +379,7 @@ If you experience persistent pain, consult a healthcare professional.`;
             return `
 Injury prevention strategies vary depending on the specific activity or body part. 
 Please specify which area or activity you're concerned about. For example:
+
 • "Prevent running injuries"
 • "Protect my back during weightlifting"
 • "Avoid shoulder injuries in swimming"
