@@ -1,6 +1,5 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
-    console.log('TITAN AI HAS BEEN INITIALIZED...');
 
     const categories = {
         calculations: [
@@ -55,6 +54,7 @@
         await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 1000));
 
         const input = message.toLowerCase().trim();
+        const normalizedInput = input.replace(/[^a-z0-9\s]/g, '');
 
         if (['hi', 'hello', 'hey', 'greetings'].includes(input)) {
             return "Hello! I'm Titan AI, your fitness assistant. How can I help you today? Type 'help' to see what I can do.";
@@ -69,18 +69,18 @@
         }
 
         const calculationTypes = [
-            { type: 'bmi', keywords: ['bmi', 'body mass index'] },
-            { type: 'one-rep max', keywords: ['one-rep max', 'one rep max', '1rm'] },
-            { type: 'daily calorie', keywords: ['daily calorie', 'calorie needs', 'tdee'] },
-            { type: 'protein intake', keywords: ['protein intake', 'protein needs'] },
-            { type: 'water intake', keywords: ['water intake', 'hydration needs'] },
-            { type: 'ideal weight', keywords: ['ideal weight', 'target weight'] },
-            { type: 'body fat', keywords: ['body fat', 'fat percentage'] },
-            { type: 'macronutrient', keywords: ['macronutrient', 'macro', 'macros'] }
+            { type: 'bmi', keywords: ['bmi', 'body mass index', 'body mass'] },
+            { type: 'one-rep max', keywords: ['one rep max', '1rm', 'one rep maximum', 'max rep'] },
+            { type: 'daily calorie', keywords: ['daily calorie', 'calorie needs', 'tdee', 'calorie intake'] },
+            { type: 'protein intake', keywords: ['protein intake', 'protein needs', 'protein requirement'] },
+            { type: 'water intake', keywords: ['water intake', 'hydration needs', 'water requirement'] },
+            { type: 'ideal weight', keywords: ['ideal weight', 'target weight', 'healthy weight'] },
+            { type: 'body fat', keywords: ['body fat', 'fat percentage', 'body fat percentage'] },
+            { type: 'macronutrient', keywords: ['macronutrient', 'macro', 'macros', 'macro split'] }
         ];
 
         for (const calc of calculationTypes) {
-            if (calc.keywords.some(keyword => input.includes(keyword))) {
+            if (calc.keywords.some(keyword => normalizedInput.includes(keyword.replace(/\s/g, '')))) {
                 return handleCalculationRequest(calc.type, input);
             }
         }
@@ -112,33 +112,18 @@
         return `
 Welcome to Titan AI! I'm here to assist you with your fitness journey.
 
-📊 Calculations
-   • BMI (Body Mass Index)
-   • Daily Calorie Needs
-   • Protein Intake
-   • And more...
+I can help with:
+• Calculations (BMI, calories, etc.)
+• Workout plans
+• Nutrition advice
+• Injury prevention
+• Motivation and more
 
-💪 Workouts
-   • Muscle Gain Plans
-   • Weight Loss Routines
-   • General Fitness Advice
-
-🥗 Nutrition
-   • Meal Planning
-   • Pre/Post-Workout Nutrition
-   • Specialized Diets
-
-🌟 Other Topics
-   • Motivation
-   • Injury Prevention
-   • Recovery Techniques
-   • Fitness Myths
-
-To get started, try asking:
-• "What calculations can you do?"
-• "Give me a workout for muscle gain"
-• "Nutrition advice for weight loss"
-• "How to prevent running injuries"
+Try asking:
+• "Calculate my BMI"
+• "Workout for muscle gain"
+• "Nutrition for weight loss"
+• "Prevent running injuries"
 
 What would you like to know?`;
     }
@@ -182,7 +167,7 @@ Which one would you like to calculate?`;
     }
 
     function calculateBMI(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|feet|\d+)/i;
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs|pounds|kilos).*?(\d+(?:\.\d+)?)\s*(cm|m|ft|feet|\d+)/i;
         const match = input.match(regex);
         
         if (match) {
@@ -190,18 +175,16 @@ Which one would you like to calculate?`;
             let weightKg = parseFloat(weight);
             let heightM = parseFloat(height);
 
-            if (weightUnit.toLowerCase() === 'lbs') {
+            if (weightUnit.toLowerCase() === 'lbs' || weightUnit.toLowerCase() === 'pounds') {
                 weightKg *= 0.453592;
             }
 
             if (heightUnit.toLowerCase() === 'cm') {
                 heightM /= 100;
-            } else if (heightUnit.toLowerCase() === 'ft' || heightUnit === "'") {
-                heightM *= 0.3048;
-            } else if (!isNaN(parseInt(heightUnit))) {
+            } else if (heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' || !isNaN(parseInt(heightUnit))) {
                 // Handle cases like "5 6" for 5 feet 6 inches
                 const feet = parseInt(height);
-                const inches = parseInt(heightUnit);
+                const inches = heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' ? 0 : parseInt(heightUnit);
                 heightM = (feet * 12 + inches) * 0.0254;
             }
 
@@ -221,16 +204,17 @@ Which one would you like to calculate?`;
     }
 
     function calculateOneRepMax(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(?:kg|lbs).*?(\d+)\s*reps/i;
+        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs|pounds|kilos).*?(\d+)\s*(reps?|repetitions?)/i;
         const match = input.match(regex);
 
         if (match) {
-            const [, weight, reps] = match;
+            const [, weight, weightUnit, reps] = match;
             const oneRM = parseFloat(weight) / (1.0278 - 0.0278 * parseFloat(reps));
-            return `Your estimated one-rep max is ${Math.round(oneRM)} ${input.includes('kg') ? 'kg' : 'lbs'}.`;
+            const unit = weightUnit.toLowerCase() === 'kg' || weightUnit.toLowerCase() === 'kilos' ? 'kg' : 'lbs';
+            return `Your estimated one-rep max is ${Math.round(oneRM)} ${unit}.`;
         }
 
-        return "To calculate one-rep max, please provide the weight and number of reps. For example: 'Calculate 1RM: 100 kg for 5 reps'";
+        return "To calculate one-rep max, please provide the weight and number of reps. For example: 'Calculate 1RM: 100 kg for 5 reps' or 'One rep max: 225 lbs, 8 repetitions'";
     }
 
     function calculateDailyCalories(input) {
