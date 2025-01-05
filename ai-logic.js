@@ -1,5 +1,6 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
+    console.log('Initializing Enhanced Titan AI Fitness Assistant...');
 
     const categories = {
         calculations: ["BMI", "One-Rep Max", "Daily Calorie Needs", "Protein Intake", "Water Intake", "Ideal Weight", "Body Fat Percentage", "Macronutrient Balance"],
