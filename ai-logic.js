@@ -222,7 +222,7 @@ Which one would you like to calculate?`;
         const match = input.match(regex);
         
         if (!match) {
-            return "Invalid input. Please format your height and weight like '154 lbs, 5 6' or '70 kg, 175 cm'.";
+            return "Invalid input. Please format your height and weight like '125 lbs, 5 6' or '70 kg, 175 cm'.";
         }
     
         let [_, weight, weightUnit, feet, inches] = match;
