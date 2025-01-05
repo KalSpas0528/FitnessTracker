@@ -218,41 +218,50 @@ Which one would you like to calculate?`;
     }
 
     function calculateBMI(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs|pounds|kilos)?\s*(?:and)?\s*(\d+(?:\.\d+)?)\s*(cm|m|ft|feet|\d+)?/i;
+        const regex = /(\d+(?:\.\d+)?)\s*(lbs|kg)?\s*,?\s*(\d+)\s*(\d+)?/i;
         const match = input.match(regex);
-        
+    
         if (match) {
-            let [, weight, weightUnit, height, heightUnit] = match;
+            let [_, weight, weightUnit, feet, inches] = match;
             let weightKg = parseFloat(weight);
-            let heightM = parseFloat(height);
-
-            if (!weightUnit || weightUnit.toLowerCase() === 'lbs' || weightUnit.toLowerCase() === 'pounds') {
-                weightKg *= 0.453592;
+            let heightM;
+    
+            if (weightUnit && weightUnit.toLowerCase() === 'lbs') {
+                weightKg *= 0.453592; // Convert pounds to kilograms
             }
-
-            if (!heightUnit || heightUnit.toLowerCase() === 'cm') {
-                heightM /= 100;
-            } else if (heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' || !isNaN(parseInt(heightUnit))) {
-                const feet = parseInt(height);
-                const inches = heightUnit.toLowerCase() === 'ft' || heightUnit.toLowerCase() === 'feet' ? 0 : parseInt(heightUnit);
-                heightM = (feet * 12 + inches) * 0.0254;
+    
+            if (inches) {
+                heightM = ((parseInt(feet) * 12) + parseInt(inches)) * 0.0254; // Convert feet and inches to meters
+            } else {
+                heightM = parseInt(feet) * 0.3048; // Convert feet to meters
             }
-
+    
             const bmi = weightKg / (heightM * heightM);
             const roundedBMI = Math.round(bmi * 10) / 10;
-
+    
             let category;
             if (bmi < 18.5) category = "Underweight";
             else if (bmi < 25) category = "Normal weight";
             else if (bmi < 30) category = "Overweight";
             else category = "Obese";
-
+    
             return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
         }
-        
-        return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5 6'";
+    
+        return "To calculate BMI, please provide your weight and height in a format like 'Calculate BMI: 125 lbs, 5 6'.";
     }
-
+    
+    async function handleChatResponse(message) {
+        const input = message.toLowerCase().trim();
+    
+        // Check for "calculate BMI" specifically
+        if (input.startsWith('calculate bmi')) {
+            return calculateBMI(message); // Pass the original message to ensure proper parsing
+        }
+    
+        // Rest of the function logic...
+    }
+    
     function calculateMacros(input) {
         return `To calculate your macronutrient balance, I'll need a bit more information:
 
