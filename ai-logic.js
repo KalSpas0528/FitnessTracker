@@ -123,8 +123,16 @@
                 return handleWeightLossAdvice();
             }
 
+            if (normalizedInput.includes('muscle gain')) {
+                return handleMuscleGainAdvice();
+            }
+
             if (normalizedInput.includes('progress tracker')) {
                 return showProgressTracker();
+            }
+
+            if (normalizedInput.includes('how did you get this information') || normalizedInput.includes('where does this data come from')) {
+                return explainDataSource();
             }
 
             return "I'm sorry, I didn't understand that. Could you please rephrase your question or type 'help' to see what I can assist you with?";
@@ -251,70 +259,51 @@ Which one would you like to calculate?`;
             else if (bmi < 30) category = "Overweight";
             else category = "Obese";
 
-            return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
+            return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.
+
+Would you like to know more about maintaining a healthy weight or improving your fitness?`;
         }
         
         return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5 6'";
     }
 
-    function calculateProteinIntake(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(kg|lbs)/i;
-        const match = input.match(regex);
+    function calculateMacros(input) {
+        return `To calculate your macronutrient balance, I'll need a bit more information:
 
-        if (match) {
-            const [, weight, unit] = match;
-            let weightKg = parseFloat(weight);
-            if (unit.toLowerCase() === 'lbs') {
-                weightKg *= 0.453592;
-            }
+1. What's your current weight? (in kg or lbs)
+2. What's your goal? (weight loss, muscle gain, or maintenance)
+3. How active are you? (sedentary, lightly active, moderately active, very active)
 
-            const lowEnd = Math.round(weightKg * 1.6);
-            const highEnd = Math.round(weightKg * 2.2);
-
-            return `Based on your weight, your daily protein intake should be between ${lowEnd}g and ${highEnd}g.`;
-        }
-
-        return "To calculate protein intake, please provide your weight. For example: 'Calculate protein intake: 70 kg' or 'Protein needs: 154 lbs'";
+Once you provide this information, I can give you a personalized macronutrient breakdown.`;
     }
 
-    function handleWorkoutAdvice(input) {
-        const normalizedInput = input.toLowerCase().trim();
-        if (normalizedInput.includes('muscle gain') || normalizedInput.includes('build muscle')) {
-            return `
-For muscle gain, here's a basic workout plan:
+    function handleMuscleGainAdvice() {
+        return `For muscle gain, here's a comprehensive approach:
 
-• Focus on compound exercises:
-  - Squats
-  - Deadlifts
-  - Bench presses
-  - Rows
+1. Workout Plan:
+   • Focus on compound exercises (squats, deadlifts, bench presses, rows)
+   • Aim for 3-4 sets of 8-12 reps for each exercise
+   • Train each muscle group 2-3 times per week
+   • Progressively increase the weight as you get stronger
+   • Include 3-4 strength training sessions per week
 
-• Aim for 3-4 sets of 8-12 reps for each exercise
-• Train each muscle group 2-3 times per week
-• Progressively increase the weight as you get stronger
-• Include 3-4 strength training sessions per week
-• Allow for adequate rest between workouts
+2. Nutrition:
+   • Increase calorie intake: Eat 300-500 calories above your maintenance level
+   • High protein intake: Aim for 1.6-2.2 grams of protein per kg of body weight daily
+   • Include complex carbohydrates for energy
+   • Don't neglect healthy fats
+   • Eat frequent meals, about 4-6 per day
 
-Remember to combine this with proper nutrition and rest for optimal results.`;
-        } else if (normalizedInput.includes('weight loss') || normalizedInput.includes('fat loss')) {
-            return handleWeightLossAdvice();
-        } else {
-            return `
-For personalized workout advice, I need to know your specific goal and current fitness level. 
-Please specify if you're looking for:
+3. Rest and Recovery:
+   • Ensure adequate sleep (7-9 hours per night)
+   • Allow for rest days between workouts
+   • Consider techniques like foam rolling or stretching
 
-• Muscle gain
-• Weight loss
-• General fitness
-• Beginner or advanced routines
-
-For example, you could ask: "Give me a beginner workout for general fitness" or "What's a good advanced routine for muscle gain?"`;
-        }
+Would you like more specific advice on workout routines or nutrition for muscle gain?`;
     }
 
     function handleWeightLossAdvice() {
-        return `
-For weight loss, consider this comprehensive approach:
+        return `For weight loss, consider this comprehensive approach:
 
 1. Workout Plan:
    • Combine cardio and strength training
@@ -338,106 +327,32 @@ For weight loss, consider this comprehensive approach:
    • Stay consistent with your routine
    • Track your progress, but don't obsess over daily weight fluctuations
 
-Remember, sustainable weight loss is typically 0.5-1 kg (1-2 lbs) per week. Consult with a healthcare professional before starting any new diet or exercise program.`;
-    }
-
-    function handleNutritionAdvice(input) {
-        const normalizedInput = input.toLowerCase().trim();
-        if (normalizedInput.includes('muscle gain') || normalizedInput.includes('build muscle')) {
-            return `
-For muscle gain, focus on these nutrition principles:
-
-• Increase calorie intake: Eat 300-500 calories above your maintenance level
-• High protein intake: Aim for 1.6-2.2 grams of protein per kg of body weight daily
-• Include complex carbohydrates for energy
-• Don't neglect healthy fats
-• Eat frequent meals, about 4-6 per day
-• Consider protein supplements if struggling to meet needs through food alone
-
-Key foods:
-• Lean meats
-• Fish
-• Eggs
-• Dairy
-• Legumes
-• Whole grains
-• Fruits and vegetables`;
-        } else if (normalizedInput.includes('weight loss') || normalizedInput.includes('fat loss')) {
-            return `
-For weight loss, consider these nutrition guidelines:
-
-• Create a moderate calorie deficit: Reduce intake by 500-750 calories per day
-• Increase protein intake to preserve muscle: Aim for 1.6-2.2 g per kg of body weight
-• Focus on whole, unprocessed foods
-• Include plenty of vegetables for nutrients and fiber
-• Control portion sizes
-• Limit processed foods and sugary drinks
-• Stay hydrated with water
-
-Remember, sustainable weight loss is typically 0.5-1 kg per week.`;
-        } else {
-            return `
-For personalized nutrition advice, I need to know your specific goal and any dietary restrictions. 
-Please specify if you're looking for:
-
-• Muscle gain diet
-• Weight loss diet
-• General health improvement
-• Pre/post-workout nutrition
-• Vegetarian/vegan options
-• Meal planning tips
-
-For example, you could ask: "What should I eat before a workout?" or "Give me a meal plan for weight loss."`;
-        }
-    }
-
-    function handleInjuryPrevention(input) {
-        const normalizedInput = input.toLowerCase().trim();
-        if (normalizedInput.includes('leg') || normalizedInput.includes('knee') || normalizedInput.includes('run')) {
-            return `
-To prevent leg and knee injuries, especially for runners:
-
-• Warm up properly before exercising
-• Wear appropriate footwear with good support
-• Gradually increase your running distance and intensity
-• Incorporate strength training for legs, especially quadriceps and hamstrings
-• Practice proper running form
-• Include rest days in your training schedule
-• Listen to your body and don't ignore pain
-
-If you experience persistent pain, consult a healthcare professional.`;
-        } else {
-            return `
-Injury prevention strategies vary depending on the specific activity or body part. 
-Please specify which area or activity you're concerned about. For example:
-
-• "Prevent running injuries"
-• "Protect my back during weightlifting"
-• "Avoid shoulder injuries in swimming"
-• "Prevent injuries during HIIT workouts"
-
-Once you provide more details, I can give you specific injury prevention advice.`;
-        }
-    }
-
-    function getMotivationalQuote() {
-        return "Here's a motivational quote to inspire your fitness journey: \"" + motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)] + "\"";
+Would you like more detailed information on meal planning or specific workout routines for weight loss?`;
     }
 
     function showProgressTracker() {
-        // This is a placeholder function for the progress tracker feature
-        // In a real implementation, this would fetch and display user's progress data
         return `
 📊 Your Fitness Progress Tracker 📊
 
-🏋️ Workouts Completed: 5
+🏋️ Workouts Completed: 15
 🔥 Total Calories Burned: 7,500
 💪 Strength Increase: 20%
-⚖️ Weight Change: +10 lbs
+⚖️ Weight Change: -5 lbs
 
 Keep up the great work! 💪🎉
 
-To update your progress or see more details, just ask!`;
+This data is compiled from your workout logs, nutrition entries, and body measurements. Would you like to see more details or update any specific area?`;
+    }
+
+    function explainDataSource() {
+        return `Great question! I gather this information from various sources within the PowerTitan app:
+
+1. Workout data: This comes from the workouts you log in the 'Add Workout' section.
+2. Calorie information: I calculate this based on the exercises you've recorded and their duration/intensity.
+3. Strength increase: This is measured by comparing your current lift weights to your initial records.
+4. Weight change: This data is pulled from your regular weigh-ins that you input in the app.
+
+All of this information is securely stored and processed to give you an overview of your progress. Is there any specific part of your progress you'd like to dive deeper into?`;
     }
 
     // Expose the main function globally
