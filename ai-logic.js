@@ -308,18 +308,18 @@ Want more details on a specific area?`;
 Detailed Progress Breakdown:
 
 1. Workouts:
-   • Strength Training: 10 sessions
+   • Strength Training: 5 sessions
 
 
 2. Strength Gains:
    • Bench Press: +15 lbs
    • Squat: +25 lbs
-   • Deadlift: +30 lbs
+   • Make sure to continue logging your workouts!
 
 3. Nutrition:
    • Average Daily Calories: 200
-   • Protein Intake: 130g/day
-   • Water Intake: 3 liters/day
+   • Protein Intake: 20g/day
+   • Water Intake: No Water Inputted
 
 Which area would you like to focus on improving?`;
     }
