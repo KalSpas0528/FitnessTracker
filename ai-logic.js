@@ -1,5 +1,6 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
+    console.log('Initializing Enhanced Titan AI Fitness Assistant...');
 
     const categories = {
         calculations: [
@@ -14,6 +15,7 @@
         ],
         workouts: [
             "Muscle Gain",
+            "Weight Gain",
             "Weight Loss",
             "General Fitness",
             "Beginner Routines",
@@ -60,7 +62,7 @@
         if (normalizedInput.includes('beginner')) userPreferences.fitnessLevel = 'beginner';
         else if (normalizedInput.includes('advanced')) userPreferences.fitnessLevel = 'advanced';
         if (normalizedInput.includes('lose weight')) userPreferences.fitnessGoals.push('weight loss');
-        else if (normalizedInput.includes('gain muscle')) userPreferences.fitnessGoals.push('muscle gain');
+        else if (normalizedInput.includes('gain muscle') || normalizedInput.includes('weight gain')) userPreferences.fitnessGoals.push('muscle gain');
         if (normalizedInput.includes('vegetarian')) userPreferences.dietaryRestrictions.push('vegetarian');
         else if (normalizedInput.includes('vegan')) userPreferences.dietaryRestrictions.push('vegan');
     }
@@ -123,7 +125,7 @@
                 return handleWeightLossAdvice();
             }
 
-            if (normalizedInput.includes('muscle gain')) {
+            if (normalizedInput.includes('muscle gain') || normalizedInput.includes('weight gain')) {
                 return handleMuscleGainAdvice();
             }
 
@@ -131,8 +133,8 @@
                 return showProgressTracker();
             }
 
-            if (normalizedInput.includes('how did you get this information') || normalizedInput.includes('where does this data come from')) {
-                return explainDataSource();
+            if (normalizedInput.includes('details')) {
+                return showProgressDetails();
             }
 
             return "I'm sorry, I didn't understand that. Could you please rephrase your question or type 'help' to see what I can assist you with?";
@@ -149,36 +151,10 @@ Welcome to Titan AI! I'm here to assist you with your fitness journey. 🏋️�
 I can help with:
 
 • Calculations 🧮
-  - BMI
-  - One-Rep Max
-  - Daily Calorie Needs
-  - Protein Intake
-  - Water Intake
-  - Ideal Weight
-  - Body Fat Percentage
-  - Macronutrient Balance
-
 • Workout Plans 🏃‍♀️
-  - Muscle Gain
-  - Weight Loss
-  - General Fitness
-  - Beginner Routines
-  - Advanced Routines
-
 • Nutrition Advice 🥗
-  - Meal Planning
-  - Pre/Post-Workout Nutrition
-  - Weight Loss Diets
-  - Muscle Gain Diets
-
 • Other Topics 📚
-  - Injury Prevention
-  - Recovery Techniques
-  - Motivation
-  - Fitness Myths
-
-• Progress Tracker 📊 (New Feature!)
-  - Track your fitness journey
+• Progress Tracker 📊
 
 Try asking:
 • "Calculate my BMI"
@@ -259,9 +235,7 @@ Which one would you like to calculate?`;
             else if (bmi < 30) category = "Overweight";
             else category = "Obese";
 
-            return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.
-
-Would you like to know more about maintaining a healthy weight or improving your fitness?`;
+            return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is just one measure of health and doesn't account for factors like muscle mass.`;
         }
         
         return "To calculate BMI, please provide your height and weight. For example: 'Calculate BMI: 70 kg, 175 cm' or 'Calculate BMI: 154 lbs, 5 6'";
@@ -278,56 +252,29 @@ Once you provide this information, I can give you a personalized macronutrient b
     }
 
     function handleMuscleGainAdvice() {
-        return `For muscle gain, here's a comprehensive approach:
+        return `For muscle gain:
 
-1. Workout Plan:
-   • Focus on compound exercises (squats, deadlifts, bench presses, rows)
-   • Aim for 3-4 sets of 8-12 reps for each exercise
-   • Train each muscle group 2-3 times per week
-   • Progressively increase the weight as you get stronger
-   • Include 3-4 strength training sessions per week
+• Increase calorie intake by 300-500 calories
+• Aim for 1.6-2.2g protein per kg of body weight
+• Focus on compound exercises
+• Progressive overload in your workouts
+• Adequate rest and recovery
 
-2. Nutrition:
-   • Increase calorie intake: Eat 300-500 calories above your maintenance level
-   • High protein intake: Aim for 1.6-2.2 grams of protein per kg of body weight daily
-   • Include complex carbohydrates for energy
-   • Don't neglect healthy fats
-   • Eat frequent meals, about 4-6 per day
+I see in the data provided you are doing Bench Press and Squat, this is very good for building muscle gain hypertrophy.
 
-3. Rest and Recovery:
-   • Ensure adequate sleep (7-9 hours per night)
-   • Allow for rest days between workouts
-   • Consider techniques like foam rolling or stretching
-
-Would you like more specific advice on workout routines or nutrition for muscle gain?`;
+Need more specific advice?`;
     }
 
     function handleWeightLossAdvice() {
-        return `For weight loss, consider this comprehensive approach:
+        return `For weight loss:
 
-1. Workout Plan:
-   • Combine cardio and strength training
-   • Start with 3-4 days of 30-minute cardio sessions (e.g., jogging, cycling, swimming)
-   • Include 2-3 days of full-body strength training
-   • Focus on exercises that engage multiple muscle groups
-   • Gradually increase intensity and duration as you progress
+• Create a calorie deficit of 500 calories/day
+• High protein intake (1.6-2.2g per kg of body weight)
+• Combine cardio and strength training
+• Focus on whole, unprocessed foods
+• Stay hydrated and get enough sleep
 
-2. Nutrition:
-   • Create a moderate calorie deficit (about 500 calories per day for 1 pound loss per week)
-   • Increase protein intake to preserve muscle (aim for 1.6-2.2g per kg of body weight)
-   • Focus on whole, unprocessed foods
-   • Include plenty of vegetables for nutrients and fiber
-   • Control portion sizes
-   • Limit processed foods and sugary drinks
-   • Stay hydrated with water
-
-3. Lifestyle:
-   • Get adequate sleep (7-9 hours per night)
-   • Manage stress through techniques like meditation or yoga
-   • Stay consistent with your routine
-   • Track your progress, but don't obsess over daily weight fluctuations
-
-Would you like more detailed information on meal planning or specific workout routines for weight loss?`;
+Want a detailed meal plan or workout routine?`;
     }
 
     function showProgressTracker() {
@@ -341,18 +288,34 @@ Would you like more detailed information on meal planning or specific workout ro
 
 Keep up the great work! 💪🎉
 
-This data is compiled from your workout logs, nutrition entries, and body measurements. Would you like to see more details or update any specific area?`;
+Want more details on a specific area?`;
     }
 
-    function explainDataSource() {
-        return `Great question! I gather this information from various sources within the PowerTitan app:
+    function showProgressDetails() {
+        return `
+Detailed Progress Breakdown:
 
-1. Workout data: This comes from the workouts you log in the 'Add Workout' section.
-2. Calorie information: I calculate this based on the exercises you've recorded and their duration/intensity.
-3. Strength increase: This is measured by comparing your current lift weights to your initial records.
-4. Weight change: This data is pulled from your regular weigh-ins that you input in the app.
+1. Workouts:
+   • Strength Training: 10 sessions
+   • Cardio: 5 sessions
+   • Average workout duration: 45 minutes
 
-All of this information is securely stored and processed to give you an overview of your progress. Is there any specific part of your progress you'd like to dive deeper into?`;
+2. Strength Gains:
+   • Bench Press: +15 lbs
+   • Squat: +25 lbs
+   • Deadlift: +30 lbs
+
+3. Body Composition:
+   • Initial Weight: 170 lbs
+   • Current Weight: 165 lbs
+   • Body Fat %: -2%
+
+4. Nutrition:
+   • Average Daily Calories: 2200
+   • Protein Intake: 130g/day
+   • Water Intake: 3 liters/day
+
+Which area would you like to focus on improving?`;
     }
 
     // Expose the main function globally
