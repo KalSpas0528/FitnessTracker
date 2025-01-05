@@ -293,8 +293,8 @@ Want a detailed meal plan or workout routine?`;
         return `
 📊 Your Fitness Progress Tracker 📊
 
-🏋️ Workouts Completed: 15
-🔥 Total Calories Burned: 7,500
+🏋️ Workouts Completed: 5
+🔥 Estimate Total Calories Burned: 7,500
 💪 Strength Increase: 20%
 ⚖️ Weight Change: -5 lbs
 
@@ -309,21 +309,15 @@ Detailed Progress Breakdown:
 
 1. Workouts:
    • Strength Training: 10 sessions
-   • Cardio: 5 sessions
-   • Average workout duration: 45 minutes
+
 
 2. Strength Gains:
    • Bench Press: +15 lbs
    • Squat: +25 lbs
    • Deadlift: +30 lbs
 
-3. Body Composition:
-   • Initial Weight: 170 lbs
-   • Current Weight: 165 lbs
-   • Body Fat %: -2%
-
-4. Nutrition:
-   • Average Daily Calories: 2200
+3. Nutrition:
+   • Average Daily Calories: 200
    • Protein Intake: 130g/day
    • Water Intake: 3 liters/day
 
