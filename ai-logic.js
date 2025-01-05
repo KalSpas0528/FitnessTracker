@@ -281,7 +281,7 @@ Once you provide this information, I can give you a personalized macronutrient b
 • Progressive overload in your workouts
 • Adequate rest and recovery
 
-I see in the data provided you are doing Bench Press and Squat, this is very good for building muscle gain hypertrophy.
+. I see in the Progress Details provided you are doing Bench Press and Squat, keep this up, as this very good for building muscle gain hypertrophy!
 
 Need more specific advice?`;
     }
