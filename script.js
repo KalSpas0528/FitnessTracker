@@ -11,6 +11,7 @@ window.logout = logout;
 let workouts = [];
 let nutritionData = [];
 let model;
+let chatMessages = []; // Added global variable for chat messages
 
 // API URL
 const apiUrl = "https://fitnesstracker-41f0.onrender.com";
@@ -435,6 +436,16 @@ function showChatWithTitanAI() {
         </form>
     `;
     document.getElementById('chat-form').addEventListener('submit', handleChatSubmit);
+    
+    // Load saved messages
+    const chatMessagesElement = document.getElementById('chat-messages');
+    chatMessages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'mb-2';
+        messageElement.innerHTML = `<strong>${message.sender}:</strong> ${message.text}`;
+        chatMessagesElement.appendChild(messageElement);
+    });
+    chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
 }
 
 // Update the handleChatSubmit function to use the TensorFlow.js model
@@ -457,12 +468,15 @@ async function handleChatSubmit(event) {
 }
 
 function addMessageToChat(sender, message) {
-    const chatMessages = document.getElementById('chat-messages');
+    const chatMessagesElement = document.getElementById('chat-messages'); // Corrected variable name
     const messageElement = document.createElement('div');
     messageElement.className = 'mb-2';
     messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessagesElement.appendChild(messageElement);
+    chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+
+    // Save the message
+    chatMessages.push({ sender, text: message });
 }
 
 // Initialize the application

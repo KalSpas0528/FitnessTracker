@@ -1,6 +1,5 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
-    console.log('Initializing Enhanced Titan AI Fitness Assistant...');
 
     const categories = {
         calculations: [
@@ -67,9 +66,16 @@
         else if (normalizedInput.includes('vegan')) userPreferences.dietaryRestrictions.push('vegan');
     }
 
+    function simulateThinking() {
+        return new Promise(resolve => {
+            addMessageToChat('System', 'TITAN AI is thinking...');
+            setTimeout(resolve, Math.random() * 1000 + 500);
+        });
+    }
+
     async function handleChatResponse(message) {
         try {
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500));
+            await simulateThinking();
 
             const input = message.toLowerCase().trim();
             const normalizedInput = input.replace(/[^a-z0-9\s]/g, '');
@@ -317,6 +323,12 @@ Detailed Progress Breakdown:
 
 Which area would you like to focus on improving?`;
     }
+
+    // Placeholder for addMessageToChat function.  Needs to be defined elsewhere.
+    function addMessageToChat(sender, message) {
+        console.log(`${sender}: ${message}`);
+    }
+
 
     // Expose the main function globally
     window.handleChatResponse = handleChatResponse;
