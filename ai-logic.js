@@ -279,9 +279,7 @@ Once you provide this information, I can give you a personalized macronutrient b
 • Aim for 1.6-2.2g protein per kg of body weight
 • Focus on compound exercises
 • Progressive overload in your workouts
-• Adequate rest and recovery
-
-. I see in the Progress Details provided you are doing Bench Press and Squat, keep this up, as this very good for building muscle gain hypertrophy!
+• Adequate rest and recovery. I see in the Progress Tracker provided you are doing Bench Press and Squat. Ensure you are doing more compound exercises to build muscular hypotrophy!
 
 Need more specific advice?`;
     }
