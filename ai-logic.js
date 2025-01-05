@@ -49,62 +49,106 @@
         "Don't wish for it, work for it."
     ];
 
+    let userPreferences = {
+        fitnessLevel: 'intermediate',
+        fitnessGoals: [],
+        dietaryRestrictions: []
+    };
+
+    function updateUserPreferences(input) {
+        const normalizedInput = input.toLowerCase();
+
+        if (normalizedInput.includes('beginner')) {
+            userPreferences.fitnessLevel = 'beginner';
+        } else if (normalizedInput.includes('advanced')) {
+            userPreferences.fitnessLevel = 'advanced';
+        }
+
+        if (normalizedInput.includes('lose weight')) {
+            userPreferences.fitnessGoals.push('weight loss');
+        } else if (normalizedInput.includes('gain muscle')) {
+            userPreferences.fitnessGoals.push('muscle gain');
+        }
+
+        if (normalizedInput.includes('vegetarian')) {
+            userPreferences.dietaryRestrictions.push('vegetarian');
+        } else if (normalizedInput.includes('vegan')) {
+            userPreferences.dietaryRestrictions.push('vegan');
+        }
+    }
+
     async function handleChatResponse(message) {
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500));
+        try {
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500));
 
-        const input = message.toLowerCase().trim();
-        const normalizedInput = input.replace(/[^a-z0-9\s]/g, '');
+            const input = message.toLowerCase().trim();
+            const normalizedInput = input.replace(/[^a-z0-9\s]/g, '');
 
-        if (['hi', 'hello', 'hey', 'greetings'].includes(input)) {
-            return "Hello! I'm Titan AI, your fitness assistant. How can I help you today? Type 'help' to see what I can do.";
-        }
-
-        if (input === 'help' || input === '?') {
-            return generateHelpResponse();
-        }
-
-        if (normalizedInput.includes('calculations') || normalizedInput.includes('calculate')) {
-            return listCalculations();
-        }
-
-        const calculationTypes = [
-            { type: 'bmi', keywords: ['bmi', 'body mass index', 'body mass'] },
-            { type: 'one-rep max', keywords: ['one rep max', '1rm', 'one rep maximum', 'max rep'] },
-            { type: 'daily calorie', keywords: ['daily calorie', 'calorie needs', 'tdee', 'calorie intake'] },
-            { type: 'protein intake', keywords: ['protein intake', 'protein needs', 'protein requirement'] },
-            { type: 'water intake', keywords: ['water intake', 'hydration needs', 'water requirement'] },
-            { type: 'ideal weight', keywords: ['ideal weight', 'target weight', 'healthy weight'] },
-            { type: 'body fat', keywords: ['body fat', 'fat percentage', 'body fat percentage'] },
-            { type: 'macronutrient', keywords: ['macronutrient', 'macro', 'macros', 'macro split'] }
-        ];
-
-        for (const calc of calculationTypes) {
-            if (calc.keywords.some(keyword => normalizedInput.includes(keyword.replace(/\s/g, '')))) {
-                return handleCalculationRequest(calc.type, input);
+            if (['hi', 'hello', 'hey', 'greetings'].includes(input)) {
+                return "Hello! I'm Titan AI, your fitness assistant. How can I help you today? Type 'help' to see what I can do.";
             }
-        }
 
-        if (normalizedInput.includes('workout') || normalizedInput.includes('exercise')) {
-            return handleWorkoutAdvice(input);
-        }
+            if (input === 'help' || input === '?') {
+                return generateHelpResponse();
+            }
 
-        if (normalizedInput.includes('nutrition') || normalizedInput.includes('diet') || normalizedInput.includes('eat')) {
-            return handleNutritionAdvice(input);
-        }
+            if (normalizedInput.includes('calculations') || normalizedInput.includes('calculate')) {
+                return listCalculations();
+            }
 
-        if (normalizedInput.includes('injury') || normalizedInput.includes('prevent')) {
-            return handleInjuryPrevention(input);
-        }
+            const calculationTypes = [
+                { type: 'bmi', keywords: ['bmi', 'body mass index', 'body mass'] },
+                { type: 'one-rep max', keywords: ['one rep max', '1rm', 'one rep maximum', 'max rep'] },
+                { type: 'daily calorie', keywords: ['daily calorie', 'calorie needs', 'tdee', 'calorie intake'] },
+                { type: 'protein intake', keywords: ['protein intake', 'protein needs', 'protein requirement'] },
+                { type: 'water intake', keywords: ['water intake', 'hydration needs', 'water requirement'] },
+                { type: 'ideal weight', keywords: ['ideal weight', 'target weight', 'healthy weight'] },
+                { type: 'body fat', keywords: ['body fat', 'fat percentage', 'body fat percentage'] },
+                { type: 'macronutrient', keywords: ['macronutrient', 'macro', 'macros', 'macro split'] }
+            ];
 
-        if (normalizedInput.includes('motivat') || normalizedInput.includes('inspire')) {
-            return getMotivationalQuote();
-        }
+            for (const calc of calculationTypes) {
+                if (calc.keywords.some(keyword => normalizedInput.includes(keyword.replace(/\s/g, '')))) {
+                    return handleCalculationRequest(calc.type, input);
+                }
+            }
 
-        if (normalizedInput.includes('weight loss')) {
-            return handleWeightLossAdvice();
-        }
+            if (normalizedInput.includes('workout') || normalizedInput.includes('exercise')) {
+                return handleWorkoutAdvice(input);
+            }
 
-        return "I'm sorry, I didn't understand that. Could you please rephrase your question or type 'help' to see what I can assist you with?";
+            if (normalizedInput.includes('nutrition') || normalizedInput.includes('diet') || normalizedInput.includes('eat')) {
+                return handleNutritionAdvice(input);
+            }
+
+            if (normalizedInput.includes('injury') || normalizedInput.includes('prevent')) {
+                return handleInjuryPrevention(input);
+            }
+
+            if (normalizedInput.includes('motivat') || normalizedInput.includes('inspire')) {
+                return getMotivationalQuote();
+            }
+
+            if (normalizedInput.includes('weight loss')) {
+                return handleWeightLossAdvice();
+            }
+
+            updateUserPreferences(input);
+
+            if (normalizedInput.includes('my preferences')) {
+                return `Based on our conversation, I understand that:
+                    • Your fitness level is: ${userPreferences.fitnessLevel}
+                    • Your fitness goals include: ${userPreferences.fitnessGoals.join(', ') || 'Not specified'}
+                    • Your dietary restrictions include: ${userPreferences.dietaryRestrictions.join(', ') || 'None specified'}
+                    
+                    I'll keep these in mind when providing advice. Let me know if you want to update any of these!`;
+            }
+
+            return "I'm sorry, I didn't understand that. Could you please rephrase your question or type 'help' to see what I can assist you with?";
+        } catch (error) {
+            console.error('Error in handleChatResponse:', error);
+            return "I apologize, but I encountered an unexpected error. Could you please try rephrasing your question?";
+        }
     }
 
     function generateHelpResponse() {
@@ -388,43 +432,6 @@ Please specify which area or activity you're concerned about. For example:
 Once you provide more details, I can give you specific injury prevention advice.`;
         }
     }
-
-    // Workout Suggestion with Adjustment for Time and Equipment
-if (input.startsWith("Create a workout for me")) {
-    const timeRegex = /(\d+)\s*minutes?/i;
-    const equipmentRegex = /only\s*(.+)$/i;
-
-    let timeMatch = input.match(timeRegex);
-    let equipmentMatch = input.match(equipmentRegex);
-
-    let workoutTime = timeMatch ? parseInt(timeMatch[1]) : 30; // Default to 30 minutes if not provided
-    let equipment = equipmentMatch ? equipmentMatch[1].toLowerCase() : "bodyweight";
-
-    let workoutPlan = [];
-    if (equipment.includes("dumbbells")) {
-        workoutPlan = [
-            `- ${Math.min(5, workoutTime)} minutes: Dumbbell Goblet Squats (3 sets, 12 reps)`,
-            `- ${Math.min(10, workoutTime - 5)} minutes: Dumbbell Push Press (3 sets, 10 reps)`,
-            `- ${Math.min(5, workoutTime - 15)} minutes: Dumbbell Rows (3 sets, 12 reps per side)`
-        ];
-    } else if (equipment.includes("bodyweight")) {
-        workoutPlan = [
-            `- ${Math.min(5, workoutTime)} minutes: Bodyweight Squats (3 sets, 15 reps)`,
-            `- ${Math.min(10, workoutTime - 5)} minutes: Push-Ups (3 sets, 12 reps)`,
-            `- ${Math.min(5, workoutTime - 15)} minutes: Plank Holds (3 sets, 30 seconds each)`
-        ];
-    } else {
-        workoutPlan = [
-            `- ${Math.min(10, workoutTime)} minutes: Jumping Jacks (3 sets, 1 minute each)`,
-            `- ${Math.min(10, workoutTime - 10)} minutes: High Knees (3 sets, 1 minute each)`,
-            `- ${Math.min(10, workoutTime - 20)} minutes: Burpees (3 sets, 10 reps)`
-        ];
-    }
-
-    let response = `Here's a workout plan for ${workoutTime} minutes with ${equipment}:\n${workoutPlan.join("\n")}`;
-    addToChatHistory(input, response);
-    return response;
-}
 
     function getMotivationalQuote() {
         return "Here's a motivational quote to inspire your fitness journey: \"" + motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)] + "\"";
