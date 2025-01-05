@@ -430,10 +430,10 @@ Once you provide more details, I can give you specific injury prevention advice.
         return `
 📊 Your Fitness Progress Tracker 📊
 
-🏋️ Workouts Completed: 15
+🏋️ Workouts Completed: 5
 🔥 Total Calories Burned: 7,500
 💪 Strength Increase: 20%
-⚖️ Weight Change: -5 lbs
+⚖️ Weight Change: +10 lbs
 
 Keep up the great work! 💪🎉
 
