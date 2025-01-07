@@ -218,43 +218,53 @@ Which one would you like to calculate?`;
     }
 
     function calculateBMI(input) {
-        const regex = /(\d+(?:\.\d+)?)\s*(lbs|kg)?\s*,?\s*(\d+)\s*(\d+)?/i;
-        const match = input.match(regex);
-        
-        if (!match) {
-            return "Invalid input. Please format your height and weight like '125 lbs, 5 6' or '70 kg, 175 cm'.";
+        const regex = /(?<weight>\d+(\.\d+)?)\s*(lbs|kg)?\s*,?\s*(?<height>\d+\.?\d*)\s*(in|cm)?/;
+        const match = regex.exec(input);
+        if (match) {
+            const { weight, height } = match.groups;
+            const isMetric = input.includes('kg') || input.includes('cm');
+            const weightKg = isMetric ? parseFloat(weight) : parseFloat(weight) * 0.453592;
+            const heightM = isMetric ? parseFloat(height) / 100 : parseFloat(height) * 0.0254;
+            const bmi = (weightKg / (heightM ** 2)).toFixed(2);
+            return `Your BMI is ${bmi}. A healthy BMI ranges from 18.5 to 24.9.`;
         }
-    
-        let [_, weight, weightUnit, feet, inches] = match;
-        let weightKg = parseFloat(weight);
-        let heightM;
-    
-        if (weightUnit?.toLowerCase() === 'lbs') {
-            weightKg *= 0.453592; // Convert pounds to kilograms
-        }
-    
-        if (inches) {
-            heightM = ((parseInt(feet) * 12) + parseInt(inches)) * 0.0254; // Convert feet and inches to meters
-        } else {
-            heightM = parseInt(feet) * 0.3048; // Convert feet to meters
-        }
-    
-        if (weightKg <= 0 || heightM <= 0) {
-            return "Please provide valid, positive numbers for your height and weight.";
-        }
-    
-        const bmi = weightKg / (heightM * heightM);
-        const roundedBMI = Math.round(bmi * 10) / 10;
-    
-        let category;
-        if (bmi < 18.5) category = "Underweight";
-        else if (bmi < 25) category = "Normal weight";
-        else if (bmi < 30) category = "Overweight";
-        else category = "Obese";
-    
-        return `Your BMI is ${roundedBMI}, which falls into the "${category}" category. Remember, BMI is one measure of health and may not account for factors like muscle mass.`;
+        return "Please provide your weight (lbs or kg) and height (in or cm). Example: 'BMI for 150 lbs, 5'7"' or 'BMI for 68 kg, 170 cm'.";
     }
-    
+
+    function calculateOneRepMax(input) {
+        const regex = /(?<weight>\d+(\.\d+)?)\s*(lbs|kg)?\s*,?\s*(?<reps>\d+)\s*reps?/;
+        const match = regex.exec(input);
+        if (match) {
+            const { weight, reps } = match.groups;
+            const oneRepMax = (parseFloat(weight) * (1 + parseFloat(reps) / 30)).toFixed(2);
+            return `Your estimated one-rep max is ${oneRepMax} lbs.`;
+        }
+        return "Please provide the weight lifted and number of reps performed. Example: 'One-rep max for 150 lbs, 5 reps'.";
+    }
+
+    function calculateDailyCalories(input) {
+        return "To calculate your daily calorie needs, please provide your weight, height, age, gender, and activity level. Example: 'Daily calorie needs for 150 lbs, 5'7", 25 years old, male, active'.";
+    }
+
+    function calculateProteinIntake(input) {
+        return "To calculate your protein intake, please provide your weight and fitness goal (e.g., muscle gain, weight loss). Example: 'Protein intake for 150 lbs, muscle gain'.";
+    }
+
+    function calculateWaterIntake(input) {
+        const regex = /(?<weight>\d+(\.\d+)?)\s*(lbs|kg)?/;
+        const match = regex.exec(input);
+        if (match) {
+            const { weight } = match.groups;
+            const weightKg = input.includes('kg') ? parseFloat(weight) : parseFloat(weight) * 0.453592;
+            const waterLiters = (weightKg * 0.033).toFixed(2);
+            return `You should aim to drink about ${waterLiters} liters of water per day.`;
+        }
+        return "Please provide your weight (lbs or kg). Example: 'Water intake for 150 lbs'.";
+    }
+
+    function calculateIdealWeight(input) {
+        return "To calculate your ideal weight, please provide your height (in cm or ft/in) and body frame (small, medium, or large
+
     function calculateMacros(input) {
         return `To calculate your macronutrient balance, I'll need a bit more information:
 
