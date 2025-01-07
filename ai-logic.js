@@ -1,5 +1,6 @@
 (function () {
     console.log('Initializing Enhanced Titan AI Fitness Assistant...');
+    console.log('Tensorflow fitness database initialised...');
 
     const categories = {
         calculations: [
